@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#131313"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="Xác Nhận OTP"
+        android:textColor="#ffde31"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <!-- Hướng dẫn nhập OTP -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Nhập mã OTP đã được gửi đến email của bạn"
+        android:textColor="#B0B0B0"
+        android:textSize="14sp"
+        android:layout_marginBottom="10dp" />
+
+    <!-- Ô nhập OTP -->
+    <EditText
+        android:id="@+id/edtOTP"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/rounded_edittext"
+        android:hint="Nhập mã OTP"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:inputType="number"
+        android:maxLength="6"
+        android:textAlignment="center"
+        android:textColor="#8f8f8f"
+        android:textColorHint="#8f8f8f" />
+
+    <!-- Nút xác nhận OTP -->
+    <Button
+        android:id="@+id/btnVerifyOTP"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#ffde31"
+        android:text="Xác nhận"
+        android:textSize="14sp"
+        android:textColor="#131313" />
+
+    <!-- Nút gửi lại OTP -->
+    <TextView
+        android:id="@+id/txtResendOTP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="Gửi lại mã OTP"
+        android:textColor="#ffde31"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <!-- Nút quay lại màn hình quên mật khẩu -->
+    <TextView
+        android:id="@+id/txtBackToForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="Quay lại"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+</LinearLayout>
