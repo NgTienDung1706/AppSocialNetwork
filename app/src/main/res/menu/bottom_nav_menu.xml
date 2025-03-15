@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/housesolid"
+        android:title="TODO" />
+
+    <item
+        android:id="@+id/nav_chat"
+        android:icon="@drawable/commentsolid"
+        android:title="" />
+
+    <item
+        android:id="@+id/nav_writepost"
+        android:icon="@drawable/pen_to_square_solid"
+        android:title="" />
+
+    <item
+        android:id="@+id/nav_friends"
+        android:icon="@drawable/usergroupsolid"
+        android:title="" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/circleusersolid"
+        android:title="" />
+
+</menu>
