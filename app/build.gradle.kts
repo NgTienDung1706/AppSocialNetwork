@@ -43,6 +43,8 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.14.2")
     implementation ("com.squareup.picasso:picasso:2.5.2")
     implementation ("com.google.android.material:material:1.9.0")
+    implementation ("androidx.cardview:cardview:1.0.0")
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
