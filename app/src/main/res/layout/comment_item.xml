@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/bg_comment_item"
+    android:layout_marginBottom="8dp">
+
+    <!-- Tên người dùng -->
+    <TextView
+        android:id="@+id/tv_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tên người dùng"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:textSize="14sp" />
+
+    <!-- Nội dung bình luận -->
+    <TextView
+        android:id="@+id/tv_comment_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nội dung bình luận"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        android:textColor="#666666" />
+
+    <!-- Like và Reply -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <!-- Nút Like -->
+        <ImageView
+            android:id="@+id/iv_like"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_like"
+            android:contentDescription="Like" />
+
+        <!-- Số lượt thích -->
+        <TextView
+            android:id="@+id/tv_like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:layout_marginStart="4dp"
+            android:textSize="12sp" />
+
+        <!-- Nút Reply -->
+        <ImageView
+            android:id="@+id/iv_reply"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_reply"
+            android:layout_marginStart="16dp"
+            android:contentDescription="Reply" />
+    </LinearLayout>
+</LinearLayout>
