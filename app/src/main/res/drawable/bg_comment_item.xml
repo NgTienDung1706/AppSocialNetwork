@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/bg_02" /> <!-- Màu nền (trắng) -->
+    <solid android:color="@color/bg_02" /> <!-- Màu xám -->
     <corners android:radius="16dp" /> <!-- Bo góc 16dp -->
     <stroke
         android:width="2dp"
