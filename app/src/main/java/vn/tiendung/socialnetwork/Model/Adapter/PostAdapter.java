@@ -1,4 +1,4 @@
-package vn.tiendung.socialnetwork.Model;
+package vn.tiendung.socialnetwork.Model.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.R;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {

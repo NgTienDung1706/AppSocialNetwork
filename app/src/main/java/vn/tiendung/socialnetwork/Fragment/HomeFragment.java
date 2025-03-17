@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import vn.tiendung.socialnetwork.Model.Moment;
-import vn.tiendung.socialnetwork.Model.MomentAdapter;
+import vn.tiendung.socialnetwork.Model.Adapter.MomentAdapter;
 import vn.tiendung.socialnetwork.Model.Post;
-import vn.tiendung.socialnetwork.Model.PostAdapter;
+import vn.tiendung.socialnetwork.Model.Adapter.PostAdapter;
 import vn.tiendung.socialnetwork.R;
 
 public class HomeFragment extends Fragment {
