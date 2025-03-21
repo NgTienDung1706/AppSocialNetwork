@@ -2,6 +2,7 @@ package vn.tiendung.socialnetwork.API;
 
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -20,4 +21,10 @@ public interface APIService {
 
     @POST("/api/reset-password")
     Call<Map<String, String>> resetPassword(@Body Map<String, String> body);
+
+    @POST("/api/register")
+    Call<ResponseBody> registerUser(@Body UserModel user);
+
+    @POST("/api/verifyAccount")
+    Call<ResponseBody> validateOtp(@Body Map<String, String> requestBody);
 }

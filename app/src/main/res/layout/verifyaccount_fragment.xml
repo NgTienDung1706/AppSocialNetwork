@@ -11,35 +11,35 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="Quên Mật Khẩu"
+        android:layout_marginBottom="30dp"
+        android:text="Xác nhận OTP"
         android:textColor="#ffde31"
         android:textSize="28sp"
         android:textStyle="bold" />
 
     <!-- Ô nhập Email -->
     <EditText
-        android:id="@+id/edtOTP"
+        android:id="@+id/edtOtp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/rounded_edittext"
-        android:hint="Nhập email của bạn"
-        android:textSize="14sp"
+        android:hint="Nhập mã OTP được gửi về email của bạn"
+        android:inputType="text|textLongMessage"
         android:padding="15dp"
         android:textColor="#8f8f8f"
         android:textColorHint="#8f8f8f"
-        android:inputType="textEmailAddress" />
+        android:textSize="14sp" />
 
     <!-- Nút Gửi mã OTP -->
     <Button
-        android:id="@+id/btnSendOTP"
+        android:id="@+id/btnSendOtp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:backgroundTint="#ffde31"
         android:text="Gửi mã OTP"
-        android:textSize="14sp"
-        android:textColor="#131313" />
+        android:textColor="#131313"
+        android:textSize="14sp" />
 
     <!-- Nút quay lại màn hình đăng nhập -->
     <TextView

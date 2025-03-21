@@ -23,6 +23,8 @@ import vn.tiendung.socialnetwork.R;
 public class LoginActivity extends AppCompatActivity {
     private EditText edtUsername, edtPassword;
     private Button btnLogin;
+
+    private TextView txtRegister;
     private APIService apiService;
 
     @Override
@@ -32,8 +34,9 @@ public class LoginActivity extends AppCompatActivity {
 
         // Ánh xạ View
         edtUsername = findViewById(R.id.edtEmail);
-        edtPassword = findViewById(R.id.edtPassword);
+        edtPassword = findViewById(R.id.edtPassWord);
         btnLogin = findViewById(R.id.btnLogin);
+        txtRegister = findViewById(R.id.txtRegister);
 
         // Khởi tạo APIService
         apiService = RetrofitClient.getRetrofit().create(APIService.class);
@@ -57,6 +60,11 @@ public class LoginActivity extends AppCompatActivity {
         TextView txtForgotPassword = findViewById(R.id.txtForgotPassword);
         txtForgotPassword.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
+        });
+
+        txtRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
     }
