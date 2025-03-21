@@ -18,6 +18,8 @@ import androidx.fragment.app.Fragment;
 
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,7 +90,12 @@ public class VerifyAccontFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
                         String message = response.body().string();
-                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                        JSONObject jsonResponse = new JSONObject(message);
+
+                        // Lấy nội dung trong "message"
+                        String mess = jsonResponse.has("message") ? jsonResponse.getString("message") : "Đăng ký thành công!";
+
+                        Toast.makeText(getContext(), mess, Toast.LENGTH_SHORT).show();
 
                         // Xác minh thành công -> Chuyển sang màn hình đăng nhập
                         Intent intent = new Intent(getActivity(), LoginActivity.class);

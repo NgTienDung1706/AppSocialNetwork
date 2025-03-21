@@ -119,6 +119,19 @@ public class LoginActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
 
+                } else {
+                    // Lấy lỗi từ response trả về
+                    try {
+                        String errorBody = response.errorBody().string();
+                        JSONObject errorJson = new JSONObject(errorBody);
+                        String errorMessage = errorJson.has("message") ? errorJson.getString("message") : "Lỗi không xác định!";
+
+                        Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                        Log.e("LoginError", "Đăng nhập thất bại: " + errorMessage);
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(LoginActivity.this, "Lỗi khi đọc phản hồi từ server!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 

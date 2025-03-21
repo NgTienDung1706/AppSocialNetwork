@@ -14,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,13 +81,18 @@ public class ForgotPasswordFragment extends Fragment {
             @Override
             public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    String message = response.body().get("message");
-                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                        String message = response.body().get("message");
 
-                    // Chuyển sang VerifyOTPFragment
-                    if (getActivity() instanceof ForgotPasswordActivity) {
-                        ((ForgotPasswordActivity) getActivity()).loadFragment(new VerifyOTPFragment(email));
-                    }
+                        if (message != null) {
+                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), "Phản hồi không hợp lệ!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        // Chuyển sang `VerifyOTPFragment`
+                        if (getActivity() instanceof ForgotPasswordActivity) {
+                            ((ForgotPasswordActivity) getActivity()).loadFragment(new VerifyOTPFragment(email));
+                        }
                 } else {
                     Toast.makeText(getActivity(), "Gửi OTP thất bại! Hãy thử lại.", Toast.LENGTH_SHORT).show();
                 }
