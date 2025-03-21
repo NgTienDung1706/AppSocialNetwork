@@ -11,7 +11,7 @@ import vn.tiendung.socialnetwork.Model.UserModel;
 
 public interface APIService {
     @POST("/api/login")
-    Call<LoginResponse> login(@Body UserModel user);
+    Call<ResponseBody> login(@Body UserModel user);
 
     @POST("/api/forgot-password")
     Call<Map<String, String>> sendOTP(@Body Map<String, String> body);
