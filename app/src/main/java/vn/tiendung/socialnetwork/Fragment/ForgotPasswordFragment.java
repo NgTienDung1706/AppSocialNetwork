@@ -1,6 +1,5 @@
 package vn.tiendung.socialnetwork.Fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -42,7 +41,7 @@ public class ForgotPasswordFragment extends Fragment {
         View view = inflater.inflate(R.layout.forgotpassword_fragment, container, false);
 
         // Ánh xạ View
-        edtEmail = view.findViewById(R.id.edtEmail);
+        edtEmail = view.findViewById(R.id.edtOTP);
         btnSendOTP = view.findViewById(R.id.btnSendOTP);
         txtBackToLogin = view.findViewById(R.id.txtBackToLogin);
 

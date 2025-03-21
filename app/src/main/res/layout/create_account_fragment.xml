@@ -7,19 +7,29 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-    <!-- Tiêu đề -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
         android:gravity="center"
         android:paddingHorizontal="20dp"
-        android:text="Đăng Nhập"
+        android:text="Đăng Ký"
         android:textColor="#ffde31"
         android:textSize="32sp"
         android:textStyle="bold" />
 
-    <!-- Ô nhập Email -->
+    <EditText
+        android:id="@+id/edtUserName"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/rounded_edittext"
+        android:hint="Username"
+        android:textSize="14sp"
+        android:padding="15dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#8f8f8f" />
+
     <EditText
         android:id="@+id/edtEmail"
         android:layout_width="match_parent"
@@ -27,12 +37,10 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/rounded_edittext"
         android:hint="Email"
-        android:textSize="14sp"
         android:padding="15dp"
         android:textColor="#FFFFFF"
-        android:textColorHint="#8f8f8f" />
-
-    <!-- Ô nhập Mật khẩu -->
+        android:textColorHint="#8f8f8f"
+        android:textSize="14sp" />
     <EditText
         android:id="@+id/edtPassWord"
         android:layout_width="match_parent"
@@ -46,43 +54,32 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#8f8f8f" />
 
-    <!-- Nút Quên mật khẩu -->
-    <TextView
-        android:id="@+id/txtForgotPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:text="Quên mật khẩu?"
+    <EditText
+        android:id="@+id/edtConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/rounded_edittext"
+        android:hint="Xác nhận mật khẩu"
+        android:inputType="textPassword"
+        android:padding="15dp"
         android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        android:textColorHint="#8f8f8f"
+        android:textSize="14sp" />
+
 
     <!-- Nút đăng ký / đăng nhập -->
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnRegister"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:backgroundTint="#ffde31"
-        android:text="Đăng nhập"
-        android:textSize="14sp"
-        android:textColor="#131313" />
+        android:text="Đăng Ký"
+        android:textColor="#131313"
+        android:textSize="14sp" />
 
-    <!-- Điều khoản -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:gravity="center"
-        android:text="Bằng việc đăng nhập, bạn đã đồng ý với Điều khoản và Điều kiện của chúng tôi"
-        android:textAlignment="center"
-        android:textColor="#B0B0B0"
-        android:textSize="12sp" />
 
-    <!-- Nút Đăng ký -->
     <TextView
         android:id="@+id/txtRegister"
         android:layout_width="wrap_content"
@@ -91,7 +88,7 @@
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
-        android:text="Chưa có tài khoản? Đăng ký ngay"
+        android:text="Quay lại trang đăng nhập"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
         android:textStyle="bold" />
