@@ -7,4 +7,12 @@
     <color name="bg_01">#000000</color>
     <color name="bg_02">#272727</color>
     <color name="yellow">#fedc00</color>
+<!--    <color name="bg">#213555</color>-->
+<!--    <color name="st">#F5EFE7</color>-->
+<!--    <color name="nd">#D8C4B6</color>-->
+<!--    <color name="rd">#3E5879</color>-->
+    <color name="bg">#222831</color>
+    <color name="st">#EEEEEE</color>
+    <color name="nd">#00ADB5</color>
+    <color name="rd">#393E46</color>
 </resources>
