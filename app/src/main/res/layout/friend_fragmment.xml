@@ -61,7 +61,7 @@
         app:tabSelectedTextColor="@color/yellow"
         app:tabIndicatorColor="@color/yellow"
         app:tabIndicatorHeight="2dp"
-        app:tabTextColor="@color/text"
+        app:tabTextColor="@color/st"
         android:background="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@id/header_title"
         app:layout_constraintStart_toStartOf="parent"

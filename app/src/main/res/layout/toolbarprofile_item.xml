@@ -3,36 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@color/black"
+    android:background="@color/bg"
     android:padding="8dp"
     android:gravity="end"
     android:layout_marginTop="8dp">
 
     <!-- Điểm số -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <!-- Icon Coin -->
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_coin"
-            android:contentDescription="Coin" />
-
-        <!-- Điểm số -->
-        <TextView
-            android:id="@+id/tvCoin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
     <View
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -43,31 +19,16 @@
         android:id="@+id/ivLogout"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_coin"
-        android:contentDescription="Share"
+        android:src="@drawable/logout"
+        android:contentDescription="Logout"
         android:layout_marginEnd="16dp" />
     <ImageView
-        android:id="@+id/ivShare"
+        android:id="@+id/ivNotify"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_coin"
-        android:contentDescription="Share"
-        android:layout_marginEnd="16dp" />
-
-    <!-- Icon hỗ trợ -->
-    <ImageView
-        android:id="@+id/ivSupport"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_coin"
-        android:contentDescription="Support"
+        android:src="@drawable/bell"
+        android:contentDescription="Notify"
         android:layout_marginEnd="16dp" />
 
-    <!-- Icon cài đặt -->
-    <ImageView
-        android:id="@+id/ivSettings"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_coin"
-        android:contentDescription="Settings" />
+
 </LinearLayout>

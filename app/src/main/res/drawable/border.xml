@@ -4,8 +4,8 @@
     <!-- Viền ngoài màu xám -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@android:color/transparent" /> <!-- Nền trong suốt -->
-            <stroke android:width="0.7dp" android:color="#8f8f8f" /> <!-- Viền xám -->
+            <solid android:color="@color/rd" /> <!-- Nền trong suốt -->
+            <stroke android:width="0.7dp" android:color="@color/rd" /> <!-- Viền xám -->
             <corners android:radius="12dp" /> <!-- Bo góc -->
         </shape>
     </item>

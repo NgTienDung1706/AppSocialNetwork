@@ -3,13 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPosts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Danh sách bài viết gần đây"
-        android:textColor="@color/white"
-        android:textSize="18sp" />
+        android:orientation="vertical" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

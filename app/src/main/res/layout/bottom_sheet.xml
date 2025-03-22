@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Không Yêu Em Thì Yêu Ai?"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingBottom="10dp"/>
+
+    <Button
+        android:id="@+id/btnViewArtist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Xem Trang của nghệ sĩ" />
+
+    <Button
+        android:id="@+id/btnChangeSong"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Thay bài" />
+
+    <Button
+        android:id="@+id/btnUnpin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bỏ ghim khỏi trang cá nhân" />
+
+    <Button
+        android:id="@+id/btnDeleteSong"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Xóa bài hát khỏi trang cá nhân"
+        android:textColor="#FF0000"/>
+</LinearLayout>
