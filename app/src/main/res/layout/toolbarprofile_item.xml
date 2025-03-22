@@ -2,11 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:background="@color/bg"
-    android:padding="8dp"
     android:gravity="end"
-    android:layout_marginTop="8dp">
+    android:orientation="horizontal"
+    android:padding="8dp">
 
     <!-- Điểm số -->
     <View
@@ -19,16 +18,17 @@
         android:id="@+id/ivLogout"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/logout"
+        android:layout_marginEnd="16dp"
         android:contentDescription="Logout"
-        android:layout_marginEnd="16dp" />
+        android:src="@drawable/logout" />
+
     <ImageView
         android:id="@+id/ivNotify"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/bell"
+        android:layout_marginEnd="16dp"
         android:contentDescription="Notify"
-        android:layout_marginEnd="16dp" />
+        android:src="@drawable/bell" />
 
 
 </LinearLayout>
