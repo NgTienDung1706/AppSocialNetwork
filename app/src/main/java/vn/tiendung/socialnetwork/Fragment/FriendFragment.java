@@ -39,6 +39,8 @@ public class FriendFragment extends Fragment {
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             if (position == 0) {
                 tab.setText("Danh sách bạn");
+            } else if (position == 1) {
+                tab.setText("Yêu cầu kết bạn");
             } else {
                 tab.setText("Gợi ý kết bạn");
             }

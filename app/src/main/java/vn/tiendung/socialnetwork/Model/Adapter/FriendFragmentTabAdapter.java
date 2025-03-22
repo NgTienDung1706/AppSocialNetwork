@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import vn.tiendung.socialnetwork.Fragment.FriendListFragment;
+import vn.tiendung.socialnetwork.Fragment.FriendRequestFragment;
 import vn.tiendung.socialnetwork.Fragment.SuggestedFriendFragment;
 
 public class FriendFragmentTabAdapter extends FragmentStateAdapter {
@@ -19,6 +20,8 @@ public class FriendFragmentTabAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         if (position == 0) {
             return new FriendListFragment(); // Fragment cho "Danh sách bạn"
+        } else if (position == 1) {
+            return new FriendRequestFragment(); // Fragment cho "Yêu cầu kết bạn"
         } else {
             return new SuggestedFriendFragment(); // Fragment cho "Gợi ý kết bạn"
         }
@@ -26,7 +29,7 @@ public class FriendFragmentTabAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 2; // Số lượng tab
+        return 3; // Số lượng tab
     }
 }
 
