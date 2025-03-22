@@ -12,10 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import vn.tiendung.socialnetwork.Model.Adapter.FriendAddAdapter;
 import vn.tiendung.socialnetwork.Model.Adapter.TabFragmentAdapter;
+import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.R;
 
 public class FriendRequestFragment extends Fragment {
@@ -29,10 +32,18 @@ public class FriendRequestFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Dữ liệu mẫu
-        List<String> friends = Arrays.asList("Bạn A", "Bạn B", "Bạn C");
+
+        List<Friend> friends = new ArrayList<>();
+        friends.add(new Friend("Nguyễn Văn A", R.drawable.circleusersolid, 31, Friend.TYPE_REQUEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
 
         // Thiết lập adapter
-        RecyclerView.Adapter adapter = new TabFragmentAdapter(friends);
+        RecyclerView.Adapter adapter = new FriendAddAdapter(getContext(), friends);
         recyclerView.setAdapter(adapter);
 
         return view;

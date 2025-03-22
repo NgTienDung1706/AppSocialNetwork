@@ -11,10 +11,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import vn.tiendung.socialnetwork.Model.Adapter.FriendAddAdapter;
 import vn.tiendung.socialnetwork.Model.Adapter.TabFragmentAdapter;
+import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.R;
 
 public class SuggestedFriendFragment extends Fragment {
@@ -28,10 +31,17 @@ public class SuggestedFriendFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Dữ liệu mẫu
-        List<String> suggestions = Arrays.asList("Gợi ý A", "Gợi ý B", "Gợi ý C");
+        List<Friend> friends = new ArrayList<>();
+        friends.add(new Friend("Nguyễn Văn A", R.drawable.circleusersolid, 31, Friend.TYPE_SUGGEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_SUGGEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_SUGGEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_SUGGEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_SUGGEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_SUGGEST));
+        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_SUGGEST));
 
         // Thiết lập adapter
-        RecyclerView.Adapter adapter = new TabFragmentAdapter(suggestions);
+        RecyclerView.Adapter adapter = new FriendAddAdapter(getContext(), friends);
         recyclerView.setAdapter(adapter);
 
         return view;

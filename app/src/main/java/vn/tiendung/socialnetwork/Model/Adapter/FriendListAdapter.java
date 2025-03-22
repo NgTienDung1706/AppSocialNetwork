@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,6 +43,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
 
         holder.messageIcon.setOnClickListener(v -> {
             // Xử lý sự kiện nhắn tin
+            Toast.makeText(context, "Nhắn tin đê", Toast.LENGTH_SHORT).show();
         });
     }
 
