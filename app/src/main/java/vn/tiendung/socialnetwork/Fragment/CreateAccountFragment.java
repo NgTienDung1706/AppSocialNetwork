@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import org.json.JSONObject;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -94,7 +96,12 @@ public class CreateAccountFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
                         String message = response.body().string(); // Lấy chuỗi từ response
-                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                        JSONObject jsonResponse = new JSONObject(message);
+
+                        // Lấy nội dung trong "message"
+                        String mess = jsonResponse.has("message") ? jsonResponse.getString("message") : "Đăng ký thành công!";
+
+                        Toast.makeText(getContext(), mess, Toast.LENGTH_SHORT).show();
 
                         Bundle bundle = new Bundle();
                         bundle.putString("email", email); // Gửi email qua để xác thực OTP

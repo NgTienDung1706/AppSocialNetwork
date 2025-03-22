@@ -1,20 +1,17 @@
-package vn.tiendung.socialnetwork.Utils;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SharedPrefManager {
-    private static final String PREF_NAME = "APP_PREFS";
-    private static final String KEY_USER_ID = "USER_ID";
-    private static final String KEY_USERNAME = "USERNAME";
-    private static final String KEY_EMAIL = "EMAIL";
-    private static final String KEY_LOGGED_IN = "LOGGED_IN";
+    private static final String PREF_NAME = "user_prefs";
+    private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
+    private static final String KEY_USER_ID = "userId";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_EMAIL = "email";
 
     private static SharedPrefManager instance;
-    private final SharedPreferences sharedPreferences;
-    private final SharedPreferences.Editor editor;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
-    // Private constructor để tránh tạo nhiều instance
     private SharedPrefManager(Context context) {
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -27,36 +24,34 @@ public class SharedPrefManager {
         return instance;
     }
 
-    // Lưu thông tin user sau khi đăng nhập
+    // Lưu thông tin user khi đăng nhập
     public void saveUser(String userId, String username, String email) {
+        editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.putString(KEY_USER_ID, userId);
         editor.putString(KEY_USERNAME, username);
         editor.putString(KEY_EMAIL, email);
-        editor.putBoolean(KEY_LOGGED_IN, true);
         editor.apply();
     }
 
-    // Lấy ID của user
+    // Kiểm tra trạng thái đăng nhập
+    public boolean isLoggedIn() {
+        return sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false);
+    }
+
+    // Lấy thông tin user
     public String getUserId() {
         return sharedPreferences.getString(KEY_USER_ID, null);
     }
 
-    // Lấy tên username
     public String getUsername() {
         return sharedPreferences.getString(KEY_USERNAME, null);
     }
 
-    // Lấy email
     public String getEmail() {
         return sharedPreferences.getString(KEY_EMAIL, null);
     }
 
-    // Kiểm tra user đã đăng nhập hay chưa
-    public boolean isLoggedIn() {
-        return sharedPreferences.getBoolean(KEY_LOGGED_IN, false);
-    }
-
-    // Xóa dữ liệu khi user đăng xuất
+    // Đăng xuất
     public void logout() {
         editor.clear();
         editor.apply();

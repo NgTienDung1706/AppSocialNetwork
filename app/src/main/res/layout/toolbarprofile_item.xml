@@ -39,7 +39,13 @@
         android:layout_weight="1" />
 
     <!-- Icon chia sẻ -->
-
+    <ImageView
+        android:id="@+id/ivLogout"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_coin"
+        android:contentDescription="Share"
+        android:layout_marginEnd="16dp" />
     <ImageView
         android:id="@+id/ivShare"
         android:layout_width="24dp"
