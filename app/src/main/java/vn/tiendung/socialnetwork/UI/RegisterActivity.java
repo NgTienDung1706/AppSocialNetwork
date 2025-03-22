@@ -1,6 +1,8 @@
 package vn.tiendung.socialnetwork.UI;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,8 @@ import vn.tiendung.socialnetwork.Fragment.CreateAccountFragment;
 import vn.tiendung.socialnetwork.R;
 
 public class RegisterActivity extends AppCompatActivity {
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +23,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             loadFragment(new CreateAccountFragment());
         }
+
     }
 
     private void loadFragment(Fragment fragment) {
