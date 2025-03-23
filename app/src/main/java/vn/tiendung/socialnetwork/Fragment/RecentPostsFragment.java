@@ -34,7 +34,7 @@ public class RecentPostsFragment extends Fragment {
         posts.add(new Post(R.drawable.circleusersolid, "Minh Tâm", "Mình vừa hoàn thành một dự án lớn!"));
         posts.add(new Post(R.drawable.circleusersolid, "Thu Hà", "Cùng đi cafe không mọi người?"));
 
-        adapter = new PostAdapter(posts);
+        adapter = new PostAdapter(getContext(), posts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
 

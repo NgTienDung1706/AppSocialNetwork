@@ -45,7 +45,7 @@ public class HomeFragment extends Fragment {
         posts.add(new Post(R.drawable.circleusersolid, "Minh Tâm", "Mình vừa hoàn thành một dự án lớn!"));
         posts.add(new Post(R.drawable.circleusersolid, "Thu Hà", "Cùng đi cafe không mọi người?"));
 
-        PostAdapter postAdapter = new PostAdapter(posts);
+        PostAdapter postAdapter = new PostAdapter(getContext(), posts);
         recyclerViewPosts.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewPosts.setAdapter(postAdapter);
 

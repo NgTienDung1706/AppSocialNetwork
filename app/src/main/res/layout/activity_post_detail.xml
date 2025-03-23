@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UI.PostDetailActivity">
 
-    <?xml version="1.0" encoding="utf-8"?>
+    <!-- Nội dung chính bên trong ScrollView -->
     <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#FFFFFF"
-        tools:context=".UI.PostDetailActivity">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/commentBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,8 +37,7 @@
                     android:layout_height="50dp"
                     android:src="@drawable/circleusersolid"
                     android:scaleType="centerCrop"
-                    android:layout_marginEnd="8dp"
-                    />
+                    android:layout_marginEnd="8dp" />
 
                 <!-- Tên người dùng -->
                 <TextView
@@ -69,7 +68,8 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="16dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_camera" />
+                android:src="@drawable/ic_camera"
+                />
 
             <!-- Caption và Hashtags -->
             <TextView
@@ -104,41 +104,41 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp" />
-
         </LinearLayout>
     </ScrollView>
 
-    <!-- Phần nhập và gửi bình luận -->
     <LinearLayout
         android:id="@+id/commentBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:background="#EEEEEE"
         android:orientation="horizontal"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Ô nhập bình luận -->
         <EditText
             android:id="@+id/etComment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@null"
+            android:background="@android:color/transparent"
             android:hint="Thêm bình luận..."
             android:inputType="text"
             android:padding="8dp" />
 
+        <!-- Nút gửi bình luận -->
         <ImageButton
             android:id="@+id/btnSendComment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
             android:contentDescription="Send Comment"
-            android:src="@drawable/ic_send" />
+            android:src="@drawable/ic_send"
+            android:scaleType="centerInside"
+            android:layout_marginStart="8dp" />
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
