@@ -17,7 +17,10 @@
         android:theme="@style/Theme.SocialNetwork"
         tools:targetApi="31">
         <activity
-            android:name=".UI.LoginActivity"
+            android:name=".UI.LoginActivity">
+
+        </activity>
+        <activity android:name=".UI.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,12 +28,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UI.MainActivity"/>
-        <activity android:name=".UI.RegisterActivity"/>
+        <activity android:name=".UI.RegisterActivity">
+
+        </activity>
         <activity android:name=".UI.ForgotPasswordActivity"
 
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
+        </activity>
     </application>
 
 </manifest>

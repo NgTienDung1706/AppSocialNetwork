@@ -11,10 +11,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import vn.tiendung.socialnetwork.Model.Adapter.FriendListAdapter;
 import vn.tiendung.socialnetwork.Model.Adapter.TabFragmentAdapter;
+import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.R;
 
 public class FriendListFragment extends Fragment {
@@ -28,10 +31,23 @@ public class FriendListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Dữ liệu mẫu
-        List<String> friends = Arrays.asList("Bạn A", "Bạn B", "Bạn C");
+        List<Friend> friends = new ArrayList<>();
+        friends.add(new Friend("Thao Pham", 15, R.drawable.circleusersolid));
+        friends.add(new Friend("Nguyen Van A", 10, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
+        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
 
         // Thiết lập adapter
-        RecyclerView.Adapter adapter = new TabFragmentAdapter(friends);
+        RecyclerView.Adapter adapter = new FriendListAdapter(getContext(),friends);
         recyclerView.setAdapter(adapter);
 
         return view;

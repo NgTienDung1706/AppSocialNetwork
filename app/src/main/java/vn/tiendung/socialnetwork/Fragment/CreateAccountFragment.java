@@ -1,5 +1,6 @@
 package vn.tiendung.socialnetwork.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +25,8 @@ import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Model.UserModel;
 import vn.tiendung.socialnetwork.R;
+import vn.tiendung.socialnetwork.UI.LoginActivity;
+import vn.tiendung.socialnetwork.UI.RegisterActivity;
 
 public class CreateAccountFragment extends Fragment {
 
@@ -47,7 +51,6 @@ public class CreateAccountFragment extends Fragment {
         edtEmail = view.findViewById(R.id.edtEmail);
         edtPassword = view.findViewById(R.id.edtPassWord);
         edtConfirmPassword = view.findViewById(R.id.edtConfirm);
-        btnRegister = view.findViewById(R.id.btnRegister);
 
         // Lấy instance của Retrofit từ RetrofitClient
         apiService = RetrofitClient.getRetrofit().create(APIService.class);

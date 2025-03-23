@@ -1,48 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:background="@color/bg_01">
-    <!-- Top navigation -->
-    <include
-        layout="@layout/home_top_nav_bar"
+
+
+    <!-- AppBarLayout chứa thanh Top Nav và Khoảnh khắc -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:elevation="4dp"
+        app:liftOnScroll="true">
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="8dp"
-        android:background="@color/bg_01">
-
-        <!-- Danh sách khoảnh khắc (lướt ngang) -->
-        <LinearLayout
+        <!-- Thanh Top Nav -->
+        <include
+            layout="@layout/home_top_nav_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-            <!-- Nút thêm khoảnh khắc -->
-            <include
-                layout="@layout/share_moment_item" />
+            app:layout_scrollFlags="scroll|enterAlways"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewMoments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:scrollbars="horizontal"
-                />
-        </LinearLayout>
-
-        <!-- Danh sách bài đăng (lướt dọc) -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewPosts"
+        <!-- CollapsingToolbarLayout -->
+        <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
+            android:layout_height="200dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:contentScrim="@color/bg_02">
 
-    </LinearLayout>
-</LinearLayout>
+            <!-- Nội dung Khoảnh khắc -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:background="@color/bg_01">
+
+                <!-- Danh sách khoảnh khắc (lướt ngang) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp">
+
+                    <!-- Nút thêm khoảnh khắc -->
+                    <include
+                        layout="@layout/share_moment_item" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewMoments"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:scrollbars="horizontal" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Nội dung chính: Danh sách bài đăng -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPosts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
