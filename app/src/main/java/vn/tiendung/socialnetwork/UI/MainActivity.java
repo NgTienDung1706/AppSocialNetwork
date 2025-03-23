@@ -5,11 +5,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -20,19 +22,20 @@ import vn.tiendung.socialnetwork.Fragment.HomeFragment;
 import vn.tiendung.socialnetwork.Fragment.ProfileFragment;
 import vn.tiendung.socialnetwork.Fragment.WritePostFragment;
 import vn.tiendung.socialnetwork.R;
+import vn.tiendung.socialnetwork.Utils.OnScrollListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnScrollListener {
 
-
+    private RecyclerView recyclerViewPosts;
+    private BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FloatingActionButton fabWritePost = findViewById(R.id.fabWritePost);
-        fabWritePost.setVisibility(View.VISIBLE);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
         // Hiển thị Fragment mặc định khi mở app
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_containerr, new HomeFragment()).commit();
@@ -63,5 +66,17 @@ public class MainActivity extends AppCompatActivity {
 
             return true;
         });
+
     }
+    @Override
+    public void onScroll(boolean isScrollingDown) {
+        if (bottomNavigationView != null) {
+            if (isScrollingDown) {
+                bottomNavigationView.animate().translationY(bottomNavigationView.getHeight() + 30).setDuration(300);
+            } else {
+                bottomNavigationView.animate().translationY(0).setDuration(300);
+            }
+        }
+    }
+
 }

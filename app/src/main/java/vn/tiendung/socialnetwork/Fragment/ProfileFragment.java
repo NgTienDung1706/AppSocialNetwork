@@ -1,7 +1,9 @@
 package vn.tiendung.socialnetwork.Fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +15,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import vn.tiendung.socialnetwork.Adapter.ViewPagerAdapter;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.UI.LoginActivity;
+import vn.tiendung.socialnetwork.Utils.OnScrollListener;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements OnScrollListener{
+    private OnScrollListener activityScrollListener;
+    AppBarLayout appBarLayout ;
     ImageView logout;
     @Nullable
     @Override
@@ -56,8 +62,39 @@ public class ProfileFragment extends Fragment {
                 tab.setText("Album ảnh");
             }
         }).attach();
+        // Gửi sự kiện cuộn lên Activity (MainActivity)
+        if (getActivity() instanceof OnScrollListener) {
+            activityScrollListener = (OnScrollListener) getActivity();
+        }
 
+        appBarLayout = view.findViewById(R.id.appBarLayout);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            private int lastOffset = 0;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (activityScrollListener != null) {
+                    boolean isScrollingDown = verticalOffset < lastOffset; // Nếu offset nhỏ hơn trước, nghĩa là đang cuộn xuống
+                    activityScrollListener.onScroll(isScrollingDown);
+                }
+                lastOffset = verticalOffset;
+            }
+        });
         return view; // ĐẢM BẢO return SAU KHI setup xong
+    }
+    @Override
+    public void onScroll(boolean isScrollingDown) {
+        Log.d("SCROLL_EVENT", "ProfileFragment nhận sự kiện cuộn: " + isScrollingDown);
+        if (activityScrollListener != null) {
+            activityScrollListener.onScroll(isScrollingDown);
+        }
+    }
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof OnScrollListener) {
+            activityScrollListener = (OnScrollListener) context;
+        }
     }
 }
 

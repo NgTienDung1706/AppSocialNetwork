@@ -19,8 +19,11 @@ import vn.tiendung.socialnetwork.Model.Adapter.MomentAdapter;
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.Model.Adapter.PostAdapter;
 import vn.tiendung.socialnetwork.R;
+import vn.tiendung.socialnetwork.Utils.OnScrollListener;
 
 public class HomeFragment extends Fragment {
+    private OnScrollListener scrollListener;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,6 +51,23 @@ public class HomeFragment extends Fragment {
         PostAdapter postAdapter = new PostAdapter(posts);
         recyclerViewPosts.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewPosts.setAdapter(postAdapter);
+
+        // Gán listener từ MainActivity
+        if (getActivity() instanceof OnScrollListener) {
+            scrollListener = (OnScrollListener) getActivity();
+        }
+
+        recyclerViewPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // Kiểm tra nếu cuộn xuống (dy > 0) thì ẩn, nếu cuộn lên (dy < 0) thì hiện
+                if (scrollListener != null) {
+                    scrollListener.onScroll(dy > 0);
+                }
+            }
+        });
 
         return view;
     }
