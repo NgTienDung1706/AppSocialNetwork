@@ -7,24 +7,24 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
-    android:background="@android:color/black">
+    android:background="@color/bg">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:background="@color/bg"
         android:gravity="center"
+        android:orientation="vertical"
         android:padding="8dp">
 
         <!-- Biểu tượng nền -->
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:backgroundTint="@color/yellow"
-            android:src="@drawable/ic_camera"
             android:background="@drawable/circle_background"
             android:padding="8dp"
-            android:scaleType="centerInside" />
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_camera" />
 
         <!-- Nội dung mô tả -->
         <TextView
@@ -33,7 +33,7 @@
             android:layout_marginTop="12dp"
             android:gravity="center"
             android:text="Chia sẻ khoảnh khắc hiện tại với bạn bè"
-            android:textColor="@color/black"
+            android:textColor="@color/st"
             android:textSize="14sp" />
 
     </LinearLayout>

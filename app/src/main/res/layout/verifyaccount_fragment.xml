@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#131313"
+    android:background="@color/bg"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="20dp">
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
         android:text="Xác nhận OTP"
-        android:textColor="#ffde31"
+        android:textColor="@color/st"
         android:textSize="28sp"
         android:textStyle="bold" />
 
@@ -26,8 +26,8 @@
         android:hint="Nhập mã OTP được gửi về email của bạn"
         android:inputType="text|textLongMessage"
         android:padding="15dp"
-        android:textColor="#8f8f8f"
-        android:textColorHint="#8f8f8f"
+        android:textColor="@color/st"
+        android:textColorHint="@color/nd"
         android:textSize="14sp" />
 
     <!-- Nút Gửi mã OTP -->
@@ -36,9 +36,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="30dp"
-        android:backgroundTint="#ffde31"
+        android:backgroundTint="@color/rd"
         android:text="Gửi mã OTP"
-        android:textColor="#131313"
+        android:textStyle="bold"
+        android:textColor="@color/st"
         android:textSize="14sp" />
 
     <!-- Nút quay lại màn hình đăng nhập -->
@@ -51,7 +52,7 @@
         android:focusable="true"
         android:gravity="center"
         android:text="Quay lại đăng nhập"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/nd"
         android:textSize="14sp"
         android:textStyle="bold" />
 

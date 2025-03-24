@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tên người dùng"
-                android:textColor="@color/white"
+                android:textColor="@color/st"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Thời gian đăng bài"
-                android:textColor="@color/white"
+                android:textColor="@color/st"
                 android:textSize="10sp" />
         </LinearLayout>
     </LinearLayout>
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Caption bài đăng"
-        android:textColor="@color/white"
+        android:textColor="@color/st"
         android:textSize="20sp" />
 
     <ImageView

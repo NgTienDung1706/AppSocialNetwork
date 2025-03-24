@@ -14,7 +14,7 @@
         android:text="User Name"
         android:textStyle="bold"
         android:textSize="14sp"
-        android:textColor="#000000" />
+        android:textColor="@color/st" />
 
     <!-- Nội dung bình luận -->
     <TextView
@@ -24,7 +24,7 @@
         android:layout_marginTop="4dp"
         android:text="This is a comment"
         android:textSize="14sp"
-        android:textColor="#333333" />
+        android:textColor="@color/st" />
 
     <!-- Lượt thích -->
     <TextView
@@ -34,5 +34,5 @@
         android:layout_marginTop="4dp"
         android:text="10 likes"
         android:textSize="12sp"
-        android:textColor="#888888" />
+        android:textColor="@color/nd" />
 </LinearLayout>

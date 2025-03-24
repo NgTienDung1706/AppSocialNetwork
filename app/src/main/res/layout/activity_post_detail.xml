@@ -48,6 +48,7 @@
                     android:text="User Name"
                     android:textSize="18sp"
                     android:textStyle="bold"
+                    android:textColor="@color/st"
                     android:ellipsize="end"
                     android:maxLines="1" />
 
@@ -57,8 +58,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Follow"
-                    android:backgroundTint="@color/black"
-                    android:textColor="@color/white" />
+                    android:backgroundTint="@color/rd"
+                    android:textColor="@color/st" />
             </LinearLayout>
 
             <!-- Ảnh bài viết -->
@@ -79,7 +80,7 @@
                 android:layout_marginTop="8dp"
                 android:text="RS7 Winter ❄️"
                 android:textSize="16sp"
-                android:textColor="#333333" />
+                android:textColor="@color/st" />
 
             <TextView
                 android:id="@+id/tvHashtags"
@@ -87,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:text="#audi #rs7 #quattro"
                 android:textSize="14sp"
-                android:textColor="@color/black" />
+                android:textColor="@color/nd" />
 
             <!-- Danh sách bình luận -->
             <TextView
@@ -97,13 +98,14 @@
                 android:text="Bình luận"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#000000" />
+                android:textColor="@color/st" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvComments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                />
         </LinearLayout>
     </ScrollView>
 
@@ -111,7 +113,7 @@
         android:id="@+id/commentBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#EEEEEE"
+        android:background="@color/rd"
         android:orientation="horizontal"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"

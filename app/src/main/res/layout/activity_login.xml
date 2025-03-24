@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#131313"
+    android:background="@color/bg"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="20dp">
@@ -15,7 +15,7 @@
         android:gravity="center"
         android:paddingHorizontal="20dp"
         android:text="Đăng Nhập"
-        android:textColor="#ffde31"
+        android:textColor="@color/st"
         android:textSize="32sp"
         android:textStyle="bold" />
 
@@ -29,8 +29,8 @@
         android:hint="Email"
         android:textSize="14sp"
         android:padding="15dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#8f8f8f" />
+        android:textColor="@color/st"
+        android:textColorHint="@color/nd" />
 
     <!-- Ô nhập Mật khẩu -->
     <EditText
@@ -43,8 +43,8 @@
         android:textSize="14sp"
         android:inputType="textPassword"
         android:padding="15dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#8f8f8f" />
+        android:textColor="@color/st"
+        android:textColorHint="@color/nd" />
 
     <!-- Nút Quên mật khẩu -->
     <TextView
@@ -56,7 +56,7 @@
         android:focusable="true"
         android:gravity="center"
         android:text="Quên mật khẩu?"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/nd"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -66,10 +66,11 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:backgroundTint="#ffde31"
+        android:backgroundTint="@color/rd"
         android:text="Đăng nhập"
         android:textSize="14sp"
-        android:textColor="#131313" />
+        android:textStyle="bold"
+        android:textColor="@color/st" />
 
     <!-- Điều khoản -->
     <TextView
@@ -79,7 +80,7 @@
         android:gravity="center"
         android:text="Bằng việc đăng nhập, bạn đã đồng ý với Điều khoản và Điều kiện của chúng tôi"
         android:textAlignment="center"
-        android:textColor="#B0B0B0"
+        android:textColor="@color/nd"
         android:textSize="12sp" />
 
     <!-- Nút Đăng ký -->
@@ -92,7 +93,7 @@
         android:focusable="true"
         android:gravity="center"
         android:text="Chưa có tài khoản? Đăng ký ngay"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/nd"
         android:textSize="14sp"
         android:textStyle="bold" />
 

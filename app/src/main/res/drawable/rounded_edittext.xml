@@ -3,9 +3,9 @@
     <!-- Khi EditText được focus -->
     <item android:state_focused="true">
         <shape android:shape="rectangle">
-            <solid android:color="#262626"/> <!-- Màu nền giữ nguyên -->
+            <solid android:color="@color/bg"/> <!-- Màu nền giữ nguyên -->
             <corners android:radius="5dp"/>
-            <stroke android:width="2dp" android:color="#FFFFFF"/> <!-- Viền trắng khi focus -->
+            <stroke android:width="2dp" android:color="@color/nd"/> <!-- Viền khi focus -->
             <padding android:left="10dp" android:right="10dp"/>
         </shape>
     </item>
@@ -13,9 +13,9 @@
     <!-- Trạng thái mặc định -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#262626"/>
+            <solid android:color="@color/bg"/>
             <corners android:radius="5dp"/>
-            <stroke android:width="2dp" android:color="#262626"/> <!-- Viền xám mặc định -->
+            <stroke android:width="2dp" android:color="@color/rd"/> <!-- Viền mặc định -->
             <padding android:left="10dp" android:right="10dp"/>
         </shape>
     </item>
