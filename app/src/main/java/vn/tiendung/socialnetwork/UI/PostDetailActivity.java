@@ -9,11 +9,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import me.relex.circleindicator.CircleIndicator3;
 import vn.tiendung.socialnetwork.Model.Adapter.CommentAdapter;
+import vn.tiendung.socialnetwork.Model.Adapter.PostImagesAdapter;
 import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.R;
 
@@ -33,6 +37,21 @@ public class PostDetailActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        ViewPager2 vpPostImages = findViewById(R.id.vpPostImages);
+
+        // Danh sách ảnh mẫu (thay bằng dữ liệu thực tế)
+        List<Integer> imageList = Arrays.asList(
+                R.drawable.bell,
+                R.drawable.ic_camera,
+                R.drawable.usergroupsolid
+        );
+
+        PostImagesAdapter adapter = new PostImagesAdapter(this, imageList);
+        CircleIndicator3 circleIndicator = findViewById(R.id.circleIndicator);
+        vpPostImages.setAdapter(adapter);
+        // Liên kết CircleIndicator3 với ViewPager2
+        circleIndicator.setViewPager(vpPostImages);
 
         rvComments = findViewById(R.id.rvComments);
         rvComments.setLayoutManager(new LinearLayoutManager(this));

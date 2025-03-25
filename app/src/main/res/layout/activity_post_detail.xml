@@ -61,14 +61,36 @@
                     android:textColor="@color/st" />
             </LinearLayout>
 
-            <!-- Ảnh bài viết -->
-            <ImageView
-                android:id="@+id/ivPostImage"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="16dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_camera" />
+                android:layout_height="wrap_content">
+
+                <!-- Ảnh bài viết -->
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/vpPostImages"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Chỉ mục -->
+                <me.relex.circleindicator.CircleIndicator3
+                    android:id="@+id/circleIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:ci_drawable="@drawable/circle_selected"
+                    app:ci_drawable_unselected="@drawable/circle_unselected"
+                    app:layout_constraintTop_toBottomOf="@id/vpPostImages"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
             <!-- Caption và Hashtags -->
             <TextView
