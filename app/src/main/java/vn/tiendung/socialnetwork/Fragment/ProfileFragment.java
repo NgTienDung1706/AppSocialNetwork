@@ -29,6 +29,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
+import vn.tiendung.socialnetwork.Adapter.EditProfileBottomSheet;
 import vn.tiendung.socialnetwork.Adapter.ViewPagerAdapter;
 import vn.tiendung.socialnetwork.Model.UserProfile;
 import vn.tiendung.socialnetwork.R;
@@ -36,10 +37,14 @@ import vn.tiendung.socialnetwork.UI.LoginActivity;
 import vn.tiendung.socialnetwork.Utils.OnScrollListener;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 
-public class ProfileFragment extends Fragment implements OnScrollListener{
+public class ProfileFragment extends Fragment implements OnScrollListener, EditProfileBottomSheet.OnProfileUpdatedListener {
     private OnScrollListener activityScrollListener;
     AppBarLayout appBarLayout ;
     ImageView logout;
+    private String username;
+
+    private UserProfile userProfile;
+    ImageView ivUpdateProfile;
 
     private ImageView ivAvatar;
     private TextView tvUsername, tvFriendCount, tvPostCount, tvAboutMe;
@@ -106,6 +111,22 @@ public class ProfileFragment extends Fragment implements OnScrollListener{
         String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
         getUserProfile(userId);
 
+        ivUpdateProfile = view.findViewById(R.id.ivUpdateProfile);
+        ivUpdateProfile.setOnClickListener(v -> {
+            if (userProfile != null) {
+                EditProfileBottomSheet bottomSheet = EditProfileBottomSheet.newInstance(
+                        userProfile.getAvatar(),
+                        userProfile.getFullname(),
+                        userProfile.getBio(),
+                        userProfile.getUsername() // Truyền username vào BottomSheet
+                );
+                bottomSheet.setOnProfileUpdatedListener(this);
+                bottomSheet.show(getChildFragmentManager(), "EditProfileBottomSheet");
+            } else {
+                Toast.makeText(getContext(), "Đang tải dữ liệu, vui lòng thử lại sau!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         return view; // ĐẢM BẢO return SAU KHI setup xong
     }
     @Override
@@ -128,7 +149,8 @@ public class ProfileFragment extends Fragment implements OnScrollListener{
             @Override
             public void onResponse(@NonNull Call<UserProfile> call, @NonNull Response<UserProfile> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    UserProfile userProfile = response.body();
+                    userProfile = response.body();
+                    username = userProfile.getUsername();
                     tvUsername.setText(userProfile.getFullname());
                     tvFriendCount.setText(userProfile.getFriendsCount() + " bạn");
                     tvPostCount.setText(userProfile.getPostsCount() + " bài viết");
@@ -149,7 +171,9 @@ public class ProfileFragment extends Fragment implements OnScrollListener{
                         tagView.setTextSize(14);
                         tagView.setTextColor(ContextCompat.getColor(getContext(), R.color.nd));
                         tagView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.tag));
+                        tagView.setOnClickListener(v -> {
 
+                        });
                         // Tạo container để đảm bảo padding
                         FrameLayout container = new FrameLayout(getContext());
                         container.setPadding(16, 8, 16, 8);
@@ -176,6 +200,12 @@ public class ProfileFragment extends Fragment implements OnScrollListener{
                 Toast.makeText(getActivity(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    @Override
+    public void onProfileUpdated() {
+        // Load lại thông tin profile khi cập nhật thành công
+        String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
+        getUserProfile(userId);
     }
 }
 

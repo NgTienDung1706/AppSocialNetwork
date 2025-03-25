@@ -1,8 +1,11 @@
 package vn.tiendung.socialnetwork.UI;
 
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
             return true;
         });
 
+
     }
     // Hàm chưa chạy được
     private void setupScrollListener() {
@@ -105,6 +109,17 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
                 bottomNavigationView.animate().translationY(bottomNavigationView.getHeight() + 30).setDuration(300);
             } else {
                 bottomNavigationView.animate().translationY(0).setDuration(300);
+            }
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 100) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Đã cấp quyền truy cập!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Bạn cần cấp quyền để chọn ảnh!", Toast.LENGTH_SHORT).show();
             }
         }
     }

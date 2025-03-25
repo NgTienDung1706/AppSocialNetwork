@@ -34,6 +34,8 @@ public class CreateAccountFragment extends Fragment {
     private EditText edtEmail;
     private EditText edtPassword;
     private EditText edtConfirmPassword;
+
+    private TextView txtReturnLogin;
     private Button btnRegister;
     private APIService apiService;
 
@@ -52,7 +54,7 @@ public class CreateAccountFragment extends Fragment {
         edtPassword = view.findViewById(R.id.edtPassWord);
         edtConfirmPassword = view.findViewById(R.id.edtConfirm);
         btnRegister = view.findViewById(R.id.btnRegister);
-
+        txtReturnLogin = view.findViewById(R.id.txtReturnLogin);
 
         // Lấy instance của Retrofit từ RetrofitClient
         apiService = RetrofitClient.getRetrofit().create(APIService.class);
@@ -62,7 +64,11 @@ public class CreateAccountFragment extends Fragment {
                 registerUser();
             }
         });
-
+        txtReturnLogin.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish(); // Đóng ForgotPasswordActivity để quay lại LoginActivity
+            }
+        });
         return view;
     }
 
