@@ -96,4 +96,16 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
                 }
             }
         });
-    }}
+    }
+
+    @Override
+    public void onScroll(boolean isScrollingDown) {
+        if (bottomNavigationView != null) {
+            if (isScrollingDown) {
+                bottomNavigationView.animate().translationY(bottomNavigationView.getHeight() + 30).setDuration(300);
+            } else {
+                bottomNavigationView.animate().translationY(0).setDuration(300);
+            }
+        }
+    }
+}
