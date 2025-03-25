@@ -15,21 +15,21 @@
 
     <!-- Bottom Navigation View -->
 
-<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--        android:id="@+id/fabWritePost"-->
-<!--        android:layout_width="54dp"-->
-<!--        android:layout_height="54dp"-->
-<!--        android:layout_gravity="bottom|center_horizontal"-->
-<!--        android:layout_marginBottom="20dp"-->
-<!--        android:backgroundTint="#ffde31"-->
-<!--        android:elevation="10dp"-->
-<!--        android:src="@drawable/plussolid"-->
-<!--        android:tint="#ffffff"-->
-<!--        android:translationY="9.5dp"-->
-<!--        app:layout_anchorGravity="center"-->
-<!--        app:maxImageSize="24dp"-->
-<!--        app:shapeAppearanceOverlay="@style/RoundedFAB"-->
-<!--        android:translationZ="-10dp"/>-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabWritePost"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="#ffde31"
+        android:elevation="10dp"
+        android:src="@drawable/plussolid"
+        android:tint="#ffffff"
+        android:translationY="9.5dp"
+        app:layout_anchorGravity="center"
+        app:maxImageSize="24dp"
+        app:shapeAppearanceOverlay="@style/RoundedFAB"
+        android:translationZ="-10dp"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
