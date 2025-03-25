@@ -191,7 +191,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@android:color/transparent"
-                app:alignItems="center"
+                app:alignItems="baseline"
                 app:flexWrap="wrap"
                 app:justifyContent="flex_start"
                 app:layout_constraintStart_toStartOf="parent"

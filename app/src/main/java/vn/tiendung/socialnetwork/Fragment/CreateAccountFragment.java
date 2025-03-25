@@ -51,6 +51,8 @@ public class CreateAccountFragment extends Fragment {
         edtEmail = view.findViewById(R.id.edtEmail);
         edtPassword = view.findViewById(R.id.edtPassWord);
         edtConfirmPassword = view.findViewById(R.id.edtConfirm);
+        btnRegister = view.findViewById(R.id.btnRegister);
+
 
         // Lấy instance của Retrofit từ RetrofitClient
         apiService = RetrofitClient.getRetrofit().create(APIService.class);

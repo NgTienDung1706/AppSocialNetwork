@@ -7,19 +7,30 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bumptech.glide.Glide;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import vn.tiendung.socialnetwork.API.APIService;
+import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Adapter.ViewPagerAdapter;
+import vn.tiendung.socialnetwork.Model.UserProfile;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.UI.LoginActivity;
 import vn.tiendung.socialnetwork.Utils.OnScrollListener;
@@ -29,6 +40,10 @@ public class ProfileFragment extends Fragment implements OnScrollListener{
     private OnScrollListener activityScrollListener;
     AppBarLayout appBarLayout ;
     ImageView logout;
+
+    private ImageView ivAvatar;
+    private TextView tvUsername, tvFriendCount, tvPostCount, tvAboutMe;
+    private FlexboxLayout flexboxLayout;
     @Nullable
     @Override
 
@@ -80,6 +95,17 @@ public class ProfileFragment extends Fragment implements OnScrollListener{
                 lastOffset = verticalOffset;
             }
         });
+
+        ivAvatar = view.findViewById(R.id.ivAvatar);
+        tvUsername = view.findViewById(R.id.tvUsername);
+        tvFriendCount = view.findViewById(R.id.tvFriendCount);
+        tvPostCount = view.findViewById(R.id.tvPostCount);
+        tvAboutMe = view.findViewById(R.id.tvAboutMe);
+        flexboxLayout = view.findViewById(R.id.flexboxLayout);
+
+        String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
+        getUserProfile(userId);
+
         return view; // ĐẢM BẢO return SAU KHI setup xong
     }
     @Override
@@ -95,6 +121,61 @@ public class ProfileFragment extends Fragment implements OnScrollListener{
         if (context instanceof OnScrollListener) {
             activityScrollListener = (OnScrollListener) context;
         }
+    }
+    private void getUserProfile(String userId) {
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);;
+        apiService.getUserProfile(userId).enqueue(new Callback<UserProfile>() {
+            @Override
+            public void onResponse(@NonNull Call<UserProfile> call, @NonNull Response<UserProfile> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UserProfile userProfile = response.body();
+                    tvUsername.setText(userProfile.getFullname());
+                    tvFriendCount.setText(userProfile.getFriendsCount() + " bạn");
+                    tvPostCount.setText(userProfile.getPostsCount() + " bài viết");
+                    tvAboutMe.setText(userProfile.getBio().isEmpty() ? "Chạm để viết..." : userProfile.getBio());
+
+                    // Hiển thị ảnh đại diện bằng Glide
+                    Glide.with(requireContext())
+                            .load(userProfile.getAvatar())
+                            .placeholder(R.drawable.avt_default)
+                            .into(ivAvatar);
+
+                    // Hiển thị các chủ đề yêu thích
+                    flexboxLayout.removeAllViews();
+                    for (String topic : userProfile.getFavoriteTags()) {
+                        // Tạo TextView
+                        TextView tagView = new TextView(getContext());
+                        tagView.setText("#" + topic);
+                        tagView.setTextSize(14);
+                        tagView.setTextColor(ContextCompat.getColor(getContext(), R.color.nd));
+                        tagView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.tag));
+
+                        // Tạo container để đảm bảo padding
+                        FrameLayout container = new FrameLayout(getContext());
+                        container.setPadding(16, 8, 16, 8);
+                        container.addView(tagView);
+
+                        // LayoutParams cho FlexboxLayout
+                        FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                        );
+                        params.setMargins(8, 8, 8, 8);
+                        container.setLayoutParams(params);
+
+                        flexboxLayout.addView(container);
+                    }
+
+                } else {
+                    Toast.makeText(getActivity(), "Lỗi khi lấy dữ liệu hồ sơ", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<UserProfile> call, @NonNull Throwable t) {
+                Toast.makeText(getActivity(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
 
