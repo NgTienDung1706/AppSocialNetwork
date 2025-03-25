@@ -1,4 +1,4 @@
-package vn.tiendung.socialnetwork.Model.Adapter;
+package vn.tiendung.socialnetwork.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;

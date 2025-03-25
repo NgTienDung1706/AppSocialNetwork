@@ -13,11 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import vn.tiendung.socialnetwork.Model.Adapter.FriendAddAdapter;
-import vn.tiendung.socialnetwork.Model.Adapter.TabFragmentAdapter;
+import vn.tiendung.socialnetwork.Adapter.FriendAddAdapter;
 import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.R;
 

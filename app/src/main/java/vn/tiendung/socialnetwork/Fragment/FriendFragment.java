@@ -14,7 +14,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import vn.tiendung.socialnetwork.R;
-import vn.tiendung.socialnetwork.Model.Adapter.FriendFragmentTabAdapter;
+import vn.tiendung.socialnetwork.Adapter.FriendFragmentTabAdapter;
 
 public class FriendFragment extends Fragment {
 

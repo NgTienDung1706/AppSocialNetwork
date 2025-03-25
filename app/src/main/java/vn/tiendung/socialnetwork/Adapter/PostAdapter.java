@@ -1,4 +1,4 @@
-package vn.tiendung.socialnetwork.Model.Adapter;
+package vn.tiendung.socialnetwork.Adapter;
 
 import android.content.Context;
 import android.content.Intent;

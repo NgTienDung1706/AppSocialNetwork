@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import vn.tiendung.socialnetwork.Model.Adapter.PostAdapter;
+import vn.tiendung.socialnetwork.Adapter.PostAdapter;
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.R;
 

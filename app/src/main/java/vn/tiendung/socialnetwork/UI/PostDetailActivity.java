@@ -16,8 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import me.relex.circleindicator.CircleIndicator3;
-import vn.tiendung.socialnetwork.Model.Adapter.CommentAdapter;
-import vn.tiendung.socialnetwork.Model.Adapter.PostImagesAdapter;
+import vn.tiendung.socialnetwork.Adapter.CommentAdapter;
+import vn.tiendung.socialnetwork.Adapter.PostImagesAdapter;
 import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.R;
 
