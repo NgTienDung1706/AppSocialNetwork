@@ -23,13 +23,25 @@ import vn.tiendung.socialnetwork.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    private BottomNavigationView bottomNavigationView;
+    private FloatingActionButton fabWritePost;
+    private View fragmentContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FloatingActionButton fabWritePost = findViewById(R.id.fabWritePost);
+
+        fabWritePost = findViewById(R.id.fabWritePost);
         fabWritePost.setVisibility(View.VISIBLE);
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        fragmentContainer = findViewById(R.id.fragment_containerr);
+
+
+        // Gắn sự kiện theo dõi lướt nội dung
+        setupScrollListener();
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
@@ -62,6 +74,23 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return true;
+        });
+    }
+    // Hàm chưa chạy được
+    private void setupScrollListener() {
+        fragmentContainer.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY > oldScrollY) {
+                    // Lướt xuống - Ẩn BottomNavigationView và FAB
+                    bottomNavigationView.animate().translationY(bottomNavigationView.getHeight()).setDuration(200);
+                    fabWritePost.animate().translationY(fabWritePost.getHeight() + 20).setDuration(200);
+                } else if (scrollY < oldScrollY) {
+                    // Lướt lên - Hiện BottomNavigationView và FAB
+                    bottomNavigationView.animate().translationY(0).setDuration(200);
+                    fabWritePost.animate().translationY(0).setDuration(200);
+                }
+            }
         });
     }
 }
