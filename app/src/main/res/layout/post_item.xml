@@ -69,27 +69,31 @@
         android:weightSum="3">
 
         <LinearLayout
+            android:id="@+id/reactionLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="4dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="4dp">
+
             <ImageButton
+                android:id="@+id/btnReaction"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_like"
                 android:background="?android:selectableItemBackgroundBorderless"
-                android:contentDescription="Like" />
+                android:contentDescription="Like"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_like" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Thích"
-                android:textSize="16dp"
-                android:textColor="@color/st"/>
+                android:textColor="@color/st"
+                android:textSize="16dp" />
         </LinearLayout>
 
         <LinearLayout
