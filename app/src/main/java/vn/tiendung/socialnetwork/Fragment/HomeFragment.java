@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import vn.tiendung.socialnetwork.Model.Moment;
-import vn.tiendung.socialnetwork.Model.Adapter.MomentAdapter;
+import vn.tiendung.socialnetwork.Adapter.MomentAdapter;
 import vn.tiendung.socialnetwork.Model.Post;
-import vn.tiendung.socialnetwork.Model.Adapter.PostAdapter;
+import vn.tiendung.socialnetwork.Adapter.PostAdapter;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.Utils.OnScrollListener;
 
@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
         posts.add(new Post(R.drawable.circleusersolid, "Minh Tâm", "Mình vừa hoàn thành một dự án lớn!"));
         posts.add(new Post(R.drawable.circleusersolid, "Thu Hà", "Cùng đi cafe không mọi người?"));
 
-        PostAdapter postAdapter = new PostAdapter(posts);
+        PostAdapter postAdapter = new PostAdapter(getContext(), posts);
         recyclerViewPosts.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewPosts.setAdapter(postAdapter);
 

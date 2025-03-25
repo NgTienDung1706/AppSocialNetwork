@@ -1,5 +1,7 @@
-package vn.tiendung.socialnetwork.Model.Adapter;
+package vn.tiendung.socialnetwork.Adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +15,14 @@ import java.util.List;
 
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.R;
+import vn.tiendung.socialnetwork.UI.PostDetailActivity;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private List<Post> posts;
+    private Context context;
 
-    public PostAdapter(List<Post> posts) {
+    public PostAdapter(Context context, List<Post> posts) {
+        this.context = context;
         this.posts = posts;
     }
 
@@ -34,6 +39,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.avatar.setImageResource(post.getAvatar());
         holder.name.setText(post.getName());
         holder.content.setText(post.getContent());
+
+        // Xử lý sự kiện click item
+        holder.itemView.setOnClickListener(v -> {
+            // Gọi Intent để mở PostDetailActivity
+            Intent intent = new Intent(context, PostDetailActivity.class);
+
+            // Truyền dữ liệu sang Activity
+            intent.putExtra("avatar", post.getAvatar());
+            intent.putExtra("name", post.getName());
+            intent.putExtra("content", post.getContent());
+
+            context.startActivity(intent); // Bắt đầu Activity
+        });
     }
 
     @Override

@@ -11,8 +11,14 @@
 <!--    <color name="st">#F5EFE7</color>-->
 <!--    <color name="nd">#D8C4B6</color>-->
 <!--    <color name="rd">#3E5879</color>-->
-    <color name="bg">#222831</color>
-    <color name="st">#EEEEEE</color>
-    <color name="nd">#00ADB5</color>
-    <color name="rd">#393E46</color>
+    <color name="bg">#F9F7F7</color>
+    <color name="rd">#DBE2EF</color>
+    <color name="nd">#3F72AF</color>
+    <color name="st">#112D4E</color>
+    <!--
+    #F9F7F7: bg Nền chính.
+    #DBE2EF: rd Màu nền phụ, nền nhạt cho các thành phần không quá nổi bật.
+    #3F72AF: nd Màu chính, dùng cho nút và các điểm nhấn.
+    #112D4E: st Màu mạnh, dùng cho chữ, viền, hoặc các yếu tố cần sự nổi bật.
+    -->
 </resources>

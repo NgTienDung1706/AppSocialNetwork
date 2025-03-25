@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/rd"
+    android:background="@color/bg"
     android:orientation="vertical"
     android:padding="8dp">
 
@@ -18,7 +18,7 @@
             android:layout_height="40dp"
             android:layout_marginEnd="8dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_coin" />
+            android:src="@drawable/circleusersolid" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tên người dùng"
-                android:textColor="@color/white"
+                android:textColor="@color/st"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Thời gian đăng bài"
-                android:textColor="@color/white"
+                android:textColor="@color/st"
                 android:textSize="10sp" />
         </LinearLayout>
     </LinearLayout>
@@ -51,30 +51,99 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Caption bài đăng"
-        android:textColor="@color/white"
+        android:textColor="@color/st"
         android:textSize="20sp" />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_coin" />
-    <!-- Các nút tương tác -->
+
+    <!-- Các nút Thích, Bình luận, Chia sẻ -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="4dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:weightSum="3">
 
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_like" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="4dp"
+            android:orientation="horizontal">
+            <ImageButton
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_like"
+                android:background="?android:selectableItemBackgroundBorderless"
+                android:contentDescription="Like" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Thích"
+                android:textSize="16dp"
+                android:textColor="@color/st"/>
+        </LinearLayout>
 
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_reply" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="4dp"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_comment"
+                android:background="?android:selectableItemBackgroundBorderless"
+                android:contentDescription="Comment"
+                android:backgroundTint="@color/rd"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Bình luận"
+                android:textSize="16dp"
+                android:textColor="@color/st"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="4dp"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_share"
+                android:background="?android:selectableItemBackgroundBorderless"
+                android:contentDescription="Share"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Chia sẻ"
+                android:textSize="16dp"
+                android:textColor="@color/st"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

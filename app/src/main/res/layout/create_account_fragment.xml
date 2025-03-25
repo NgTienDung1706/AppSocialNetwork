@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#131313"
+    android:background="@color/bg"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="20dp">
@@ -14,7 +14,7 @@
         android:gravity="center"
         android:paddingHorizontal="20dp"
         android:text="Đăng Ký"
-        android:textColor="#ffde31"
+        android:textColor="@color/st"
         android:textSize="32sp"
         android:textStyle="bold" />
 
@@ -27,8 +27,8 @@
         android:hint="Username"
         android:textSize="14sp"
         android:padding="15dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#8f8f8f" />
+        android:textColor="@color/st"
+        android:textColorHint="@color/nd" />
 
     <EditText
         android:id="@+id/edtEmail"
@@ -38,8 +38,8 @@
         android:background="@drawable/rounded_edittext"
         android:hint="Email"
         android:padding="15dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#8f8f8f"
+        android:textColor="@color/st"
+        android:textColorHint="@color/nd"
         android:textSize="14sp" />
     <EditText
         android:id="@+id/edtPassWord"
@@ -51,8 +51,8 @@
         android:textSize="14sp"
         android:inputType="textPassword"
         android:padding="15dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#8f8f8f" />
+        android:textColor="@color/st"
+        android:textColorHint="@color/nd" />
 
     <EditText
         android:id="@+id/edtConfirm"
@@ -63,8 +63,8 @@
         android:hint="Xác nhận mật khẩu"
         android:inputType="textPassword"
         android:padding="15dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#8f8f8f"
+        android:textColor="@color/st"
+        android:textColorHint="@color/nd"
         android:textSize="14sp" />
 
 
@@ -74,9 +74,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="30dp"
-        android:backgroundTint="#ffde31"
+        android:backgroundTint="@color/rd"
         android:text="Đăng Ký"
-        android:textColor="#131313"
+        android:textStyle="bold"
+        android:textColor="@color/st"
         android:textSize="14sp" />
 
 
@@ -89,7 +90,7 @@
         android:focusable="true"
         android:gravity="center"
         android:text="Quay lại trang đăng nhập"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/nd"
         android:textSize="14sp"
         android:textStyle="bold" />
 

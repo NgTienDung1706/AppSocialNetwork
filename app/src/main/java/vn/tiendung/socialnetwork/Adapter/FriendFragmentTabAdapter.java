@@ -1,4 +1,4 @@
-package vn.tiendung.socialnetwork.Model.Adapter;
+package vn.tiendung.socialnetwork.Adapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

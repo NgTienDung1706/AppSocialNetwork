@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_01">
+    android:background="@color/bg">
 
 
     <!-- AppBarLayout chứa thanh Top Nav và Khoảnh khắc -->
@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:elevation="4dp"
-        app:liftOnScroll="true">
+        app:liftOnScroll="true"
+        android:background="@android:color/transparent">
 
         <!-- Thanh Top Nav -->
         <include
@@ -34,7 +35,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="8dp"
-                android:background="@color/bg_01">
+                android:background="@android:color/transparent">
 
                 <!-- Danh sách khoảnh khắc (lướt ngang) -->
                 <LinearLayout

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Màu khi icon được chọn -->
-    <item android:state_checked="true" android:color="#ffde31" />
+    <item android:state_checked="true" android:color="@color/st" />
 
     <!-- Màu khi icon không được chọn -->
-    <item android:color="@color/white" />
+    <item android:color="@color/nd" />
 </selector>

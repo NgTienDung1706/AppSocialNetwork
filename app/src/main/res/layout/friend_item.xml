@@ -34,7 +34,7 @@
             android:text="Name of friend"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#000" />
+            android:textColor="@color/st" />
 
         <TextView
             android:id="@+id/tvMutualFriends"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text="number of Friend together"
             android:textSize="14sp"
-            android:textColor="#666" />
+            android:textColor="@color/nd" />
     </LinearLayout>
 
     <!-- Icon nhắn tin -->
@@ -52,5 +52,5 @@
         android:layout_height="24dp"
         android:src="@drawable/messagesolid"
         android:contentDescription="Message Icon"
-        app:tint="#36A420" />
+        app:tint="@color/nd" />
 </LinearLayout>
