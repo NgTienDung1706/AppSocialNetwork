@@ -46,79 +46,104 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
+        popupWindow.setOutsideTouchable(false);
+
+        // Danh sách các icon cảm xúc
+        ImageView[] reactionIcons = {
+                popupView.findViewById(R.id.img_like),
+                popupView.findViewById(R.id.img_love),
+                popupView.findViewById(R.id.img_heart),
+                popupView.findViewById(R.id.img_haha),
+                popupView.findViewById(R.id.img_huhu),
+                popupView.findViewById(R.id.img_angry),
+        };
 
         // Lắng nghe sự kiện nhấn giữ
         reactionLayout.setOnTouchListener(new View.OnTouchListener() {
+            private boolean isPopupVisible = false;
+            private boolean isDraggingDown = false;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
+                int action = event.getAction();
+                switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         // Hiển thị PopupWindow
-                        popupWindow.showAsDropDown(reactionLayout, 0, -200);
+                        popupWindow.showAsDropDown(reactionLayout, 0, -350);
+                        isPopupVisible = true;
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
-                        // Xác định cảm xúc dựa trên vị trí tay người dùng
-                        int x = (int) event.getRawX();
-                        int y = (int) event.getRawY();
-
-                        View hoveredView = findHoveredView(popupView, x, y);
-                        if (hoveredView != null) {
-                            hoveredView.setScaleX(1.5f);
-                            hoveredView.setScaleY(1.5f);
+                        if (isPopupVisible) {
+                            float deltaY = event.getRawY();
+                            if (deltaY > 200) {
+                                isDraggingDown = true;
+                                popupWindow.dismiss();
+                                isPopupVisible = false;
+                            } else {
+                                handleHover(event, popupView, reactionIcons);
+                            }
                         }
                         return true;
 
                     case MotionEvent.ACTION_UP:
-                        // Xử lý cảm xúc được chọn
-                        int selectedEmotion = getSelectedEmotion(event, popupView);
-                        handleEmotion(selectedEmotion);
-
-                        popupWindow.dismiss();
+                        if (isPopupVisible) {
+                            if (!isDraggingDown) {
+                                int selectedEmotion = getSelectedEmotion(event, popupView, reactionIcons);
+                                handleEmotion(selectedEmotion);
+                            }
+                            popupWindow.dismiss();
+                        }
                         return true;
                 }
                 return false;
             }
-            // Hàm xác định cảm xúc được chọn
-            private int getSelectedEmotion(MotionEvent event, View popupView) {
+
+            private void handleHover(MotionEvent event, View parent, ImageView[] icons) {
                 int x = (int) event.getRawX();
                 int y = (int) event.getRawY();
-                View hoveredView = findHoveredView(popupView, x, y);
-                if (hoveredView != null) {
-                    // Switch case không được nên mới phải dùng như này
-                    if (hoveredView.getId() == R.id.img_like) {
-                        return R.drawable.ic_reaction_like;
-                    } else if (hoveredView.getId() == R.id.img_love) {
-                        return R.drawable.ic_reaction_love;
-                    } else if (hoveredView.getId() == R.id.img_heart) {
-                        return R.drawable.ic_reaction_heart;
-                    } else if (hoveredView.getId() == R.id.img_haha) {
-                        return R.drawable.ic_reaction_haha;
-                    } else if (hoveredView.getId() == R.id.img_huhu) {
-                        return R.drawable.ic_reaction_huhu;
-                    } else if (hoveredView.getId() == R.id.img_angry) {
-                        return R.drawable.ic_reaction_angry;
+
+                // Tìm icon đang được hover
+                ImageView hoveredIcon = null;
+                for (ImageView icon : icons) {
+                    int[] location = new int[2];
+                    icon.getLocationOnScreen(location);
+                    Rect rect = new Rect(location[0], location[1], location[0] + icon.getWidth(), location[1] + icon.getHeight());
+
+                    if (rect.contains(x, y)) {
+                        hoveredIcon = icon;
+                        break;
+                    }
+                }
+
+                // Xử lý phóng to và thu nhỏ
+                for (ImageView icon : icons) {
+                    if (icon == hoveredIcon) {
+                        icon.setScaleX(1.5f);
+                        icon.setScaleY(1.5f);
+                    } else {
+                        icon.setScaleX(1.0f);
+                        icon.setScaleY(1.0f);
+                    }
+                }
+            }
+
+            private int getSelectedEmotion(MotionEvent event, View parent, ImageView[] icons) {
+                int x = (int) event.getRawX();
+                int y = (int) event.getRawY();
+
+                for (ImageView icon : icons) {
+                    int[] location = new int[2];
+                    icon.getLocationOnScreen(location);
+                    Rect rect = new Rect(location[0], location[1], location[0] + icon.getWidth(), location[1] + icon.getHeight());
+
+                    if (rect.contains(x, y)) {
+                        return (int) icon.getTag(); // Tag chứa resourceId của cảm xúc
                     }
                 }
                 return 0; // Không chọn gì
             }
 
-            // Hàm tìm View được hover
-            private View findHoveredView(View parent, int x, int y) {
-                int[] location = new int[2];
-                parent.getLocationOnScreen(location);
-
-                Rect rect = new Rect(location[0], location[1],
-                        location[0] + parent.getWidth(),
-                        location[1] + parent.getHeight());
-
-                if (rect.contains(x, y)) {
-                    return parent;
-                }
-                return null;
-            }
-
-            // Hàm xử lý cảm xúc
             private void handleEmotion(int emotionResId) {
                 if (emotionResId != 0) {
                     Toast.makeText(view.getContext(), "Chọn cảm xúc: " + view.getResources().getResourceEntryName(emotionResId), Toast.LENGTH_SHORT).show();

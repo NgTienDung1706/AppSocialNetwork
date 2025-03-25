@@ -5,53 +5,53 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@drawable/border"
-    android:padding="8dp">
+    android:padding="4dp">
 
     <ImageView
         android:id="@+id/img_like"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="4dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_margin="2dp"
         android:src="@drawable/ic_reaction_like"
         android:contentDescription="Like" />
 
     <ImageView
         android:id="@+id/img_heart"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="4dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_margin="2dp"
         android:src="@drawable/ic_reaction_heart"
         android:contentDescription="Heart" />
 
     <ImageView
         android:id="@+id/img_love"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="4dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_margin="2dp"
         android:src="@drawable/ic_reaction_love"
         android:contentDescription="Love" />
 
     <ImageView
         android:id="@+id/img_haha"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="4dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_margin="2dp"
         android:src="@drawable/ic_reaction_haha"
         android:contentDescription="Haha" />
 
     <ImageView
         android:id="@+id/img_huhu"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="4dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_margin="2dp"
         android:src="@drawable/ic_reaction_huhu"
         android:contentDescription="Huhu" />
 
     <ImageView
         android:id="@+id/img_angry"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="4dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_margin="2dp"
         android:src="@drawable/ic_reaction_angry"
         android:contentDescription="Love" />
 </LinearLayout>
