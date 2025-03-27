@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!-- Avatar người chat -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgAvatar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:contentDescription="Avatar"
+        android:src="@drawable/avt_default"
+        app:civ_border_color="@android:color/darker_gray"
+        app:civ_border_width="2dp"
+        tools:ignore="MissingClass,MissingConstraints"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp" />
+
+    <!-- Trạng thái online (chấm xanh) -->
+    <View
+        android:id="@+id/onlineStatus"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:background="@drawable/online"
+        app:layout_constraintBottom_toBottomOf="@id/imgAvatar"
+        app:layout_constraintEnd_toEndOf="@id/imgAvatar"/>
+
+    <!-- Tên người chat -->
+    <TextView
+        android:id="@+id/txtUserName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Tên người chat"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imgAvatar"
+        app:layout_constraintTop_toTopOf="@id/imgAvatar" />
+
+    <!-- Tin nhắn gần nhất -->
+    <TextView
+        android:id="@+id/txtLastMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Tin nhắn gần nhất"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@id/txtTime"
+        app:layout_constraintStart_toEndOf="@id/imgAvatar"
+        app:layout_constraintTop_toBottomOf="@id/txtUserName" />
+
+    <!-- Thời gian tin nhắn cuối -->
+    <TextView
+        android:id="@+id/txtTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10:30 AM"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txtUserName"/>
+
+    <!-- Số tin nhắn chưa đọc -->
+    <TextView
+        android:id="@+id/txtUnreadCount"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/unread_count_bg"
+        android:text="3"
+        android:textSize="12sp"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/txtLastMessage"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

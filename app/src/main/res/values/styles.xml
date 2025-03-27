@@ -3,4 +3,9 @@
     <style name="RoundedFAB">
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
 </resources>

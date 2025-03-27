@@ -22,10 +22,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
-import vn.tiendung.socialnetwork.Model.LoginResponse;
 import vn.tiendung.socialnetwork.Model.UserModel;
 import vn.tiendung.socialnetwork.R;
-import vn.tiendung.socialnetwork.SongOptionsBottomSheet;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 
 public class LoginActivity extends AppCompatActivity {
