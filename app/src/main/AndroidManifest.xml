@@ -39,6 +39,10 @@
             android:name=".UI.ForgotPasswordActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
         </activity>
+
+        <activity android:name=".UI.MessageActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

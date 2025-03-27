@@ -195,29 +195,26 @@ public class EditProfileBottomSheet extends BottomSheetDialogFragment {
         }
         return result;
     }
+
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Toast.makeText(requireContext(), "Quyền đã được cấp!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), "Bạn cần cấp quyền để chọn ảnh!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
     private void checkAndRequestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES)
                     != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_PERMISSION_CODE);
+                requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
             }
-        } else {
-            // Với Android 12 trở xuống
+        } else { // Android 12 trở xuống
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(requireContext(), "Quyền đã được cấp!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(requireContext(), "Bạn cần cấp quyền để chọn ảnh!", Toast.LENGTH_SHORT).show();
+                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
             }
         }
     }

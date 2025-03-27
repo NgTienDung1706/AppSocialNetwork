@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".Fragment.ChatFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/chatToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        tools:ignore="MissingConstraints">
+
+        <!-- Layout chứa tiêu đề và ô tìm kiếm -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Tiêu đề "Tin nhắn" -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tin Nhắn"
+                android:textColor="@color/st"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <!-- Ô tìm kiếm -->
+            <EditText
+                android:id="@+id/searchChat"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_search"
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:drawablePadding="8dp"
+                android:hint="Tìm kiếm"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/nd"
+                android:textColorHint="@color/nd" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerChatList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chatToolbar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
