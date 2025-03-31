@@ -51,10 +51,12 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        
+        // Khởi tạo chatFragment ngay từ đầu
         if (chatFragment == null) {
             chatFragment = new ChatFragment();
         }
+        
         // Thiết lập socket listener ngay từ khi khởi tạo
         setupSocketListener();
 
@@ -71,20 +73,22 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
             if (itemId == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
             } else if (itemId == R.id.nav_chat) {
-                if (chatFragment != null) {
-                    chatFragment.refreshOnlineStatus(onlineUserIds);
-                } else {
-                    chatFragment = new ChatFragment();
-                }
+                // Luôn sử dụng instance hiện tại của chatFragment
                 selectedFragment = chatFragment;
+                // Cập nhật trạng thái online ngay khi chuyển sang tab chat
+                if (chatFragment != null) {
+                    // Yêu cầu cập nhật trạng thái online
+                    SocketManager.getInstance().getSocket().emit("request_online_status");
+                    // Cập nhật UI với danh sách hiện tại
+                    chatFragment.refreshOnlineStatus(onlineUserIds);
+                }
             } else if (itemId == R.id.nav_friends) {
                 selectedFragment = new FriendFragment();
             } else if (itemId == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
-            } else if (itemId == R.id.nav_writepost) {  // Xử lý khi nhấn nút viết bài
+            } else if (itemId == R.id.nav_writepost) {
                 selectedFragment = new WritePostFragment();
             }
-
 
             if (selectedFragment != null) {
                 getSupportFragmentManager().beginTransaction()
@@ -94,8 +98,6 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
 
             return true;
         });
-
-
     }
 
     @Override
@@ -120,11 +122,10 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
         }
     }
     private void setupSocketListener() {
-        if (isSocketListenerSet) return; // Tránh thiết lập nhiều lần
+        if (isSocketListenerSet) return;
 
         // Lắng nghe sự kiện cập nhật danh sách người dùng online
         SocketManager.getInstance().getSocket().on("update_online_users", args -> {
-            // Xử lý cập nhật danh sách người dùng online
             JSONArray jsonArray = (JSONArray) args[0];
             onlineUserIds.clear();
 
@@ -145,86 +146,44 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
             });
         });
 
+        // Lắng nghe sự kiện user online/offline
+        SocketManager.getInstance().getSocket().on("user_status_change", args -> {
+            String userId = (String) args[0];
+            boolean isOnline = (boolean) args[1];
+            
+            runOnUiThread(() -> {
+                if (isOnline && !onlineUserIds.contains(userId)) {
+                    onlineUserIds.add(userId);
+                } else if (!isOnline) {
+                    onlineUserIds.remove(userId);
+                }
+                
+                if (chatFragment != null) {
+                    chatFragment.refreshOnlineStatus(onlineUserIds);
+                }
+            });
+        });
+
         isSocketListenerSet = true;
     }
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        // Kết nối socket chỉ khi chưa kết nối
-//        if (!SocketManager.getInstance().isConnected()) {
-//            SocketManager.getInstance().connect();
-//        }
-//
-//        // Gửi thông tin người dùng lên server khi kết nối
-//        String userId = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
-//        SocketManager.getInstance().getSocket().emit("user_connected", userId);
-//
-//        // Lắng nghe sự kiện cập nhật danh sách người dùng online
-//        SocketManager.getInstance().getSocket().on("update_online_users", args -> {
-//            // Xử lý cập nhật danh sách người dùng online
-//            // args[0] là một đối tượng JSONArray từ server, ta cần chuyển đổi thành List
-//            JSONArray jsonArray = (JSONArray) args[0];
-//            onlineUserIds.clear(); // Xóa danh sách cũ
-//            try {
-//                // Duyệt qua JSONArray và thêm từng phần tử vào List
-//                for (int i = 0; i < jsonArray.length(); i++) {
-//                    onlineUserIds.add(jsonArray.getString(i));  // Lấy từng userId
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//
-//            // Cập nhật trạng thái online trong ChatFragment nếu nó đã được khởi tạo
-//            if (chatFragment != null) {
-//                chatFragment.updateOnlineStatus(onlineUserIds);
-//            }
-//        });
-//    }
-//    // Thêm phương thức này để lấy danh sách user online
-//    public List<String> getOnlineUserIds() {
-//        return onlineUserIds;
-//    }
-//
-//    // Sửa phương thức thiết lập ChatFragment
-//    private void setupChatFragment() {
-//        if (chatFragment == null) {
-//            chatFragment = new ChatFragment();
-//        }
-//
-//        // Cập nhật trạng thái online ngay khi gắn fragment
-//        chatFragment.updateOnlineStatus(onlineUserIds);
-//
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.fragment_containerr, chatFragment)
-//                .commit();
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//
-//        // Ngắt kết nối socket khi không cần nữa
-//        if (SocketManager.getInstance().isConnected()) {
-//            SocketManager.getInstance().disconnect();
-//        }
-//    }
-@Override
-protected void onStart() {
-    super.onStart();
 
-    // Kết nối socket nếu chưa kết nối
-    if (!SocketManager.getInstance().isConnected()) {
-        SocketManager.getInstance().connect();
-        setupSocketListener(); // Thiết lập listener lại nếu socket mới kết nối
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Kết nối socket nếu chưa kết nối
+        if (!SocketManager.getInstance().isConnected()) {
+            SocketManager.getInstance().connect();
+            setupSocketListener();
+        }
+
+        // Gửi thông tin người dùng lên server khi kết nối
+        String userId = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
+        SocketManager.getInstance().getSocket().emit("user_connected", userId);
+
+        // Yêu cầu danh sách người dùng online ngay lập tức
+        SocketManager.getInstance().getSocket().emit("request_online_status");
     }
-
-    // Gửi thông tin người dùng lên server khi kết nối
-    String userId = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
-    SocketManager.getInstance().getSocket().emit("user_connected", userId);
-
-    // Yêu cầu danh sách người dùng online ngay lập tức
-    SocketManager.getInstance().getSocket().emit("request_online_status");
-}
 
     @Override
     protected void onStop() {
@@ -234,10 +193,10 @@ protected void onStart() {
         String userId = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
         SocketManager.getInstance().getSocket().emit("user_disconnected", userId);
 
-        // Ngắt kết nối socket khi không cần nữa
-        if (SocketManager.getInstance().isConnected()) {
-            SocketManager.getInstance().disconnect();
-        }
+        // Không ngắt kết nối socket ở đây nữa để giữ kết nối
+        // if (SocketManager.getInstance().isConnected()) {
+        //     SocketManager.getInstance().disconnect();
+        // }
     }
 
     @Override

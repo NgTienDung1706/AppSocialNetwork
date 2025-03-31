@@ -40,6 +40,9 @@ import vn.tiendung.socialnetwork.UI.MainActivity;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 import vn.tiendung.socialnetwork.Utils.SocketManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 public class ChatFragment extends Fragment {
     private RecyclerView recyclerView;
     private ChatListAdapter chatListAdapter;
@@ -109,7 +112,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         Log.d("ChatFragment", "onResume called");
 
         // Yêu cầu trạng thái online mỗi khi fragment hiển thị
@@ -117,13 +119,17 @@ public class ChatFragment extends Fragment {
             SocketManager.getInstance().getSocket().emit("request_online_status");
         }
 
-        // Lắng nghe danh sách user online khi quay lại fragment
-        SocketManager.getInstance().getSocket().on("update_online_status", args -> {
-            getActivity().runOnUiThread(() -> {
-                List<String> onlineUserIds = (List<String>) args[0]; // Giả sử server gửi danh sách userId online
-                refreshOnlineStatus(onlineUserIds);
-            });
-        });
+        // Nếu chưa load dữ liệu, load lại
+        if (!isDataLoaded) {
+            String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
+            loadChatList(userId);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Không cần xóa listener ở đây vì MainActivity sẽ xử lý việc cập nhật
     }
 
     private void loadChatList(String userId) {
@@ -145,8 +151,10 @@ public class ChatFragment extends Fragment {
                         isDataLoaded = true;
                         chatListAdapter.notifyDataSetChanged();
 
-                        // Áp dụng trạng thái online ngay sau khi load dữ liệu
-                        refreshOnlineStatus(currentOnlineIds);
+                        // Yêu cầu cập nhật trạng thái online sau khi load dữ liệu
+                        if (SocketManager.getInstance().isConnected()) {
+                            SocketManager.getInstance().getSocket().emit("request_online_status");
+                        }
 
                         Log.d("ChatFragment", "Chat list loaded: " + chatList.size() + " items");
                     }
