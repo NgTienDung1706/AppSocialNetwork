@@ -1,6 +1,7 @@
 package vn.tiendung.socialnetwork.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,98 +13,179 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import vn.tiendung.socialnetwork.Model.Message;
 import vn.tiendung.socialnetwork.R;
+import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 
 public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final int TYPE_SEND = 1;
-    private static final int TYPE_RECEIVE = 2;
+    private static final int VIEW_TYPE_SENT = 1;
+    private static final int VIEW_TYPE_RECEIVED = 2;
+    private static final String TAG = "MessageAdapter";
 
     private Context context;
-    private List<Message> messageList;
+    private List<Message> messages;
+    private String currentUserId;
 
-    public MessageAdapter(Context context, List<Message> messageList) {
+    public MessageAdapter(Context context, List<Message> messages) {
         this.context = context;
-        this.messageList = messageList;
+        this.messages = messages;
+        this.currentUserId = SharedPrefManager.getInstance(context).getUserId();
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return messageList.get(position).getSenderId().equals("user1") ? TYPE_SEND : TYPE_RECEIVE;
+    public void addMessage(Message message) {
+        if (message != null) {
+            messages.add(message);
+            notifyItemInserted(messages.size() - 1);
+            Log.d(TAG, "Message added: " + message.getContent());
+        }
+    }
+
+    public void addMessages(List<Message> messages) {
+        if (messages != null && !messages.isEmpty()) {
+            int startPosition = this.messages.size();
+            this.messages.addAll(messages);
+            notifyItemRangeInserted(startPosition, messages.size());
+            Log.d(TAG, "Added " + messages.size() + " messages");
+        }
+    }
+
+    public void updateMessage(Message message) {
+        if (message != null) {
+            for (int i = 0; i < messages.size(); i++) {
+                if (messages.get(i).getId().equals(message.getId())) {
+                    messages.set(i, message);
+                    notifyItemChanged(i);
+                    Log.d(TAG, "Message updated: " + message.getContent());
+                    break;
+                }
+            }
+        }
+    }
+
+    public void clearMessages() {
+        messages.clear();
+        notifyDataSetChanged();
+        Log.d(TAG, "Messages cleared");
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == TYPE_SEND) {
-            View view = LayoutInflater.from(context).inflate(R.layout.item_message_send, parent, false);
-            return new SendViewHolder(view);
+        if (viewType == VIEW_TYPE_SENT) {
+            View view = LayoutInflater.from(context).inflate(R.layout.item_message_sent, parent, false);
+            return new SentMessageHolder(view);
         } else {
             View view = LayoutInflater.from(context).inflate(R.layout.item_message_received, parent, false);
-            return new ReceiveViewHolder(view);
+            return new ReceivedMessageHolder(view);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Message message = messageList.get(position);
+        Message message = messages.get(position);
 
-        if (holder instanceof SendViewHolder) {
-            SendViewHolder sendHolder = (SendViewHolder) holder;
-            if (message.getContent() != null) {
-                sendHolder.tvMessageSent.setText(message.getContent());
-                sendHolder.tvMessageSent.setVisibility(View.VISIBLE);
-                sendHolder.imgMessageReceived.setVisibility(View.GONE);
-            } else if (message.getImageUrl() != null) {
-                Glide.with(context).load(message.getImageUrl()).into(sendHolder.imgMessageReceived);
-                sendHolder.imgMessageReceived.setVisibility(View.VISIBLE);
-                sendHolder.tvMessageSent.setVisibility(View.GONE);
-            }
-            sendHolder.tvTimestampSent.setText(message.getTimestamp());
+        if (holder.getItemViewType() == VIEW_TYPE_SENT) {
+            configureSentMessageHolder((SentMessageHolder) holder, message);
+        } else {
+            configureReceivedMessageHolder((ReceivedMessageHolder) holder, message);
+        }
+    }
 
-        } else if (holder instanceof ReceiveViewHolder) {
-            ReceiveViewHolder receiveHolder = (ReceiveViewHolder) holder;
-            if (message.getContent() != null) {
-                receiveHolder.tvMessageReceived.setText(message.getContent());
-                receiveHolder.tvMessageReceived.setVisibility(View.VISIBLE);
-                receiveHolder.imgMessageReceived.setVisibility(View.GONE);
-            } else if (message.getImageUrl() != null) {
-                Glide.with(context).load(message.getImageUrl()).into(receiveHolder.imgMessageReceived);
-                receiveHolder.imgMessageReceived.setVisibility(View.VISIBLE);
-                receiveHolder.tvMessageReceived.setVisibility(View.GONE);
+    private void configureSentMessageHolder(SentMessageHolder holder, Message message) {
+        if (message.getMessageType().equals("text")) {
+            holder.imgMessage.setVisibility(View.GONE);
+            holder.tvMessage.setVisibility(View.VISIBLE);
+            holder.tvMessage.setText(message.getContent());
+        } else {
+            holder.imgMessage.setVisibility(View.VISIBLE);
+            holder.tvMessage.setVisibility(View.GONE);
+            Glide.with(context)
+                    .load(message.getImageUrl())
+                    .into(holder.imgMessage);
+        }
+        holder.tvTimestamp.setText(message.getTimestamp());
+    }
+
+    private void configureReceivedMessageHolder(ReceivedMessageHolder holder, Message message) {
+        if (message.getMessageType().equals("text")) {
+            holder.imgMessage.setVisibility(View.GONE);
+            holder.tvMessage.setVisibility(View.VISIBLE);
+            holder.tvMessage.setText(message.getContent());
+        } else {
+            holder.imgMessage.setVisibility(View.VISIBLE);
+            holder.tvMessage.setVisibility(View.GONE);
+            Glide.with(context)
+                    .load(message.getImageUrl())
+                    .into(holder.imgMessage);
+        }
+        holder.tvTimestamp.setText(message.getTimestamp());
+
+        if (message.getSender() != null) {
+            String senderName = message.getSender().getName();
+            if (senderName != null && !senderName.isEmpty()) {
+                holder.tvSenderName.setVisibility(View.VISIBLE);
+                holder.tvSenderName.setText(senderName);
+            } else {
+                holder.tvSenderName.setVisibility(View.GONE);
             }
-            receiveHolder.tvTimestampReceived.setText(message.getTimestamp());
+
+            String avatarUrl = message.getSender().getAvatar();
+            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                holder.imgAvatar.setVisibility(View.VISIBLE);
+                Glide.with(context)
+                        .load(avatarUrl)
+                        .placeholder(R.drawable.avt_default)
+                        .error(R.drawable.avt_default)
+                        .circleCrop()
+                        .into(holder.imgAvatar);
+            } else {
+                holder.imgAvatar.setVisibility(View.VISIBLE);
+                holder.imgAvatar.setImageResource(R.drawable.avt_default);
+            }
+        } else {
+            holder.tvSenderName.setVisibility(View.GONE);
+            holder.imgAvatar.setVisibility(View.GONE);
         }
     }
 
     @Override
     public int getItemCount() {
-        return messageList.size();
+        return messages.size();
     }
 
-    public static class SendViewHolder extends RecyclerView.ViewHolder {
-        TextView tvMessageSent, tvTimestampSent;
-        ImageView imgMessageReceived;
+    @Override
+    public int getItemViewType(int position) {
+        Message message = messages.get(position);
+        if (message.getSender() == null) return VIEW_TYPE_SENT;
+        return message.getSender().getId().equals(currentUserId) ? VIEW_TYPE_SENT : VIEW_TYPE_RECEIVED;
+    }
 
-        public SendViewHolder(View itemView) {
+    static class SentMessageHolder extends RecyclerView.ViewHolder {
+        TextView tvMessage, tvTimestamp;
+        ImageView imgMessage;
+
+        SentMessageHolder(View itemView) {
             super(itemView);
-            tvMessageSent = itemView.findViewById(R.id.tvMessageSent);
-            tvTimestampSent = itemView.findViewById(R.id.tvTimestampSent);
-            imgMessageReceived = itemView.findViewById(R.id.imgMessageReceived);
+            tvMessage = itemView.findViewById(R.id.tvMessageSent);
+            tvTimestamp = itemView.findViewById(R.id.tvTimestampSent);
+            imgMessage = itemView.findViewById(R.id.imgMessageSent);
         }
     }
 
-    public static class ReceiveViewHolder extends RecyclerView.ViewHolder {
-        TextView tvMessageReceived, tvTimestampReceived;
-        ImageView imgMessageReceived;
+    static class ReceivedMessageHolder extends RecyclerView.ViewHolder {
+        TextView tvMessage, tvTimestamp, tvSenderName;
+        ImageView imgMessage, imgAvatar;
 
-        public ReceiveViewHolder(View itemView) {
+        ReceivedMessageHolder(View itemView) {
             super(itemView);
-            tvMessageReceived = itemView.findViewById(R.id.tvMessageReceived);
-            tvTimestampReceived = itemView.findViewById(R.id.tvTimestampReceived);
-            imgMessageReceived = itemView.findViewById(R.id.imgMessageReceived);
+            tvMessage = itemView.findViewById(R.id.tvMessageReceived);
+            tvTimestamp = itemView.findViewById(R.id.tvTimestampReceived);
+            imgMessage = itemView.findViewById(R.id.imgMessageReceived);
+            tvSenderName = itemView.findViewById(R.id.tvSenderName);
+            imgAvatar = itemView.findViewById(R.id.imgSenderAvatar);
         }
     }
 }

@@ -49,6 +49,9 @@ dependencies {
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("io.socket:socket.io-client:2.0.1")
+    implementation ("com.github.nkzawa:socket.io-client:0.6.0")
+    //implementation 'io.socket:socket.io-client:2.0.0'
+    implementation ("io.socket:engine.io-client:2.0.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

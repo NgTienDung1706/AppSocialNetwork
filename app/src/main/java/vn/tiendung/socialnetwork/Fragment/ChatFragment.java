@@ -18,9 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,17 +28,14 @@ import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.Response.ApiResponse;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Adapter.ChatListAdapter;
-import vn.tiendung.socialnetwork.Model.Chat;
 import vn.tiendung.socialnetwork.Model.ChatItem;
-import vn.tiendung.socialnetwork.Model.LastMessage;
-import vn.tiendung.socialnetwork.Model.UserProfile;
+import vn.tiendung.socialnetwork.Model.ChatListResponse;
 import vn.tiendung.socialnetwork.R;
-import vn.tiendung.socialnetwork.UI.MainActivity;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 import vn.tiendung.socialnetwork.Utils.SocketManager;
+import com.google.gson.Gson;
+//import vn.tiendung.socialnetwork.API.Response.ChatListResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 
 public class ChatFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -139,10 +133,12 @@ public class ChatFragment extends Fragment {
         }
 
         apiService = RetrofitClient.getRetrofit().create(APIService.class);
-        apiService.getChatList(userId).enqueue(new Callback<ApiResponse<List<ChatItem>>>() {
+        apiService.getChatList(userId).enqueue(new Callback<ChatListResponse>() {
             @Override
-            public void onResponse(Call<ApiResponse<List<ChatItem>>> call, Response<ApiResponse<List<ChatItem>>> response) {
+            public void onResponse(Call<ChatListResponse> call, Response<ChatListResponse> response) {
                 if (response.isSuccessful() && response.body() != null && getActivity() != null) {
+                    Log.d("ChatFragment", "API Response: " + new Gson().toJson(response.body()));
+                    
                     chatList.clear();
                     List<ChatItem> chatItems = response.body().getChatList();
 
@@ -158,11 +154,13 @@ public class ChatFragment extends Fragment {
 
                         Log.d("ChatFragment", "Chat list loaded: " + chatList.size() + " items");
                     }
+                } else {
+                    Log.e("ChatFragment", "API Error: " + response.code() + " - " + response.message());
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<List<ChatItem>>> call, Throwable t) {
+            public void onFailure(Call<ChatListResponse> call, Throwable t) {
                 Log.e("ChatFragment", "API Error: " + t.getMessage());
             }
         });

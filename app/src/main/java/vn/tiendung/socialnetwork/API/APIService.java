@@ -20,6 +20,8 @@ import vn.tiendung.socialnetwork.Model.LoginResponse;
 import vn.tiendung.socialnetwork.Model.MessageResponse;
 import vn.tiendung.socialnetwork.Model.UserModel;
 import vn.tiendung.socialnetwork.Model.UserProfile;
+import vn.tiendung.socialnetwork.Model.Message;
+import vn.tiendung.socialnetwork.Model.ChatListResponse;
 
 public interface APIService {
     @POST("/api/login")
@@ -52,5 +54,20 @@ public interface APIService {
             @Part MultipartBody.Part file  // Ảnh đại diện (tuỳ chọn)
     );
     @GET("/api/chatlist/{userId}")
-    Call<ApiResponse<List<ChatItem>>> getChatList(@Path("userId") String userId);
+    Call<ChatListResponse> getChatList(@Path("userId") String userId);
+
+    // Message APIs
+    @GET("/api/message/{conversation_id}")
+    Call<MessageResponse> getMessages(@Path("conversation_id") String conversationId);
+
+    @POST("/api/message/send")
+    Call<Message> sendMessage(@Body Message message);
+
+    @Multipart
+    @POST("/api/message/send-image")
+    Call<Message> sendImageMessage(
+            @Part("conversation_id") RequestBody conversationId,
+            @Part("sender_id") RequestBody senderId,
+            @Part MultipartBody.Part image
+    );
 }
