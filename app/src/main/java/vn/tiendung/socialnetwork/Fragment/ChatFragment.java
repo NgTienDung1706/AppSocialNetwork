@@ -3,6 +3,7 @@ package vn.tiendung.socialnetwork.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +18,42 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import vn.tiendung.socialnetwork.API.APIService;
+import vn.tiendung.socialnetwork.API.Response.ApiResponse;
+import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Adapter.ChatListAdapter;
 import vn.tiendung.socialnetwork.Model.Chat;
+import vn.tiendung.socialnetwork.Model.ChatItem;
+import vn.tiendung.socialnetwork.Model.LastMessage;
+import vn.tiendung.socialnetwork.Model.UserProfile;
 import vn.tiendung.socialnetwork.R;
+import vn.tiendung.socialnetwork.UI.MainActivity;
+import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
+import vn.tiendung.socialnetwork.Utils.SocketManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class ChatFragment extends Fragment {
     private RecyclerView recyclerView;
     private ChatListAdapter chatListAdapter;
-    private List<Chat> chatList;
+    private List<ChatItem> chatList;
+
+    private List<String> currentOnlineIds = new ArrayList<>(); // Thêm biến lưu trữ danh sách user online
+
+
+    private APIService apiService;
+
+    private boolean isDataLoaded = false;
 
     Toolbar toolbar;
 
@@ -55,9 +81,9 @@ public class ChatFragment extends Fragment {
         chatList = new ArrayList<>();
         chatListAdapter = new ChatListAdapter(getContext(), chatList);
         recyclerView.setAdapter(chatListAdapter);
-
+        String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
         // Gọi API lấy danh sách chat
-        loadChatList();
+        loadChatList(userId);
         EditText searchChat = view.findViewById(R.id.searchChat);
         searchChat.addTextChangedListener(new TextWatcher() {
             @Override
@@ -72,18 +98,115 @@ public class ChatFragment extends Fragment {
             public void afterTextChanged(Editable s) {}
         });
 
+
+
         return view;
     }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Giữ lại Fragment khi chuyển tab
+        setRetainInstance(true);
+    }
 
-    private void loadChatList() {
-        chatList.add(new Chat("1", "Nguyễn Văn A", "Hello!", "10:30 AM", 2, true, "https://example.com/avatar1.jpg"));
-        chatList.add(new Chat("2", "Trần Thị B", "Làm bài tập xong chưa?", "9:15 AM", 0, false, "https://example.com/avatar2.jpg"));
-        chatList.add(new Chat("3", "Lê Văn C", "OK bạn ơi!", "8:00 AM", 5, true, "https://example.com/avatar3.jpg"));
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("ChatFragment", "onResume called");
 
-        chatListAdapter = new ChatListAdapter(getContext(), chatList); // ✅ Khởi tạo lại adapter
-        recyclerView.setAdapter(chatListAdapter); // ✅ Cập nhật RecyclerView
+        // Yêu cầu trạng thái online mỗi khi fragment hiển thị
+        if (SocketManager.getInstance().isConnected()) {
+            SocketManager.getInstance().getSocket().emit("request_online_status");
+        }
 
-        chatListAdapter.notifyDataSetChanged();
+        // Nếu chưa load dữ liệu, load lại
+        if (!isDataLoaded) {
+            String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
+            loadChatList(userId);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Không cần xóa listener ở đây vì MainActivity sẽ xử lý việc cập nhật
+    }
+
+    private void loadChatList(String userId) {
+        if (userId.isEmpty()) {
+            Log.e("ChatFragment", "Không tìm thấy userId trong SharedPreferences");
+            return;
+        }
+
+        apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        apiService.getChatList(userId).enqueue(new Callback<ApiResponse<List<ChatItem>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<ChatItem>>> call, Response<ApiResponse<List<ChatItem>>> response) {
+                if (response.isSuccessful() && response.body() != null && getActivity() != null) {
+                    chatList.clear();
+                    List<ChatItem> chatItems = response.body().getChatList();
+
+                    if (chatItems != null) {
+                        chatList.addAll(chatItems);
+                        isDataLoaded = true;
+                        chatListAdapter.notifyDataSetChanged();
+
+                        // Yêu cầu cập nhật trạng thái online sau khi load dữ liệu
+                        if (SocketManager.getInstance().isConnected()) {
+                            SocketManager.getInstance().getSocket().emit("request_online_status");
+                        }
+
+                        Log.d("ChatFragment", "Chat list loaded: " + chatList.size() + " items");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<ChatItem>>> call, Throwable t) {
+                Log.e("ChatFragment", "API Error: " + t.getMessage());
+            }
+        });
+    }
+
+    public void updateOnlineStatus(List<String> onlineUserIds) {
+        // Phương thức cũ, giữ lại để tương thích
+        refreshOnlineStatus(onlineUserIds);
+    }
+
+    public void refreshOnlineStatus(List<String> onlineUserIds) {
+        // Lưu trữ danh sách hiện tại
+        currentOnlineIds.clear();
+        currentOnlineIds.addAll(onlineUserIds);
+
+        Log.d("ChatFragment", "Refreshing online status, users online: " + onlineUserIds.size());
+
+        // Nếu chưa load dữ liệu hoặc fragment chưa hiển thị, thoát
+        if (!isDataLoaded || !isVisible() || getActivity() == null || chatList.isEmpty()) {
+            Log.d("ChatFragment", "Skip update: dataLoaded=" + isDataLoaded +
+                    ", isVisible=" + isVisible() + ", hasActivity=" + (getActivity() != null));
+            return;
+        }
+
+        // Cập nhật UI trên thread chính
+        getActivity().runOnUiThread(() -> {
+            for (int i = 0; i < chatList.size(); i++) {
+                ChatItem chatItem = chatList.get(i);
+                String userId = chatItem.getUser().getId();
+                boolean isOnline = onlineUserIds.contains(userId);
+
+                if (chatItem.getUser().isOnline() != isOnline) {
+                    Log.d("ChatFragment", "User " + userId + " online status changed to: " + isOnline);
+                    chatItem.getUser().setOnline(isOnline);
+                    chatListAdapter.notifyItemChanged(i);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Lưu trạng thái nếu cần
     }
 
 }
