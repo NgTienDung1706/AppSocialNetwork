@@ -2,6 +2,7 @@ package vn.tiendung.socialnetwork.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import vn.tiendung.socialnetwork.Model.Chat;
 import vn.tiendung.socialnetwork.Model.ChatItem;
+import vn.tiendung.socialnetwork.Model.UserProfile;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.UI.MessageActivity;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
@@ -50,46 +49,54 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String userId = SharedPrefManager.getInstance(context).getUserId();
         ChatItem chat = chatList.get(position);
-        holder.txtName.setText(chat.getUser().getFullname());
 
-        // Kiểm tra loại tin nhắn gần nhất
-        String lastMessage = chat.getLastMessage().getContent();
-        String messageType = chat.getLastMessage().getMessage_type(); // Kiểm tra loại tin nhắn
+        holder.txtName.setText(chat.getUser().getName());
 
-        if (messageType.equals("image")) {
-            // Nếu là ảnh, hiển thị "Bạn đã gửi một ảnh" nếu là tin nhắn của người dùng hiện tại
-            if (chat.getLastMessage().getSender_id().equals(userId)) {
-                lastMessage = "Bạn đã gửi một ảnh";
+        // Kiểm tra và hiển thị tin nhắn cuối cùng
+        if (chat.getLastMessage() != null) {
+            String lastMessage = chat.getLastMessage().getContent();
+            String messageType = chat.getLastMessage().getMessageType();
+            String senderId = chat.getLastMessage().getSenderId();
+
+            if (messageType != null && messageType.equals("image")) {
+                // Nếu là ảnh, hiển thị "Bạn đã gửi một ảnh" nếu là tin nhắn của người dùng hiện tại
+                if (senderId != null && senderId.equals(userId)) {
+                    lastMessage = "Bạn đã gửi một ảnh";
+                } else {
+                    lastMessage = "Đã gửi một ảnh";
+                }
             } else {
-                lastMessage = "Đã gửi một ảnh";
+                // Nếu là tin nhắn văn bản, hiển thị "Bạn: [nội dung]" nếu là tin nhắn của người dùng hiện tại
+                if (senderId != null && senderId.equals(userId)) {
+                    lastMessage = "Bạn: " + lastMessage;
+                }
             }
-        } else {
-            // Nếu là tin nhắn văn bản, hiển thị "Bạn: [nội dung]" nếu là tin nhắn của người dùng hiện tại
-            if (chat.getLastMessage().getSender_id().equals(userId)) {
-                lastMessage = "Bạn: " + lastMessage;
-            }
-        }
 
-        // Cập nhật nội dung tin nhắn
-        holder.txtLastMessage.setText(lastMessage);
-        holder.txtTime.setText(formatTime(chat.getLastMessage().getTimestamp()));
+            // Cập nhật nội dung tin nhắn và thời gian
+            holder.txtLastMessage.setText(lastMessage);
+            holder.txtTime.setText(chat.getLastMessage().getTime());
+        } else {
+            holder.txtLastMessage.setText("");
+            holder.txtTime.setText("");
+        }
 
         // Hiển thị avatar bằng Glide
-        Glide.with(context)
-                .load(chat.getUser().getAvatar())
-                .placeholder(R.drawable.avt_default)
-                .into(holder.imgAvatar);
-
-        // Hiển thị trạng thái online
-        if (chat.getUser().isOnline()) {
-            holder.viewOnlineStatus.setVisibility(View.VISIBLE);
-        } else {
-            holder.viewOnlineStatus.setVisibility(View.GONE);
+        if (chat.getUser().getAvatar() != null && !chat.getUser().getAvatar().isEmpty()) {
+            Glide.with(context)
+                    .load(chat.getUser().getAvatar())
+                    .placeholder(R.drawable.avt_default)
+                    .into(holder.imgAvatar);
         }
 
+        // Hiển thị trạng thái online
+        holder.viewOnlineStatus.setVisibility(
+            chat.getUser().isOnline() ? View.VISIBLE : View.GONE
+        );
+
         // Hiển thị số tin nhắn chưa đọc
-        if (chat.getUnreadMessages() > 0) {
-            holder.txtUnreadCount.setText(String.valueOf(chat.getUnreadMessages()));
+        Object unreadMessages = chat.getUnreadMessages();
+        if (unreadMessages instanceof Integer && (Integer)unreadMessages > 0) {
+            holder.txtUnreadCount.setText(String.valueOf(unreadMessages));
             holder.txtUnreadCount.setVisibility(View.VISIBLE);
         } else {
             holder.txtUnreadCount.setVisibility(View.GONE);
@@ -98,26 +105,35 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         // Bắt sự kiện click mở chat
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(context, MessageActivity.class);
-            intent.putExtra("conversationId", chat.getConversationId());
-            intent.putExtra("userId", chat.getUser().getId());
-            intent.putExtra("userName", chat.getUser().getFullname());
-            intent.putExtra("userAvatar", chat.getUser().getAvatar());
+            
+            String conversationId = chat.getConversationId();
+            // Log chi tiết trước khi mở MessageActivity
+            Log.d("ChatListAdapter", String.format(
+                "Opening MessageActivity:\n" +
+                "- Conversation ID: %s\n" +
+                "- User ID: %s\n" +
+                "- User Name: %s\n" +
+                "- User Avatar: %s",
+                conversationId,
+                chat.getUser().getId(),
+                chat.getUser().getName(),
+                chat.getUser().getAvatar()
+            ));
+            
+            // Kiểm tra conversationId
+            if (conversationId == null || conversationId.isEmpty()) {
+                Log.e("ChatListAdapter", "Error: conversation_id is null or empty!");
+                return;
+            }
+            
+            intent.putExtra("conversation_id", conversationId);
+            intent.putExtra("user_id", chat.getUser().getId());
+            intent.putExtra("fullname", chat.getUser().getName());
+            intent.putExtra("avatar", chat.getUser().getAvatar());
             context.startActivity(intent);
         });
     }
-    private String formatTime(String timestamp) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = sdf.parse(timestamp);
 
-            SimpleDateFormat outputFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-            return outputFormat.format(date);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
     @Override
     public int getItemCount() {
         return chatList.size();
@@ -149,7 +165,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             filteredList.addAll(originalChatList);
         } else {
             for (ChatItem chat : originalChatList) {
-                if (chat.getUser().getFullname().toLowerCase().contains(text.toLowerCase())) {
+                if (chat.getUser().getName().toLowerCase().contains(text.toLowerCase())) {
                     filteredList.add(chat);
                 }
             }
@@ -160,5 +176,32 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         notifyDataSetChanged();
     }
 
+    public void setChatList(List<ChatItem> newChatList) {
+        if (newChatList == null) {
+            Log.e("ChatListAdapter", "Received null chat list");
+            return;
+        }
+        
+        Log.d("ChatListAdapter", "Setting chat list with " + newChatList.size() + " items");
+        for (ChatItem chat : newChatList) {
+            Log.d("ChatListAdapter", String.format(
+                "Chat item details:\n" +
+                "- Conversation ID: %s\n" +
+                "- User ID: %s\n" +
+                "- User Name: %s\n" +
+                "- Has Last Message: %b\n" +
+                "- Unread Messages: %s",
+                chat.getConversationId(),
+                chat.getUser().getId(),
+                chat.getUser().getName(),
+                chat.getLastMessage() != null,
+                chat.getUnreadMessages()
+            ));
+        }
+        
+        this.chatList = newChatList;
+        this.originalChatList = new ArrayList<>(newChatList);
+        notifyDataSetChanged();
+    }
 
 }

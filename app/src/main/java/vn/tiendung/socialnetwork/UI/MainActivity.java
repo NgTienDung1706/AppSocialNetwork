@@ -1,24 +1,17 @@
 package vn.tiendung.socialnetwork.UI;
 
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +24,6 @@ import vn.tiendung.socialnetwork.Fragment.FriendFragment;
 import vn.tiendung.socialnetwork.Fragment.HomeFragment;
 import vn.tiendung.socialnetwork.Fragment.ProfileFragment;
 import vn.tiendung.socialnetwork.Fragment.WritePostFragment;
-import vn.tiendung.socialnetwork.Model.ChatItem;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.Utils.OnScrollListener;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;

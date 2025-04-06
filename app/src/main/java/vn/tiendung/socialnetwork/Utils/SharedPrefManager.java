@@ -8,6 +8,8 @@ public class SharedPrefManager {
     private static final String KEY_USER_ID = "USER_ID";
     private static final String KEY_USERNAME = "USERNAME";
     private static final String KEY_EMAIL = "EMAIL";
+    private static final String KEY_NAME = "NAME"; // Thêm name
+    private static final String KEY_AVATAR = "AVATAR"; // Thêm avatar
     private static final String KEY_LOGGED_IN = "LOGGED_IN";
 
     private static SharedPrefManager instance;
@@ -28,6 +30,15 @@ public class SharedPrefManager {
     }
 
     // Lưu thông tin user sau khi đăng nhập
+    public void saveUser(String userId, String username, String email, String name, String avatar) {
+        editor.putString(KEY_USER_ID, userId);
+        editor.putString(KEY_USERNAME, username);
+        editor.putString(KEY_EMAIL, email);
+        editor.putString(KEY_NAME, name);
+        editor.putString(KEY_AVATAR, avatar);
+        editor.putBoolean(KEY_LOGGED_IN, true);
+        editor.apply();
+    }
     public void saveUser(String userId, String username, String email) {
         editor.putString(KEY_USER_ID, userId);
         editor.putString(KEY_USERNAME, username);
@@ -41,7 +52,7 @@ public class SharedPrefManager {
         return sharedPreferences.getString(KEY_USER_ID, null);
     }
 
-    // Lấy tên username
+    // Lấy username
     public String getUsername() {
         return sharedPreferences.getString(KEY_USERNAME, null);
     }
@@ -49,6 +60,16 @@ public class SharedPrefManager {
     // Lấy email
     public String getEmail() {
         return sharedPreferences.getString(KEY_EMAIL, null);
+    }
+
+    // Lấy tên đầy đủ của user
+    public String getName() {
+        return sharedPreferences.getString(KEY_NAME, null);
+    }
+
+    // Lấy avatar
+    public String getAvatar() {
+        return sharedPreferences.getString(KEY_AVATAR, null);
     }
 
     // Kiểm tra user đã đăng nhập hay chưa

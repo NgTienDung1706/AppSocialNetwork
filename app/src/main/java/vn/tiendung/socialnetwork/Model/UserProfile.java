@@ -16,6 +16,9 @@ public class UserProfile {
     private String lastSeen;
     private List<String> favoriteTags;
 
+    public UserProfile() {
+    }
+
     public UserProfile(String id, String username, String name, String avatar, int friendsCount, int postsCount, String bio, List<String> favoriteTags) {
         this.id = id;
         this.username = username;
