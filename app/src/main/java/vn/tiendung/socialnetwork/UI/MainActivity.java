@@ -180,21 +180,13 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
     @Override
     protected void onStop() {
         super.onStop();
-
-        // Gửi thông báo user ngắt kết nối trước khi ngắt socket
         String userId = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
         SocketManager.getInstance().getSocket().emit("user_disconnected", userId);
-
-        // Không ngắt kết nối socket ở đây nữa để giữ kết nối
-        // if (SocketManager.getInstance().isConnected()) {
-        //     SocketManager.getInstance().disconnect();
-        // }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         // Yêu cầu cập nhật trạng thái online mỗi khi activity được focus
         if (SocketManager.getInstance().isConnected()) {
             SocketManager.getInstance().getSocket().emit("request_online_status");

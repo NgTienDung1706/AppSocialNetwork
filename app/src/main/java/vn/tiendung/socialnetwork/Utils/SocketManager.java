@@ -19,8 +19,8 @@ public class SocketManager {
     private SocketManager() {
         try {
             // Kết nối đến server Socket
-            socket = IO.socket("https://socialnetwork-api-zbeb.onrender.com/chat"); // Đổi thành URL của server socket của bạn
-            //socket = IO.socket("http://10.0.2.2:3001/chat");
+            //socket = IO.socket("https://socialnetwork-api-zbeb.onrender.com/chat"); // Đổi thành URL của server socket của bạn
+            socket = IO.socket("http://10.0.2.2:3001/chat");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

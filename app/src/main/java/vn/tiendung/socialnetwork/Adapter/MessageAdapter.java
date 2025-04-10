@@ -92,6 +92,37 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else {
             configureReceivedMessageHolder((ReceivedMessageHolder) holder, message);
         }
+
+        // Thiết lập sự kiện nhấn vào tin nhắn để hiển thị/ẩn timestamp với hiệu ứng mượt mà
+        holder.itemView.setOnClickListener(v -> {
+            if (holder instanceof SentMessageHolder) {
+                SentMessageHolder sentHolder = (SentMessageHolder) holder;
+                if (sentHolder.tvTimestamp.getVisibility() == View.GONE) {
+                    // Đặt visibility thành VISIBLE ngay lập tức và áp dụng hiệu ứng alpha
+                    sentHolder.tvTimestamp.setAlpha(0f);
+                    sentHolder.tvTimestamp.setVisibility(View.VISIBLE);
+                    sentHolder.tvTimestamp.animate().alpha(1f).setDuration(1000).start();  // Hiển thị mượt mà
+                } else {
+                    // Áp dụng hiệu ứng ẩn alpha trước, sau đó đổi visibility sau khi xong
+                    sentHolder.tvTimestamp.animate().alpha(0f).setDuration(1000).withEndAction(() -> {
+                        sentHolder.tvTimestamp.setVisibility(View.GONE); // Đặt visibility thành GONE sau khi mờ
+                    }).start();
+                }
+            } else if (holder instanceof ReceivedMessageHolder) {
+                ReceivedMessageHolder receivedHolder = (ReceivedMessageHolder) holder;
+                if (receivedHolder.tvTimestamp.getVisibility() == View.GONE) {
+                    // Đặt visibility thành VISIBLE ngay lập tức và áp dụng hiệu ứng alpha
+                    receivedHolder.tvTimestamp.setAlpha(0f);
+                    receivedHolder.tvTimestamp.setVisibility(View.VISIBLE);
+                    receivedHolder.tvTimestamp.animate().alpha(1f).setDuration(1000).start();
+                } else {
+                    // Áp dụng hiệu ứng ẩn alpha trước, sau đó đổi visibility sau khi xong
+                    receivedHolder.tvTimestamp.animate().alpha(0f).setDuration(1000).withEndAction(() -> {
+                        receivedHolder.tvTimestamp.setVisibility(View.GONE); // Đặt visibility thành GONE sau khi mờ
+                    }).start();
+                }
+            }
+        });
     }
 
     private void configureSentMessageHolder(SentMessageHolder holder, Message message) {
@@ -124,13 +155,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         holder.tvTimestamp.setText(message.getTimestamp());
 
         if (message.getSender() != null) {
-            String senderName = message.getSender().getName();
-            if (senderName != null && !senderName.isEmpty()) {
-                holder.tvSenderName.setVisibility(View.VISIBLE);
-                holder.tvSenderName.setText(senderName);
-            } else {
-                holder.tvSenderName.setVisibility(View.GONE);
-            }
+            //String senderName = message.getSender().getName();
+//            if (senderName != null && !senderName.isEmpty()) {
+//                holder.tvSenderName.setVisibility(View.VISIBLE);
+//                holder.tvSenderName.setText(senderName);
+//            } else {
+//                holder.tvSenderName.setVisibility(View.GONE);
+//            }
 
             String avatarUrl = message.getSender().getAvatar();
             if (avatarUrl != null && !avatarUrl.isEmpty()) {

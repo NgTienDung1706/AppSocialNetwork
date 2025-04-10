@@ -45,8 +45,8 @@ public class MessageSocketManager {
                 opts.reconnection = true;
                 opts.reconnectionAttempts = 10;
                 opts.reconnectionDelay = 1000;
-                socket = IO.socket("https://socialnetwork-api-zbeb.onrender.com/message", opts);
-                //socket = IO.socket("http://10.0.2.2:3001/message", opts);
+                //socket = IO.socket("https://socialnetwork-api-zbeb.onrender.com/message", opts);
+                socket = IO.socket("http://10.0.2.2:3001/message", opts);
                 setupSocketListeners();
             } catch (URISyntaxException e) {
                 Log.e(TAG, "Error creating socket: " + e.getMessage());
@@ -121,7 +121,6 @@ public class MessageSocketManager {
         });
 
         socket.on("new_message", args -> {
-            Log.d(TAG, "Received new_message event");
             if (args.length > 0 && eventListener != null) {
                 try {
                     Log.d(TAG, "Raw message data: " + args[0].toString());
@@ -164,8 +163,6 @@ public class MessageSocketManager {
                     message.setContent(messageData.getString("content"));
                     message.setMessageType(messageData.getString("message_type"));
                     message.setTimestamp(messageData.getString("timestamp"));
-                    
-                    Log.d(TAG, "Successfully parsed message with sender info");
                     eventListener.onNewMessage(message);
                     
                 } catch (Exception e) {
