@@ -1,5 +1,7 @@
 package vn.tiendung.socialnetwork.API;
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 import java.util.Map;
 
@@ -65,9 +67,9 @@ public interface APIService {
 
     @Multipart
     @POST("/api/message/send-image")
-    Call<Message> sendImageMessage(
+    Call<ResponseBody> sendImageMessage(
+            @Part MultipartBody.Part image,
             @Part("conversation_id") RequestBody conversationId,
-            @Part("sender_id") RequestBody senderId,
-            @Part MultipartBody.Part image
+            @Part("sender_id") RequestBody senderId
     );
 }

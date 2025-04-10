@@ -3,9 +3,26 @@ package vn.tiendung.socialnetwork.Utils;
 
 import android.util.Log;
 
+import com.google.gson.JsonObject;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import vn.tiendung.socialnetwork.API.APIService;
+import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Model.Message;
 
 import org.json.JSONException;
@@ -15,6 +32,8 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public class MessageSocketManager {
     private static final String TAG = "MessageSocketManager";
@@ -24,6 +43,8 @@ public class MessageSocketManager {
     private String currentRoom = null;
     private SocketEventListener eventListener;
     private String userId;
+
+    private APIService apiService;
 
     private MessageSocketManager() {
         // Private constructor
@@ -163,6 +184,7 @@ public class MessageSocketManager {
                     message.setContent(messageData.getString("content"));
                     message.setMessageType(messageData.getString("message_type"));
                     message.setTimestamp(messageData.getString("timestamp"));
+                    //message.setImageUrl(messageData.getString("image_url"));
                     eventListener.onNewMessage(message);
                     
                 } catch (Exception e) {
@@ -239,6 +261,54 @@ public class MessageSocketManager {
         } else {
             Log.e(TAG, "Cannot send message - socket not connected or not in a conversation");
         }
+    }
+
+    /**
+     * Interface để callback kết quả upload ảnh
+     */
+    public interface ImageUploadCallback {
+        void onSuccess(String imageUrl);
+        void onError(String error);
+    }
+
+    /**
+     * Gửi tin nhắn hình ảnh thông qua backend
+     */
+    public void sendImageMessage(Message message, File imageFile, ImageUploadCallback callback) {
+        if (socket == null || !isConnected || currentRoom == null) {
+            callback.onError("Socket not connected or not in conversation");
+            return;
+        }
+
+        // Tạo MultipartBody.Part cho file ảnh
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
+        MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image",
+                imageFile.getName(), requestFile);
+
+        // Tạo RequestBody cho các field khác
+        RequestBody conversationId = RequestBody.create(MediaType.parse("text/plain"),
+                message.getConversationId());
+        RequestBody senderId = RequestBody.create(MediaType.parse("text/plain"),
+                message.getSender().getId());
+
+        // Gọi API
+        apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<ResponseBody> call = apiService.sendImageMessage(imagePart, conversationId, senderId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess("Upload successful");
+                } else {
+                    callback.onError("Upload failed: " + response.message());
+                }
+            }
+
+            @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        callback.onError("Network error: " + t.getMessage());
+                    }
+                });
     }
 
     public interface SocketEventListener {

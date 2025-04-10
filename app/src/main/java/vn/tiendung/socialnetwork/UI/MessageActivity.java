@@ -317,17 +317,9 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
         sender.setName(SharedPrefManager.getInstance(this).getName());
         sender.setAvatar(SharedPrefManager.getInstance(this).getAvatar());
         message.setSender(sender);
-
         message.setContent(content);
         message.setMessageType("text");
         message.setTimestamp(String.valueOf(System.currentTimeMillis()));
-
-        // Log tin nhắn trước khi gửi
-        Log.d(TAG, "Sending message:");
-        Log.d(TAG, "- Conversation ID: " + message.getConversationId());
-        Log.d(TAG, "- Sender ID: " + message.getSender().getId());
-        Log.d(TAG, "- Content: " + message.getContent());
-        Log.d(TAG, "- Timestamp: " + message.getTimestamp());
 
         socketManager.sendMessage(message);
         edtMessage.setText("");
@@ -358,7 +350,7 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
                 Toast.makeText(this, "Không thể đọc file ảnh", Toast.LENGTH_SHORT).show();
                 return;
             }
-            
+
             cursor.moveToFirst();
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String filePath = cursor.getString(columnIndex);
@@ -371,112 +363,49 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
 
             // Create file from path
             File file = new File(filePath);
-            
-            // Create request body for file
-            RequestBody requestFile = RequestBody.create(
-                MediaType.parse("multipart/form-data"),
-                file
-            );
 
-            // Create MultipartBody.Part
-            MultipartBody.Part imagePart = MultipartBody.Part.createFormData(
-                "image", 
-                file.getName(),
-                requestFile
-            );
+            // Tạo message object
+            Message message = new Message();
+            message.setConversationId(conversationId);
 
-            // Create other request bodies
-            RequestBody conversationIdBody = RequestBody.create(
-                MediaType.parse("text/plain"),
-                conversationId
-            );
-
-            RequestBody senderIdBody = RequestBody.create(
-                MediaType.parse("text/plain"),
-                SharedPrefManager.getInstance(this).getUserId()
-            );
-
-            // Log request details
-            Log.d(TAG, "Sending image message:");
-            Log.d(TAG, "Conversation ID: " + conversationId);
-            Log.d(TAG, "Sender ID: " + SharedPrefManager.getInstance(this).getUserId());
-            Log.d(TAG, "Image path: " + filePath);
-            Log.d(TAG, "Image name: " + file.getName());
-            Log.d(TAG, "Image size: " + file.length() + " bytes");
+            // Create sender object with full info
+            Message.Sender sender = new Message.Sender();
+            sender.setId(SharedPrefManager.getInstance(this).getUserId());
+            sender.setUsername(SharedPrefManager.getInstance(this).getUsername());
+            sender.setName(SharedPrefManager.getInstance(this).getName());
+            sender.setAvatar(SharedPrefManager.getInstance(this).getAvatar());
+            message.setSender(sender);
 
             // Show loading
             Toast.makeText(this, "Đang gửi ảnh...", Toast.LENGTH_SHORT).show();
 
-            apiService.sendImageMessage(conversationIdBody, senderIdBody, imagePart)
-                .enqueue(new Callback<Message>() {
-                    @Override
-                    public void onResponse(Call<Message> call, Response<Message> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            Message sentMessage = response.body();
-                            messageList.add(sentMessage);
-                            messageAdapter.notifyItemInserted(messageList.size() - 1);
-                            recyclerMessages.scrollToPosition(messageList.size() - 1);
-                            Toast.makeText(MessageActivity.this, "Gửi ảnh thành công", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "Error sending image message: " + response.code());
-                            if (response.errorBody() != null) {
-                                try {
-                                    String errorBody = response.errorBody().string();
-                                    Log.e(TAG, "Error body: " + errorBody);
-                                    Log.e(TAG, "Request URL: " + call.request().url());
-                                    Log.e(TAG, "Request method: " + call.request().method());
-                                    Log.e(TAG, "Request headers: " + call.request().headers());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            Toast.makeText(MessageActivity.this, 
-                                "Lỗi khi gửi ảnh: " + response.code(), 
+            // Gửi ảnh qua MessageSocketManager
+            socketManager.sendImageMessage(message, file, new MessageSocketManager.ImageUploadCallback() {
+                @Override
+                public void onSuccess(String imageUrl) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(MessageActivity.this,
+                                "Gửi ảnh thành công",
                                 Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                    });
+                }
 
-                    @Override
-                    public void onFailure(Call<Message> call, Throwable t) {
-                        Log.e(TAG, "Failed to send image message: " + t.getMessage());
-                        Log.e(TAG, "Request URL: " + call.request().url());
-                        t.printStackTrace();
-                        Toast.makeText(MessageActivity.this, 
-                            "Không thể gửi ảnh: " + t.getMessage(), 
-                            Toast.LENGTH_SHORT).show();
-                    }
-                });
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(MessageActivity.this,
+                                "Lỗi gửi ảnh: " + error,
+                                Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
 
         } catch (Exception e) {
             Log.e(TAG, "Error preparing image: " + e.getMessage());
-            e.printStackTrace();
             Toast.makeText(this, "Lỗi khi chuẩn bị ảnh", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    if (index != -1) {
-                        result = cursor.getString(index);
-                    }
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Error getting file name: " + e.getMessage());
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
-    }
 
     @Override
     public void onConnect() {
@@ -506,7 +435,6 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
     @Override
     public void onNewMessage(Message message) {
         try {
-            // Log thông tin tin nhắn mới
             Log.d(TAG, "New message received:");
             Log.d(TAG, "- Message ID: " + message.getId());
             Log.d(TAG, "- Conversation ID: " + message.getConversationId());
@@ -514,20 +442,16 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
             Log.d(TAG, "- Content: " + message.getContent());
             Log.d(TAG, "- Type: " + message.getMessageType());
 
-            // Kiểm tra xem tin nhắn có thuộc về conversation hiện tại không
             if (message.getConversationId().equals(conversationId)) {
                 runOnUiThread(() -> {
                     try {
                         // Thêm tin nhắn vào adapter
                         messageAdapter.addMessage(message);
-                        
-                        // Cuộn xuống tin nhắn mới nhất
                         recyclerMessages.scrollToPosition(messageAdapter.getItemCount() - 1);
                         
-                        // Nếu là tin nhắn của người khác, phát âm thanh thông báo
+                        // Phát âm thanh nếu là tin nhắn từ người khác
                         if (!message.getSender().getId().equals(userId)) {
                             // TODO: Phát âm thanh thông báo
-                            // playNotificationSound();
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "Error updating UI with new message: " + e.getMessage());
@@ -536,8 +460,6 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
                             Toast.LENGTH_SHORT).show();
                     }
                 });
-            } else {
-                Log.d(TAG, "Message belongs to different conversation");
             }
         } catch (Exception e) {
             Log.e(TAG, "Error handling new message: " + e.getMessage());

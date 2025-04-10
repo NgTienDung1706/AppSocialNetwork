@@ -134,7 +134,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             holder.imgMessage.setVisibility(View.VISIBLE);
             holder.tvMessage.setVisibility(View.GONE);
             Glide.with(context)
-                    .load(message.getImageUrl())
+                    .load(message.getContent())
                     .into(holder.imgMessage);
         }
         holder.tvTimestamp.setText(message.getTimestamp());
