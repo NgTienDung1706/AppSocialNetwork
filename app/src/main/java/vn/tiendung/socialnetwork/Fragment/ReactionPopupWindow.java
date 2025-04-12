@@ -20,10 +20,10 @@ public class ReactionPopupWindow {
     }
 
     private final PopupWindow popupWindow;
-    private final String[] emojiNames = {"Like", "Love", "Haha", "Wow", "Sad", "Angry"};
+    private final String[] emojiNames = {"Like", "Thương", "Haha", "Tim", "Wow", "Buồn", "Giận"};
     private final int[] emojiIds = {
             R.id.emoji_like, R.id.emoji_love, R.id.emoji_haha,
-            R.id.emoji_heart, R.id.emoji_sad, R.id.emoji_angry
+            R.id.emoji_heart, R.id.emoji_wow, R.id.emoji_sad, R.id.emoji_angry
     };
 
     private final List<ImageView> emojiViews = new ArrayList<>();

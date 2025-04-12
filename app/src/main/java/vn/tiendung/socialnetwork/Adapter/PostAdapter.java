@@ -74,6 +74,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             popup.show(holder.btnReaction);
             return true;
         });
+        // Nếu chỉ ấn thì là thích
+        holder.btnReaction.setOnClickListener(v -> {
+            holder.tvReaction.setText("Thích");
+            holder.btnReaction.setImageResource(getReactionIcon("Thích"));
+
+        });
         // Xử lý sự kiện click item
         holder.itemView.setOnClickListener(v -> {
             // Gọi Intent để mở PostDetailActivity
@@ -115,6 +121,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             case "Thương": return R.drawable.ic_reaction_love;
             case "Haha": return R.drawable.ic_reaction_haha;
             case "Tim": return R.drawable.ic_reaction_heart;
+            case "Wow": return R.drawable.ic_reaction_wow;
             case "Buồn": return R.drawable.ic_reaction_sad;
             case "Giận": return R.drawable.ic_reaction_angry;
             default: return R.drawable.ic_reaction_like;

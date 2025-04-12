@@ -28,6 +28,11 @@
         android:src="@drawable/ic_reaction_heart" />
 
     <ImageView
+        android:id="@+id/emoji_wow"
+        style="@style/ReactionIcon"
+        android:src="@drawable/ic_reaction_wow" />
+
+    <ImageView
         android:id="@+id/emoji_sad"
         style="@style/ReactionIcon"
         android:src="@drawable/ic_reaction_sad" />
