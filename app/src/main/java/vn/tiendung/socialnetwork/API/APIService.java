@@ -80,4 +80,6 @@ public interface APIService {
     @DELETE("/api/post/reaction/{postId}")
     Call<Void> deleteReaction(@Path("postId") String postId, @Query("userId") String userId);
 
+    @GET("/api/post/myPosts/{userId}")
+    Call<List<Post>> getMyPosts(@Path("userId") String userId);
 }

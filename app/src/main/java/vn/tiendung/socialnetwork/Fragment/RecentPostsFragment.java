@@ -1,10 +1,13 @@
 package vn.tiendung.socialnetwork.Fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,17 +18,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import vn.tiendung.socialnetwork.API.APIService;
+import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Adapter.PostAdapter;
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.Utils.OnScrollListener;
+import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 
 public class RecentPostsFragment extends Fragment {
     private OnScrollListener scrollListener;
     private RecyclerView recyclerView;
-    //private PostAdapter adapter;
-    private List<String> postList;
+    private PostAdapter postAdapter;
+    private List<Post> postList = new ArrayList<>();
 
+    TextView tvNoPosts;
+
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,15 +59,43 @@ public class RecentPostsFragment extends Fragment {
                 }
             }
         });
-        List<Post> posts = new ArrayList<>();
-        //posts.add(new Post(R.drawable.circleusersolid, "Tiến Dũng", "Hôm nay trời đẹp quá!"));
-        //posts.add(new Post(R.drawable.circleusersolid, "Minh Tâm", "Mình vừa hoàn thành một dự án lớn!"));
-        //posts.add(new Post(R.drawable.circleusersolid, "Thu Hà", "Cùng đi cafe không mọi người?"));
+        // Bài đăng
+        postAdapter = new PostAdapter(getContext(), postList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(postAdapter);
 
-        //adapter = new PostAdapter(getContext(), posts);
-        //recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        //recyclerView.setAdapter(adapter);
+        String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
+        loadPostsFromApi(userId);
+        tvNoPosts = view.findViewById(R.id.tvNoPosts);
 
         return view;
+    }
+    private void loadPostsFromApi(String userId) {
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<List<Post>> call = apiService.getMyPosts(userId);
+
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    postList.clear();
+                    postList.addAll(response.body());
+                    postAdapter.notifyDataSetChanged();
+                    // Ẩn hoặc hiện TextView tùy vào danh sách
+                    if (postList.isEmpty()) {
+                        tvNoPosts.setVisibility(View.VISIBLE);
+                    } else {
+                        tvNoPosts.setVisibility(View.GONE);
+                    }
+                } else {
+                    tvNoPosts.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
