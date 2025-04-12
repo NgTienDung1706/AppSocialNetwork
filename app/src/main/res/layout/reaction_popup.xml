@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popupContainer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_reaction_bar"
+    android:orientation="horizontal"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/emoji_like"
+        style="@style/ReactionIcon"
+
+        android:src="@drawable/ic_reaction_like" />
+
+    <ImageView
+        android:id="@+id/emoji_love"
+        style="@style/ReactionIcon"
+        android:src="@drawable/ic_reaction_love" />
+
+    <ImageView
+        android:id="@+id/emoji_haha"
+        style="@style/ReactionIcon"
+        android:src="@drawable/ic_reaction_haha" />
+
+    <ImageView
+        android:id="@+id/emoji_heart"
+        style="@style/ReactionIcon"
+        android:src="@drawable/ic_reaction_heart" />
+
+    <ImageView
+        android:id="@+id/emoji_wow"
+        style="@style/ReactionIcon"
+        android:src="@drawable/ic_reaction_wow" />
+
+    <ImageView
+        android:id="@+id/emoji_sad"
+        style="@style/ReactionIcon"
+        android:src="@drawable/ic_reaction_sad" />
+
+    <ImageView
+        android:id="@+id/emoji_angry"
+        style="@style/ReactionIcon"
+        android:src="@drawable/ic_reaction_angry" />
+
+</LinearLayout>
