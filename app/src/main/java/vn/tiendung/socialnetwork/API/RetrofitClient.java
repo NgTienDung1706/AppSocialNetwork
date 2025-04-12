@@ -9,8 +9,8 @@ public class RetrofitClient {
         if (retrofit == null){
             retrofit = new Retrofit.Builder()
                     // đường dẫn API
-                    //.baseUrl("http://10.0.2.2:3001/")
-                    .baseUrl("https://socialnetwork-api-zbeb.onrender.com/")
+                    .baseUrl("http://10.0.2.2:3001/")
+                    //.baseUrl("https://socialnetwork-api-zbeb.onrender.com/")
                     .addConverterFactory (GsonConverterFactory.create())
                     .build();
         }

@@ -7,7 +7,7 @@
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/rd"
+        android:background="#000000"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="8dp">
@@ -27,10 +27,9 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="10dp"
-            android:background="@drawable/circleusersolid"
             android:scaleType="centerCrop"
             android:src="@drawable/avt_default" />
-
+        <!-- android:background="@drawable/circleusersolid"-->
         <!-- Tên người dùng -->
         <TextView
             android:id="@+id/userName"
@@ -38,8 +37,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="Tên người dùng"
-            android:textColor="@color/st"
-            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -48,9 +47,10 @@
         android:id="@+id/recyclerMessages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
+        android:layout_above="@+id/messageInputLayout"
         android:layout_below="@id/headerLayout"
-        android:layout_above="@+id/messageInputLayout" />
+        android:background="#000000"
+        android:padding="8dp" />
 
     <!-- Thanh nhập tin nhắn -->
     <LinearLayout
@@ -58,9 +58,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:background="#000000"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:background="@android:color/white">
+        android:padding="8dp">
 
         <!-- Nút chọn ảnh -->
 
@@ -70,11 +70,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/textmessage_bg"
             android:hint="Nhập tin nhắn..."
-            android:background="@android:color/transparent"
-            android:padding="10dp"
+            android:inputType="textMultiLine"
             android:maxLines="3"
-            android:inputType="textMultiLine"/>
+            android:padding="10dp"
+            android:textColorHint="#FFFFFF" />
 
         <!-- Nút chọn ảnh -->
         <ImageView
