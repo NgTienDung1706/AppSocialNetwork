@@ -149,20 +149,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             holder.imgMessage.setVisibility(View.VISIBLE);
             holder.tvMessage.setVisibility(View.GONE);
             Glide.with(context)
-                    .load(message.getImageUrl())
+                    .load(message.getContent())
                     .into(holder.imgMessage);
         }
         holder.tvTimestamp.setText(message.getTimestamp());
 
         if (message.getSender() != null) {
-            //String senderName = message.getSender().getName();
-//            if (senderName != null && !senderName.isEmpty()) {
-//                holder.tvSenderName.setVisibility(View.VISIBLE);
-//                holder.tvSenderName.setText(senderName);
-//            } else {
-//                holder.tvSenderName.setVisibility(View.GONE);
-//            }
-
             String avatarUrl = message.getSender().getAvatar();
             if (avatarUrl != null && !avatarUrl.isEmpty()) {
                 holder.imgAvatar.setVisibility(View.VISIBLE);

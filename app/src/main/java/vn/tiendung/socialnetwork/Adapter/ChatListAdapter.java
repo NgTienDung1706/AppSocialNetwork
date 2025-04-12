@@ -107,25 +107,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             Intent intent = new Intent(context, MessageActivity.class);
             
             String conversationId = chat.getConversationId();
-            // Log chi tiết trước khi mở MessageActivity
-            Log.d("ChatListAdapter", String.format(
-                "Opening MessageActivity:\n" +
-                "- Conversation ID: %s\n" +
-                "- User ID: %s\n" +
-                "- User Name: %s\n" +
-                "- User Avatar: %s",
-                conversationId,
-                chat.getUser().getId(),
-                chat.getUser().getName(),
-                chat.getUser().getAvatar()
-            ));
-            
-            // Kiểm tra conversationId
             if (conversationId == null || conversationId.isEmpty()) {
                 Log.e("ChatListAdapter", "Error: conversation_id is null or empty!");
                 return;
             }
-            
             intent.putExtra("conversation_id", conversationId);
             intent.putExtra("user_id", chat.getUser().getId());
             intent.putExtra("fullname", chat.getUser().getName());
@@ -176,32 +161,5 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    public void setChatList(List<ChatItem> newChatList) {
-        if (newChatList == null) {
-            Log.e("ChatListAdapter", "Received null chat list");
-            return;
-        }
-        
-        Log.d("ChatListAdapter", "Setting chat list with " + newChatList.size() + " items");
-        for (ChatItem chat : newChatList) {
-            Log.d("ChatListAdapter", String.format(
-                "Chat item details:\n" +
-                "- Conversation ID: %s\n" +
-                "- User ID: %s\n" +
-                "- User Name: %s\n" +
-                "- Has Last Message: %b\n" +
-                "- Unread Messages: %s",
-                chat.getConversationId(),
-                chat.getUser().getId(),
-                chat.getUser().getName(),
-                chat.getLastMessage() != null,
-                chat.getUnreadMessages()
-            ));
-        }
-        
-        this.chatList = newChatList;
-        this.originalChatList = new ArrayList<>(newChatList);
-        notifyDataSetChanged();
-    }
 
 }

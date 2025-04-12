@@ -112,12 +112,13 @@ public class ChatFragment extends Fragment {
         if (SocketManager.getInstance().isConnected()) {
             SocketManager.getInstance().getSocket().emit("request_online_status");
         }
-
+        String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
+        loadChatList(userId);
         // Nếu chưa load dữ liệu, load lại
-        if (!isDataLoaded) {
-            String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
-            loadChatList(userId);
-        }
+//        if (!isDataLoaded) {
+//            String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
+//            loadChatList(userId);
+//        }
     }
 
     @Override

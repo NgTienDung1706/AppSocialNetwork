@@ -227,7 +227,17 @@ public class MessageSocketManager {
             }
         }
     }
-
+    public void MarkRead(JSONObject data){
+        if (socket != null && isConnected && currentRoom != null) {
+            try {
+                socket.emit("mark_read", data);
+            } catch (Exception e) {
+                Log.e(TAG, "Error sending message: " + e);
+            }
+        } else {
+            Log.e(TAG, "Hmm");
+        }
+    }
     public boolean isConnected() {
         return socket != null && isConnected;
     }
@@ -271,9 +281,7 @@ public class MessageSocketManager {
         void onError(String error);
     }
 
-    /**
-     * Gửi tin nhắn hình ảnh thông qua backend
-     */
+
     public void sendImageMessage(Message message, File imageFile, ImageUploadCallback callback) {
         if (socket == null || !isConnected || currentRoom == null) {
             callback.onError("Socket not connected or not in conversation");

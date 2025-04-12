@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -24,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
@@ -144,6 +147,7 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
                         Glide.with(this)
                                 .load(recipientAvatar)
                                 .placeholder(R.drawable.avt_default)
+                                .circleCrop()
                                 .error(R.drawable.avt_default)
                                 .listener(new RequestListener<Drawable>() {
                                     @Override
@@ -227,6 +231,7 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
                     Log.d(TAG, "Socket already connected, joining room directly");
                     if (conversationId != null && !conversationId.isEmpty()) {
                         socketManager.joinRoom(conversationId);
+                        emitMarkRead();
                     }
                 }
             }
@@ -254,18 +259,35 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
             if (socketManager != null) {
                 // Leave the conversation room first
                 if (conversationId != null && !conversationId.isEmpty()) {
+                    emitMarkRead();
                     socketManager.leaveRoom(conversationId);
                 }
                 // Remove event listener to prevent memory leaks
-                socketManager.setEventListener(null);
+                //socketManager.setEventListener(null);
                 // Disconnect socket
-                socketManager.disconnect();
+                //socketManager.disconnect();
+                // Delay disconnect slightly to ensure emits are sent
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    socketManager.setEventListener(null);
+                    socketManager.disconnect();
+                    Log.d(TAG, "Socket disconnected after markRead emit");
+                }, 2000); // Delay
             }
         } catch (Exception e) {
             Log.e(TAG, "Error in onDestroy: " + e.getMessage());
         }
     }
-
+    private void emitMarkRead() {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("conversationid", conversationId);
+            data.put("userid", userId); // user đang đọc
+            socketManager.MarkRead(data);
+            Log.d(TAG, "Emitted mark_read for conversation: " + conversationId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     private void loadMessages() {
         if (conversationId == null || conversationId.isEmpty()) {
             Log.e(TAG, "conversation_id is null or empty");
@@ -379,26 +401,30 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
             // Show loading
             Toast.makeText(this, "Đang gửi ảnh...", Toast.LENGTH_SHORT).show();
 
-            // Gửi ảnh qua MessageSocketManager
-            socketManager.sendImageMessage(message, file, new MessageSocketManager.ImageUploadCallback() {
-                @Override
-                public void onSuccess(String imageUrl) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(MessageActivity.this,
-                                "Gửi ảnh thành công",
-                                Toast.LENGTH_SHORT).show();
-                    });
-                }
 
-                @Override
-                public void onError(String error) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(MessageActivity.this,
-                                "Lỗi gửi ảnh: " + error,
-                                Toast.LENGTH_SHORT).show();
-                    });
-                }
-            });
+            // Delay 2 giây rồi mới gửi ảnh
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                // Gửi ảnh qua MessageSocketManager
+                socketManager.sendImageMessage(message, file, new MessageSocketManager.ImageUploadCallback() {
+                    @Override
+                    public void onSuccess(String imageUrl) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(MessageActivity.this,
+                                    "Gửi ảnh thành công",
+                                    Toast.LENGTH_SHORT).show();
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(MessageActivity.this,
+                                    "Lỗi gửi ảnh: " + error,
+                                    Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
+            }, 2000);
 
         } catch (Exception e) {
             Log.e(TAG, "Error preparing image: " + e.getMessage());
@@ -435,13 +461,6 @@ public class MessageActivity extends AppCompatActivity implements MessageSocketM
     @Override
     public void onNewMessage(Message message) {
         try {
-            Log.d(TAG, "New message received:");
-            Log.d(TAG, "- Message ID: " + message.getId());
-            Log.d(TAG, "- Conversation ID: " + message.getConversationId());
-            Log.d(TAG, "- Sender: " + message.getSender().getName());
-            Log.d(TAG, "- Content: " + message.getContent());
-            Log.d(TAG, "- Type: " + message.getMessageType());
-
             if (message.getConversationId().equals(conversationId)) {
                 runOnUiThread(() -> {
                     try {
