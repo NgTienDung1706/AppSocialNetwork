@@ -8,12 +8,14 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import vn.tiendung.socialnetwork.Model.MessageResponse;
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.Model.UserModel;
@@ -71,5 +73,11 @@ public interface APIService {
 
     @GET("/api/post/{userId}")
     Call<List<Post>> getAllPosts(@Path("userId") String userId);
+
+    @POST("/api/post/reaction/{postId}")
+    Call<Void> addOrUpdateReaction(@Path("postId") String postId, @Body Map<String, String> body);
+
+    @DELETE("/api/post/reaction/{postId}")
+    Call<Void> deleteReaction(@Path("postId") String postId, @Query("userId") String userId);
 
 }

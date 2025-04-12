@@ -2,7 +2,9 @@ package vn.tiendung.socialnetwork.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,17 +22,28 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import vn.tiendung.socialnetwork.API.APIService;
+import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Fragment.ReactionPopupWindow;
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.UI.PostDetailActivity;
+import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private List<Post> posts;
     private Context context;
 
+    APIService apiService;
+
+    String userId;
     public PostAdapter(Context context, List<Post> posts) {
         this.context = context;
         this.posts = posts;
@@ -46,6 +59,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull PostAdapter.ViewHolder holder, int position) {
         Post post = posts.get(position);
+        apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        userId = SharedPrefManager.getInstance(context).getUserId();
 
         // Load avatar
         Glide.with(context)
@@ -71,8 +86,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         // Tạo popup riêng cho mỗi item
         ReactionPopupWindow popup = new ReactionPopupWindow(holder.itemView.getContext(), reaction -> {
-            holder.tvReaction.setText(reaction);
-            holder.btnReaction.setImageResource(getReactionIcon(reaction));
+
+            Map<String, String> body = new HashMap<>();
+            body.put("userId", userId);
+            body.put("reaction", reaction);
+
+            apiService.addOrUpdateReaction(post.getId(), body).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        holder.tvReaction.setText(reaction);
+                        holder.btnReaction.setImageResource(getReactionIcon(reaction));
+                    } else {
+                        Toast.makeText(context, "Cập nhật cảm xúc thất bại", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(context, "Lỗi mạng", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         // Nhấn giữ để mở reaction bar
@@ -83,9 +117,60 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         // Nhấn thường là thích
         holder.btnReaction.setOnClickListener(v -> {
-            holder.tvReaction.setText("Thích");
-            holder.btnReaction.setImageResource(getReactionIcon("Thích"));
+            // Kiểm tra icon hiện tại đang hiển thị
+            int currentIcon = ((ImageButton) v).getDrawable() != null
+                    ? ((ImageButton) v).getDrawable().getConstantState().hashCode()
+                    : -1;
+
+            // Lấy icon mặc định
+            int defaultIcon = context.getResources().getDrawable(R.drawable.ic_like).getConstantState().hashCode();
+
+            // Nếu icon hiện tại khác icon mặc định (không phải "Thích"), đặt lại icon về mặc định
+            if (currentIcon != defaultIcon) {
+                apiService.deleteReaction(post.getId(), userId).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            post.setMyReaction(null);
+                            holder.tvReaction.setText("Thích");
+                            holder.btnReaction.setImageResource(getReactionIcon("default"));
+                        } else {
+                            Toast.makeText(context, "Xoá cảm xúc thất bại", Toast.LENGTH_SHORT).show();
+                            Log.e("DELETE_REACTION", "Code: " + response.code());
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(context, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Map<String, String> body = new HashMap<>();
+                body.put("userId", userId);
+                body.put("reaction", "like");
+
+                apiService.addOrUpdateReaction(post.getId(), body).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            //post.setMyReaction("Thích");
+                            holder.tvReaction.setText("Thích");
+                            holder.btnReaction.setImageResource(getReactionIcon("Thích"));
+                        } else {
+                            Toast.makeText(context, "Cập nhật cảm xúc thất bại", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(context, "Lỗi mạng", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         });
+
 
         // Click ảnh -> mở chi tiết bài viết
         holder.picture.setOnClickListener(v -> {
@@ -95,6 +180,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             intent.putExtra("content", post.getContent().getCaption());
             context.startActivity(intent);
         });
+
+        String currentReaction = post.getMyReaction();
+        if (currentReaction != null) {
+            holder.tvReaction.setText(currentReaction);
+            holder.btnReaction.setImageResource(getReactionIcon(currentReaction));
+        } else {
+            holder.tvReaction.setText("Thích");
+            holder.btnReaction.setImageResource(getReactionIcon("default"));
+        }
     }
 
     @Override
@@ -128,7 +222,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             case "Wow": return R.drawable.ic_reaction_wow;
             case "Buồn": return R.drawable.ic_reaction_sad;
             case "Giận": return R.drawable.ic_reaction_angry;
-            default: return R.drawable.ic_reaction_like;
+            default: return R.drawable.ic_like;
         }
     }
 }

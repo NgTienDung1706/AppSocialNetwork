@@ -12,6 +12,15 @@ public class Post {
     private String location;
     private Map<String, List<String>> reactions; // like, love, haha...
 
+    private String myReaction; // "Thích", "Haha", "Buồn", v.v...
+
+    public String getMyReaction() {
+        return myReaction;
+    }
+
+    public void setMyReaction(String myReaction) {
+        this.myReaction = myReaction;
+    }
     public String getId() { return _id; }
     public Content getContent() { return content; }
     public User getUser() { return userid; }
