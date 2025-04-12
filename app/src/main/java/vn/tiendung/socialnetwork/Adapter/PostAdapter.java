@@ -178,6 +178,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             intent.putExtra("avatar", post.getUser().getAvatar());
             intent.putExtra("name", post.getUser().getName());
             intent.putExtra("content", post.getContent().getCaption());
+            intent.putExtra("postId", post.getId());
             context.startActivity(intent);
         });
 

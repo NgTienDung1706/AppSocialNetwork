@@ -51,7 +51,6 @@ public class ProfileFragment extends Fragment implements OnScrollListener, EditP
     private FlexboxLayout flexboxLayout;
     @Nullable
     @Override
-
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Tạo View trước khi return
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
