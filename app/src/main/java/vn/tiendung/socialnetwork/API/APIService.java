@@ -1,7 +1,5 @@
 package vn.tiendung.socialnetwork.API;
 
-import com.google.gson.JsonObject;
-
 import java.util.List;
 import java.util.Map;
 
@@ -16,10 +14,8 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
-import vn.tiendung.socialnetwork.API.Response.ApiResponse;
-import vn.tiendung.socialnetwork.Model.ChatItem;
-import vn.tiendung.socialnetwork.Model.LoginResponse;
 import vn.tiendung.socialnetwork.Model.MessageResponse;
+import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.Model.UserModel;
 import vn.tiendung.socialnetwork.Model.UserProfile;
 import vn.tiendung.socialnetwork.Model.Message;
@@ -72,4 +68,8 @@ public interface APIService {
             @Part("conversation_id") RequestBody conversationId,
             @Part("sender_id") RequestBody senderId
     );
+
+    @GET("/api/post/{userId}")
+    Call<List<Post>> getAllPosts(@Path("userId") String userId);
+
 }

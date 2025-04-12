@@ -18,6 +18,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 import vn.tiendung.socialnetwork.Fragment.ReactionPopupWindow;
@@ -29,10 +31,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private List<Post> posts;
     private Context context;
 
-    private TextView tvReaction;
-    private ImageButton btnReaction;
-    private ReactionPopupWindow reactionPopup;
-
     public PostAdapter(Context context, List<Post> posts) {
         this.context = context;
         this.posts = posts;
@@ -40,57 +38,62 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PostAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
-
-        tvReaction = view.findViewById(R.id.tvReaction);
-        btnReaction = view.findViewById(R.id.btnReaction);
-
-        reactionPopup = new ReactionPopupWindow(view.getContext(), reaction -> {
-            tvReaction.setText(reaction);
-        });
-        btnReaction.setOnLongClickListener(v -> {
-            reactionPopup.show(btnReaction);
-            return true;
-        });
-        return new ViewHolder(view);
+        return new PostAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PostAdapter.ViewHolder holder, int position) {
         Post post = posts.get(position);
-        holder.avatar.setImageResource(post.getAvatar());
-        holder.name.setText(post.getName());
-        holder.content.setText(post.getContent());
+
+        // Load avatar
+        Glide.with(context)
+                .load(post.getUser().getAvatar())
+                .placeholder(R.drawable.circleusersolid)
+                .into(holder.avatar);
+
+        holder.name.setText(post.getUser().getName());
+        holder.time.setText(post.getCreatedAt());
+        holder.content.setText(post.getContent().getCaption());
+
+        // Load ảnh đầu tiên nếu có
+        List<String> pictures = post.getContent().getPictures();
+        if (pictures != null && !pictures.isEmpty()) {
+            holder.picture.setVisibility(View.VISIBLE);
+            Glide.with(context)
+                    .load(pictures.get(0))
+                    .placeholder(R.drawable.ic_coin)
+                    .into(holder.picture);
+        } else {
+            holder.picture.setVisibility(View.GONE);
+        }
 
         // Tạo popup riêng cho mỗi item
         ReactionPopupWindow popup = new ReactionPopupWindow(holder.itemView.getContext(), reaction -> {
-            holder.tvReaction.setText(reaction);  // Cập nhật TextView phản hồi
-            holder.btnReaction.setImageResource(getReactionIcon(reaction));  //  thay icon
+            holder.tvReaction.setText(reaction);
+            holder.btnReaction.setImageResource(getReactionIcon(reaction));
         });
 
-        // Gắn sự kiện nhấn giữ để mở reaction bar
+        // Nhấn giữ để mở reaction bar
         holder.btnReaction.setOnLongClickListener(v -> {
             popup.show(holder.btnReaction);
             return true;
         });
-        // Nếu chỉ ấn thì là thích
+
+        // Nhấn thường là thích
         holder.btnReaction.setOnClickListener(v -> {
             holder.tvReaction.setText("Thích");
             holder.btnReaction.setImageResource(getReactionIcon("Thích"));
-
         });
-        // Xử lý sự kiện click item
-        holder.itemView.setOnClickListener(v -> {
-            // Gọi Intent để mở PostDetailActivity
+
+        // Click ảnh -> mở chi tiết bài viết
+        holder.picture.setOnClickListener(v -> {
             Intent intent = new Intent(context, PostDetailActivity.class);
-
-            // Truyền dữ liệu sang Activity
-            intent.putExtra("avatar", post.getAvatar());
-            intent.putExtra("name", post.getName());
-            intent.putExtra("content", post.getContent());
-
-            context.startActivity(intent); // Bắt đầu Activity
+            intent.putExtra("avatar", post.getUser().getAvatar());
+            intent.putExtra("name", post.getUser().getName());
+            intent.putExtra("content", post.getContent().getCaption());
+            context.startActivity(intent);
         });
     }
 
@@ -100,21 +103,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView avatar;
-        TextView name, content, tvReaction;
+        ImageView avatar, picture;
+        TextView name, time, content, tvReaction;
         ImageButton btnReaction;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             avatar = itemView.findViewById(R.id.imageAvatar);
             name = itemView.findViewById(R.id.textName);
+            time = itemView.findViewById(R.id.textTime);
             content = itemView.findViewById(R.id.textContent);
+            picture = itemView.findViewById(R.id.imgpicture);
             tvReaction = itemView.findViewById(R.id.tvReaction);
             btnReaction = itemView.findViewById(R.id.btnReaction);
         }
     }
 
-    // chuyển reaction thành icon tương ứng
     private int getReactionIcon(String reaction) {
         switch (reaction) {
             case "Thích": return R.drawable.ic_reaction_like;

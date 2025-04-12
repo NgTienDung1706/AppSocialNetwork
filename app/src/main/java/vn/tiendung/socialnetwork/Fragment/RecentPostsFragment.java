@@ -23,7 +23,7 @@ import vn.tiendung.socialnetwork.Utils.OnScrollListener;
 public class RecentPostsFragment extends Fragment {
     private OnScrollListener scrollListener;
     private RecyclerView recyclerView;
-    private PostAdapter adapter;
+    //private PostAdapter adapter;
     private List<String> postList;
 
     @Nullable
@@ -48,13 +48,13 @@ public class RecentPostsFragment extends Fragment {
             }
         });
         List<Post> posts = new ArrayList<>();
-        posts.add(new Post(R.drawable.circleusersolid, "Tiến Dũng", "Hôm nay trời đẹp quá!"));
-        posts.add(new Post(R.drawable.circleusersolid, "Minh Tâm", "Mình vừa hoàn thành một dự án lớn!"));
-        posts.add(new Post(R.drawable.circleusersolid, "Thu Hà", "Cùng đi cafe không mọi người?"));
+        //posts.add(new Post(R.drawable.circleusersolid, "Tiến Dũng", "Hôm nay trời đẹp quá!"));
+        //posts.add(new Post(R.drawable.circleusersolid, "Minh Tâm", "Mình vừa hoàn thành một dự án lớn!"));
+        //posts.add(new Post(R.drawable.circleusersolid, "Thu Hà", "Cùng đi cafe không mọi người?"));
 
-        adapter = new PostAdapter(getContext(), posts);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
+        //adapter = new PostAdapter(getContext(), posts);
+        //recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        //recyclerView.setAdapter(adapter);
 
         return view;
     }
