@@ -158,7 +158,9 @@ public class ProfileFragment extends Fragment implements OnScrollListener, EditP
                     // Hiển thị ảnh đại diện bằng Glide
                     Glide.with(requireContext())
                             .load(userProfile.getAvatar())
-                            .placeholder(R.drawable.avt_default)
+                            .placeholder(R.drawable.avt_default)// Avatar mặc định
+                            .error(R.drawable.avt_default)       // Avatar khi lỗi
+                            .circleCrop()                       // Biến ảnh thành hình tròn
                             .into(ivAvatar);
 
                     // Hiển thị các chủ đề yêu thích

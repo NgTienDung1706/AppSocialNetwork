@@ -65,7 +65,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         // Load avatar
         Glide.with(context)
                 .load(post.getUser().getAvatar())
-                .placeholder(R.drawable.circleusersolid)
+                .placeholder(R.drawable.circleusersolid) // Avatar mặc định
+                .error(R.drawable.circleusersolid)       // Avatar khi lỗi
+                .circleCrop() // Biến ảnh thành hình tròn
                 .into(holder.avatar);
 
         holder.name.setText(post.getUser().getName());

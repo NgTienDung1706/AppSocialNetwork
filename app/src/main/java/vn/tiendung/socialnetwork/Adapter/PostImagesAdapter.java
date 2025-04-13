@@ -37,8 +37,8 @@ public class PostImagesAdapter extends RecyclerView.Adapter<PostImagesAdapter.Im
 
         Glide.with(context)
                 .load(imageUrl)  // Tải ảnh từ URL
-/*                .placeholder(R.drawable.placeholder)  // Ảnh hiển thị trong khi đang tải
-                .error(R.drawable.error_image)  // Ảnh lỗi nếu không thể tải*/
+                .placeholder(R.drawable.photo)  // Ảnh hiển thị trong khi đang tải
+                .error(R.drawable.ic_reaction_sad)  // Ảnh lỗi nếu không thể tải*/
                 .into(holder.imageView);  // Đặt ảnh vào ImageView
     }
 

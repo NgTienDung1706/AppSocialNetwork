@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="8dp">
 
             <!-- Phần trên cùng: Tên người dùng + Nút tương tác -->
             <LinearLayout
@@ -66,7 +66,8 @@
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
 
                 <!-- Ảnh bài viết -->
                 <androidx.viewpager2.widget.ViewPager2
@@ -107,6 +108,36 @@
                 android:text="#audi #rs7 #quattro"
                 android:textSize="14sp"
                 android:textColor="@color/nd" />
+
+
+            <!--reaction bar-->
+            <LinearLayout
+                android:id="@+id/reactionBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnReaction"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?android:selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_like"
+                    android:contentDescription="Cảm xúc"
+                    app:tint="@color/rd" />
+
+                <TextView
+                    android:id="@+id/tvReactionCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="123 lượt cảm xúc"
+                    android:textColor="@color/st"
+                    android:textSize="14sp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
 
             <!-- Danh sách bình luận -->
             <TextView

@@ -71,6 +71,7 @@ public interface APIService {
             @Part("sender_id") RequestBody senderId
     );
 
+    // Post API
     @GET("/api/post/{userId}")
     Call<List<Post>> getAllPosts(@Path("userId") String userId);
 
