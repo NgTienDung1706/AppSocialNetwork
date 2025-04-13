@@ -51,7 +51,6 @@ public class ProfileFragment extends Fragment implements OnScrollListener, EditP
     private FlexboxLayout flexboxLayout;
     @Nullable
     @Override
-
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Tạo View trước khi return
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
@@ -159,7 +158,9 @@ public class ProfileFragment extends Fragment implements OnScrollListener, EditP
                     // Hiển thị ảnh đại diện bằng Glide
                     Glide.with(requireContext())
                             .load(userProfile.getAvatar())
-                            .placeholder(R.drawable.avt_default)
+                            .placeholder(R.drawable.avt_default)// Avatar mặc định
+                            .error(R.drawable.avt_default)       // Avatar khi lỗi
+                            .circleCrop()                       // Biến ảnh thành hình tròn
                             .into(ivAvatar);
 
                     // Hiển thị các chủ đề yêu thích

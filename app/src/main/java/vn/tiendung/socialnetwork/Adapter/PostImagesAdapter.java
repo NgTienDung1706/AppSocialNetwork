@@ -7,15 +7,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 import vn.tiendung.socialnetwork.R;
 
 public class PostImagesAdapter extends RecyclerView.Adapter<PostImagesAdapter.ImageViewHolder> {
-    private final List<Integer> imageList; // ID của các ảnh trong drawable
+    private final List<String> imageList; // URL của các ảnh trong drawable
     private final Context context;
 
-    public PostImagesAdapter(Context context, List<Integer> imageList) {
+    public PostImagesAdapter(Context context, List<String> imageList) {
         this.context = context;
         this.imageList = imageList;
     }
@@ -29,7 +32,14 @@ public class PostImagesAdapter extends RecyclerView.Adapter<PostImagesAdapter.Im
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-        holder.imageView.setImageResource(imageList.get(position));
+        // Lấy URL ảnh từ imageList và sử dụng Glide để tải vào ImageView
+        String imageUrl = imageList.get(position);
+
+        Glide.with(context)
+                .load(imageUrl)  // Tải ảnh từ URL
+                .placeholder(R.drawable.photo)  // Ảnh hiển thị trong khi đang tải
+                .error(R.drawable.ic_reaction_sad)  // Ảnh lỗi nếu không thể tải*/
+                .into(holder.imageView);  // Đặt ảnh vào ImageView
     }
 
     @Override
