@@ -55,7 +55,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private Button btnFollow;
     private CommentAdapter commentAdapter;
     private List<Comment> commentList;
-    private String postId;
+    private String postId, userId;
     private ImageButton btnReaction;
 
     private Post postModel;
@@ -74,15 +74,8 @@ public class PostDetailActivity extends AppCompatActivity {
         AnhXa();
 
         // Nhận postId từ Intend để loadPost
-        loadPostById(postId);
-
-        // Danh sách ảnh mẫu (thay bằng dữ liệu thực tế)
-        List<Integer> imageList = Arrays.asList(
-                R.drawable.bell,
-                R.drawable.ic_camera,
-                R.drawable.usergroupsolid
-        );
-
+        // Nhận userId từ SharePrefManager
+        loadPostById(postId, userId);
 
 
         // Dữ liệu mẫu
@@ -103,6 +96,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private void AnhXa() {
         postId = getIntent().getStringExtra("postId");
+        userId = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
         // Khởi tạo các view từ XML
         btnReaction = findViewById(R.id.btnReaction);
         tvReactionCount = findViewById(R.id.tvReactionCount);
@@ -123,10 +117,10 @@ public class PostDetailActivity extends AppCompatActivity {
         btnFollow = findViewById(R.id.btnFollow);
     }
 
-    private void loadPostById(String postId) {
+    private void loadPostById(String postId, String userId) {
         // Khởi tạo Retrofit và APIService
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-        Call<Post> call = apiService.getPostById(postId);
+        Call<Post> call = apiService.getPostById(postId, userId);
 
         call.enqueue(new Callback<Post>() {
             @Override
@@ -139,23 +133,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(PostDetailActivity.this, "Không tìm thấy bài viết", Toast.LENGTH_SHORT).show();
                 }
-
-/*                debug, đừng quan tâm
-                try {
-                    if (response.errorBody() != null) {
-                        Log.e("ERROR_BODY", response.errorBody().string());
-                    } else if (response.body() == null) {
-                        // Debug: API trả JSON nhưng không parse được
-                        Log.e("DEBUG", "Response body null. Có thể do sai định dạng hoặc thiếu field.");
-
-                        BufferedSource source = Okio.buffer(Okio.source(response.raw().body().byteStream()));
-                        String rawJson = source.readUtf8();
-                        Log.d("RAW_JSON", rawJson);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
-
             }
 
             @Override
@@ -180,17 +157,17 @@ public class PostDetailActivity extends AppCompatActivity {
         vpPostImages.setAdapter(adapter);
         circleIndicator.setViewPager(vpPostImages);
 
+        // Cập nhật số lượt cảm xúc Gọi API
+        tvReactionCount.setText(String.valueOf(post.getTotalReactionsCount() + " lượt cảm xúc"));
+
+        // Cập nhật trạng thái cảm xúc
+        // gọi API và hàm, sửa từ trong ReactionPopupWindow - đem hàm reaction đưa từ postAdatper vào trong đó
+        btnReaction.setImageResource(post.getMyReactionsIcon());
+
         // Cập nhật danh sách bình luận
 /*        CommentsAdapter commentsAdapter = new CommentsAdapter(post.get); // Giả sử post có trường comments chứa danh sách bình luận
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentsAdapter);*/
-
-        // Cập nhật số lượt cảm xúc Gọi API
-        //tvReactionCount.setText(String.valueOf(post.getReactionCount()));
-
-        // Cập nhật trạng thái cảm xúc
-        // gọi API và hàm, sửa từ trong ReactionPopupWindow - đem hàm reaction đưa từ postAdatper vào trong đó
-        //btnReaction.setImageResource(post.isLiked() ? R.drawable.ic_like_filled : R.drawable.ic_like);
 
 /*        // Cập nhật nút Follow (nếu cần thiết)
         btnFollow.setOnClickListener(v -> {

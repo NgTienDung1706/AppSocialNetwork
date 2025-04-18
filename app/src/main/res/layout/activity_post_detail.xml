@@ -58,6 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Follow"
+                    android:visibility="invisible"
                     android:backgroundTint="@color/rd"
                     android:textColor="@color/st" />
             </LinearLayout>
@@ -121,12 +122,14 @@
 
                 <ImageButton
                     android:id="@+id/btnReaction"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="?android:selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_like"
-                    android:contentDescription="Cảm xúc"
-                    app:tint="@color/rd" />
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="@null"
+                    android:padding="0dp"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Reaction Button"
+                    android:src="@drawable/ic_like" />
+
 
                 <TextView
                     android:id="@+id/tvReactionCount"

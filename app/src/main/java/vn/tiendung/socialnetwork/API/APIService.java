@@ -84,6 +84,9 @@ public interface APIService {
     @GET("/api/post/myPosts/{userId}")
     Call<List<Post>> getMyPosts(@Path("userId") String userId);
 
-    @GET("/api/post/postDetail/{postId}")
-    Call<Post> getPostById(@Path("postId") String postId);
+    @GET("/api/post/postDetail")
+    Call<Post> getPostById(
+            @Query("postId") String postId,
+            @Query("userId") String userId
+    );
 }
