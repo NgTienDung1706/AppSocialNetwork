@@ -1,58 +1,65 @@
 package vn.tiendung.socialnetwork.Model;
 
+import java.util.List;
+
 public class Comment {
-    private int id;
-    /* Sau này sẽ sửa lại để lấy thông tin qua userId*/
+    private String id;
+    private String postId;
+    private String userId;
     private String userName;
+    private String avatarUrl;
     private String content;
-    private int likes;
-    private int parent;
+    private String createdAt; // ISO 8601 string: "2025-04-07T14:00:00Z"
+    private List<String> likes; // Danh sách userId đã like
+    private boolean isDeleted;
+    private boolean myLike;
 
-    public Comment(int id, String userName, String content, int likes, int parent) {
+    public boolean isMyLike() {
+        return myLike;
+    }
+
+    public void setMyLike(boolean myLike) {
+        this.myLike = myLike;
+    }
+
+    public Comment() {}
+
+    public Comment(String id, String postId, String userId, String userName,
+                   String avatarUrl, String content, String createdAt,
+                   List<String> likes, boolean isDeleted, boolean myLike) {
         this.id = id;
+        this.postId = postId;
+        this.userId = userId;
         this.userName = userName;
+        this.avatarUrl = avatarUrl;
         this.content = content;
+        this.createdAt = createdAt;
         this.likes = likes;
-        this.parent = parent;
+        this.isDeleted = isDeleted;
+        this.myLike = myLike;
     }
 
-    public int getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public String getPostId() { return postId; }
+    public String getUserId() { return userId; }
+    public String getUserName() { return userName; }
+    public String getAvatarUrl() { return avatarUrl; }
+    public String getContent() { return content; }
+    public String getCreatedAt() { return createdAt; }
+    public List<String> getLikes() { return likes; }
+    public boolean isDeleted() { return isDeleted; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public void setId(String id) { this.id = id; }
+    public void setPostId(String postId) { this.postId = postId; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public void setUserName(String userName) { this.userName = userName; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+    public void setContent(String content) { this.content = content; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+    public void setLikes(List<String> likes) { this.likes = likes; }
+    public void setDeleted(boolean deleted) { isDeleted = deleted; }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public int getLikes() {
-        return likes;
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
-
-    public int getParent() {
-        return parent;
-    }
-
-    public void setParent(int parent) {
-        this.parent = parent;
+    public boolean isLikedBy(String currentUserId) {
+        return likes != null && likes.contains(currentUserId);
     }
 }

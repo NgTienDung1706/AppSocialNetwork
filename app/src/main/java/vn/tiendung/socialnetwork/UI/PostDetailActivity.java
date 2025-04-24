@@ -77,21 +77,6 @@ public class PostDetailActivity extends AppCompatActivity {
         // Nhận userId từ SharePrefManager
         loadPostById(postId, userId);
 
-
-        // Dữ liệu mẫu
-        commentList = new ArrayList<>();
-        commentList.add(new Comment(1, "User 1", "Great post!", 10, 0));
-        commentList.add(new Comment(2, "User 2", "Amazing content!", 5, 0));
-        commentList.add(new Comment(2, "User 2", "Amazing content!", 5, 0));
-        commentList.add(new Comment(2, "User 2", "Amazing content!", 5, 0));
-        commentList.add(new Comment(2, "User 2", "Amazing content!", 5, 0));
-        commentList.add(new Comment(2, "User 2", "Amazing content!", 5, 0));
-        commentList.add(new Comment(3, "User 3", "Thanks for sharing.", 3, 0));
-
-        // Gắn adapter
-        commentAdapter = new CommentAdapter(commentList);
-        rvComments.setAdapter(commentAdapter);
-
     }
 
     private void AnhXa() {
@@ -142,7 +127,6 @@ public class PostDetailActivity extends AppCompatActivity {
         });
     }
 
-
     private void updateUIWithPost(Post post) {
         // Cập nhật thông tin người dùng
         loadUserById(post.getUser().get_id());
@@ -152,28 +136,36 @@ public class PostDetailActivity extends AppCompatActivity {
         tvHashtags.setText(post.getContent().getHashtags().toString());
 
         // Cập nhật ảnh bài viết (ViewPager2)
-        List<String> imageUrls = post.getContent().getPictures(); // Giả sử post có trường images chứa URL ảnh
-        PostImagesAdapter adapter = new PostImagesAdapter(this.getApplicationContext(),imageUrls);
+        List<String> imageUrls = post.getContent().getPictures();
+        PostImagesAdapter adapter = new PostImagesAdapter(this.getApplicationContext(), imageUrls);
         vpPostImages.setAdapter(adapter);
         circleIndicator.setViewPager(vpPostImages);
 
-        // Cập nhật số lượt cảm xúc Gọi API
+        // Cập nhật số lượt cảm xúc
         tvReactionCount.setText(String.valueOf(post.getTotalReactionsCount() + " lượt cảm xúc"));
 
         // Cập nhật trạng thái cảm xúc
-        // gọi API và hàm, sửa từ trong ReactionPopupWindow - đem hàm reaction đưa từ postAdatper vào trong đó
         btnReaction.setImageResource(post.getMyReactionsIcon());
 
-        // Cập nhật danh sách bình luận
-/*        CommentsAdapter commentsAdapter = new CommentsAdapter(post.get); // Giả sử post có trường comments chứa danh sách bình luận
-        rvComments.setLayoutManager(new LinearLayoutManager(this));
-        rvComments.setAdapter(commentsAdapter);*/
+        // Khởi tạo commentAdapter trước khi cập nhật
+        if (commentAdapter == null) {
+            commentAdapter = new CommentAdapter(this, new ArrayList<>(), userId, new CommentAdapter.OnCommentActionListener() {
+                @Override
+                public void onLikeClicked(Comment comment) {
+                    // Xử lý khi người dùng bấm like
+                    // Ví dụ: Thực hiện update like cho comment
+                    //updateLikeForComment(comment);
+                }
+            });
+        }
 
-/*        // Cập nhật nút Follow (nếu cần thiết)
-        btnFollow.setOnClickListener(v -> {
-            // Xử lý sự kiện theo dõi
-        });*/
+        // Cập nhật danh sách bình luận
+        loadComments(postId);  // Lấy bình luận từ API và cập nhật Adapter
+
+        rvComments.setLayoutManager(new LinearLayoutManager(this));
+        rvComments.setAdapter(commentAdapter);  // Cập nhật adapter vào RecyclerView
     }
+
     private void loadUserById(String userId) {
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
         Call<UserProfile> call = apiService.getUserProfile(userId);
@@ -199,6 +191,32 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<UserProfile> call, Throwable t) {
                 Toast.makeText(PostDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void loadComments(String postId) {
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<List<Comment>> call = apiService.getCommentsByPostId(postId,userId);
+
+        call.enqueue(new Callback<List<Comment>>() {
+            @Override
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("API Response", "Comments: " + response.body().toString());
+                    commentList = response.body();
+                    commentAdapter.updateComments(commentList);  // Cập nhật Adapter với dữ liệu mới
+                } else {
+                    Log.d("API Response", "No comments found or error: " + response.message());
+                    commentList = new ArrayList<>();  // Đảm bảo commentList không null
+                    Toast.makeText(PostDetailActivity.this, "Không tìm thấy comment", Toast.LENGTH_SHORT).show();
+                    commentAdapter.updateComments(commentList);  // Cập nhật Adapter với danh sách rỗng
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
+                Toast.makeText(PostDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Log.e("loadComments", "Error: ", t);  // Ghi lại lỗi
             }
         });
     }

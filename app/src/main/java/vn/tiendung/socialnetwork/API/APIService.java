@@ -16,6 +16,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.Model.MessageResponse;
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.Model.UserModel;
@@ -89,4 +90,15 @@ public interface APIService {
             @Query("postId") String postId,
             @Query("userId") String userId
     );
+
+    @GET("/api/posts/{postId}/comments")
+    Call<List<Comment>> getCommentsByPostId(@Path("postId") String postId, @Query("userId") String userId);
+    @POST("/api/posts/{postId}/comments")
+    Call<Void> createCommentByPostId(@Path("postId") String postId);
+    @PUT("/api/comments/{commentId}")
+    Call<Void> updateCommentByCommentId(@Path("commentId") String commentId);
+    @DELETE ("/api/comments/{commentId}")
+    Call<Void> deleteCommentByCommentId(@Path("commentId") String commentId);
+    @POST ("/api/comments/{commentId}/like")
+    Call<Void> likeCommentByCommentId(@Path("commentId") String commentId);
 }
