@@ -15,10 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import vn.tiendung.socialnetwork.Callback.LikeCallback;
 import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.R;
-import vn.tiendung.socialnetwork.Repository.CommentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +28,24 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private String currentUserId;
 
     public interface OnCommentActionListener {
-        void onLikeClicked(Comment comment);
+        void onLikeClicked(Comment comment, int position);
     }
 
-    private OnCommentActionListener listener;
+    public interface OnCommentDeleteListener {
+        void onDelete(String commentId);
+    }
 
-    public CommentAdapter(Context context, List<Comment> commentList, String currentUserId, OnCommentActionListener listener) {
+    private OnCommentActionListener likeListener;
+    private OnCommentDeleteListener deleteListener;
+
+    public CommentAdapter(Context context, List<Comment> commentList, String currentUserId,
+                          OnCommentActionListener likeListener,
+                          OnCommentDeleteListener deleteListener) {
         this.context = context;
-        // Khởi tạo commentList nếu chưa có dữ liệu
-        this.commentList = (commentList != null) ? commentList : new ArrayList<>();
+        this.commentList = commentList != null ? commentList : new ArrayList<>();
         this.currentUserId = currentUserId;
-        this.listener = listener;
+        this.likeListener = likeListener;
+        this.deleteListener = deleteListener;
     }
 
     @NonNull
@@ -70,7 +75,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             holder.tvLikeCount.setText(String.valueOf(comment.getLikes().size()));
             holder.tvTime.setText(formatTime(comment.getCreatedAt()));
 
-            // Cài đặt số dòng tối đa cho comment
             holder.tvContent.post(() -> {
                 int lineCount = holder.tvContent.getLineCount();
                 if (lineCount > 3) {
@@ -81,17 +85,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 }
             });
 
-            // Xử lý sự kiện cho nút xem thêm
             holder.tvToggleContent.setOnClickListener(v -> {
-                if (holder.tvToggleContent.getText().equals("Xem thêm")) {
-                    holder.tvContent.setMaxLines(Integer.MAX_VALUE);
-                    holder.tvToggleContent.setText("Thu gọn");
-                } else {
-                    holder.tvContent.setMaxLines(3);
-                    holder.tvToggleContent.setText("Xem thêm");
-                }
+                boolean expanded = holder.tvContent.getMaxLines() == Integer.MAX_VALUE;
+                holder.tvContent.setMaxLines(expanded ? 3 : Integer.MAX_VALUE);
+                holder.tvToggleContent.setText(expanded ? "Xem thêm" : "Thu gọn");
             });
-
 
             Glide.with(context)
                     .load(comment.getAvatarUrl())
@@ -99,31 +97,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                     .placeholder(R.drawable.circleusersolid)
                     .into(holder.imgAvatar);
 
-            if (comment.isMyLike()) {
-                holder.btnLike.setImageResource(R.drawable.ic_comment_heart); // icon fill
-            } else {
-                holder.btnLike.setImageResource(R.drawable.ic_comment_outline_heart); // icon mặc định
-            }
+            holder.btnLike.setImageResource(
+                    comment.isMyLike() ? R.drawable.ic_comment_heart : R.drawable.ic_comment_outline_heart);
 
             holder.btnLike.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onLikeClicked(comment);  // xử lý logic
-                }
-
-                boolean isLiked = comment.isMyLike();
-                comment.setMyLike(!isLiked);
-
-                if (comment.isMyLike()) {
-                    comment.getLikes().add(currentUserId);
-                    new CommentRepository().likeComment(comment.getId(), currentUserId, new LikeCallback(comment.getId()));
-                } else {
-                    comment.getLikes().remove(currentUserId);
-                    new CommentRepository().unlikeComment(comment.getId(), currentUserId, new LikeCallback(comment.getId()));
-                }
-
-                notifyItemChanged(holder.getAdapterPosition());
+                if (likeListener != null) likeListener.onLikeClicked(comment, holder.getAdapterPosition());
             });
-
 
             holder.itemView.setOnLongClickListener(v -> {
                 if (currentUserId.equals(comment.getUserId())) {
@@ -137,6 +116,40 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public int getItemCount() {
         return commentList.size();
+    }
+
+    private void showBottomSheet(Comment comment) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog((Activity) context);
+        View sheetView = LayoutInflater.from(context).inflate(R.layout.comment_options_bottom_sheet, null);
+        bottomSheetDialog.setContentView(sheetView);
+
+        TextView tvDelete = sheetView.findViewById(R.id.tvDeleteComment);
+        TextView tvCancel = sheetView.findViewById(R.id.tvCancel);
+
+        tvDelete.setOnClickListener(v -> {
+            if (deleteListener != null) {
+                deleteListener.onDelete(comment.getId());
+            }
+            bottomSheetDialog.dismiss();
+        });
+
+        tvCancel.setOnClickListener(v -> bottomSheetDialog.dismiss());
+
+        bottomSheetDialog.show();
+    }
+
+    public void updateComments(List<Comment> newComments) {
+        commentList = new ArrayList<>(newComments);
+        notifyDataSetChanged();
+    }
+
+    public void updateSingleComment(Comment updatedComment, int position) {
+        commentList.set(position, updatedComment);
+        notifyItemChanged(position);
+    }
+
+    private String formatTime(String createdAt) {
+        return "Vài phút trước"; // Placeholder, có thể dùng thư viện time sau
     }
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
@@ -157,53 +170,5 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             btnLike = itemView.findViewById(R.id.btnLike);
             layoutLike = itemView.findViewById(R.id.layoutLike);
         }
-    }
-
-    private void showBottomSheet(Comment comment) {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog((Activity) context);
-        View sheetView = LayoutInflater.from(context).inflate(R.layout.comment_options_bottom_sheet, null);
-        bottomSheetDialog.setContentView(sheetView);
-
-        TextView tvDelete = sheetView.findViewById(R.id.tvDeleteComment);
-        TextView tvCancel = sheetView.findViewById(R.id.tvCancel);
-
-        tvDelete.setOnClickListener(v -> {
-            // Xóa comment trong database
-            deleteCommentFromDatabase(comment);
-
-            // Cập nhật lại RecyclerView
-            removeCommentFromList(comment);
-
-            // Đóng bottomSheet
-            bottomSheetDialog.dismiss();
-        });
-
-        tvCancel.setOnClickListener(v -> bottomSheetDialog.dismiss());
-
-        bottomSheetDialog.show();
-    }
-
-    private void deleteCommentFromDatabase(Comment comment) {
-        // Logic để xóa comment khỏi database (API, hoặc local storage)
-    }
-
-    private void removeCommentFromList(Comment comment) {
-        // Xóa comment trong danh sách và cập nhật RecyclerView
-        commentList.remove(comment);
-        notifyDataSetChanged();
-    }
-    public void updateComments(List<Comment> newComments) {
-        if (this.commentList == null) {
-            this.commentList = new ArrayList<>();
-        }
-        this.commentList.clear();
-        this.commentList.addAll(newComments);
-        notifyDataSetChanged();  // Cập nhật RecyclerView
-    }
-
-
-    private String formatTime(String createdAt) {
-        // TODO: Chuyển thời gian ISO thành định dạng dễ đọc (VD: "3 phút trước")
-        return "Vài phút trước"; // Placeholder tạm
     }
 }

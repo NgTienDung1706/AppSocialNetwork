@@ -88,11 +88,17 @@ public class PostDetailActivity extends AppCompatActivity {
         btnSendComment = findViewById(R.id.btnSendComment);
 
         rvComments.setLayoutManager(new LinearLayoutManager(this));
-        commentAdapter = new CommentAdapter(this, new ArrayList<>(), currentUserId, comment -> {
-            // Xử lý like comment nếu cần
-        });
+        commentAdapter = new CommentAdapter(
+                this,
+                new ArrayList<>(),
+                currentUserId,
+                (comment, position) -> viewModel.toggleLikeComment(currentUserId, comment, position),
+                commentId -> viewModel.deleteComment(commentId)
+        );
+
         rvComments.setAdapter(commentAdapter);
     }
+
 
     private void setupViewModel() {
         viewModel = new ViewModelProvider(this).get(PostDetailViewModel.class);

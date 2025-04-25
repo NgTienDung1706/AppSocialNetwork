@@ -9,6 +9,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
+import vn.tiendung.socialnetwork.Callback.CommentDeleteCallback;
+import vn.tiendung.socialnetwork.Callback.CommentLikeCallback;
 import vn.tiendung.socialnetwork.Callback.CommentPostCallback;
 import vn.tiendung.socialnetwork.Model.Comment;
 
@@ -43,13 +45,43 @@ public class CommentRepository {
             }
         });
     }
-    public void likeComment(String commentId, String userId, Callback<Void> callback) {
-        apiService.likeCommentByCommentId(commentId, userId).enqueue(callback);
+    public void likeComment(String commentId, String userId, CommentLikeCallback callback) {
+        apiService.likeCommentByCommentId(commentId, userId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onError("Like thất bại: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
     }
 
-    public void unlikeComment(String commentId, String userId, Callback<Void> callback) {
-        apiService.unlikeCommentByCommentId(commentId, userId).enqueue(callback);
+
+    public void unlikeComment(String commentId, String userId, CommentLikeCallback callback) {
+        apiService.unlikeCommentByCommentId(commentId, userId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onError("Bỏ like thất bại: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
     }
+
     public void createCommentByPostId(String postId, Comment comment, CommentPostCallback callback) {
         apiService.createCommentByPostId(postId, comment).enqueue(new Callback<Comment>() {
             @Override
@@ -67,7 +99,22 @@ public class CommentRepository {
             }
         });
     }
+    public void deleteCommentByCommentId(String commentId, CommentDeleteCallback callback) {
+        apiService.deleteCommentByCommentId(commentId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onError("Xóa thất bại: " + response.code());
+                }
+            }
 
-
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
 
 }

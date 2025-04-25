@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import vn.tiendung.socialnetwork.Callback.CommentDeleteCallback;
+import vn.tiendung.socialnetwork.Callback.CommentLikeCallback;
 import vn.tiendung.socialnetwork.Callback.CommentPostCallback;
 import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.Model.Post;
@@ -47,7 +50,7 @@ public class PostDetailViewModel extends ViewModel {
             public void onSuccess(Post post) {
                 postLiveData.postValue(post);
                 loadUser(post.getUser().get_id());
-                loadComments(postId, userId);
+                loadComments(post.getId(), userId);
             }
 
             @Override
@@ -103,5 +106,62 @@ public class PostDetailViewModel extends ViewModel {
             }
         });
     }
+    public void toggleLikeComment(String currentUserId,Comment comment, int position) {
+        boolean isLiked = comment.isMyLike();
+        comment.setMyLike(!isLiked);
+
+        if (isLiked) {
+            comment.getLikes().remove(currentUserId);
+        } else {
+            comment.getLikes().add(currentUserId);
+        }
+
+        // Gửi lên server
+        CommentLikeCallback callback = new CommentLikeCallback() {
+            @Override
+            public void onSuccess() {
+                // Không cần reload
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessage.postValue(message);
+            }
+        };
+
+        if (isLiked) {
+            commentRepository.unlikeComment(comment.getId(), currentUserId, callback);
+        } else {
+            commentRepository.likeComment(comment.getId(), currentUserId, callback);
+        }
+
+        // Cập nhật comment trong danh sách hiện tại
+        List<Comment> currentList = commentListLiveData.getValue();
+        if (currentList != null && position >= 0 && position < currentList.size()) {
+            currentList.set(position, comment);
+            commentListLiveData.postValue(new ArrayList<>(currentList));
+        }
+    }
+
+    public void deleteComment(String commentId) {
+        commentRepository.deleteCommentByCommentId(commentId, new CommentDeleteCallback() {
+            @Override
+            public void onSuccess() {
+                if (postLiveData.getValue() != null && userProfileLiveData.getValue() != null) {
+                    String postId = postLiveData.getValue().getId();
+                    String userId = userProfileLiveData.getValue().getId();
+
+                    // Sau khi xóa comment, gọi lại loadComments
+                    loadComments(postId, userId);
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessage.postValue(message);
+            }
+        });
+    }
+
 
 }
