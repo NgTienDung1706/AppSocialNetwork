@@ -9,6 +9,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
+import vn.tiendung.socialnetwork.Callback.CommentPostCallback;
 import vn.tiendung.socialnetwork.Model.Comment;
 
 public class CommentRepository {
@@ -49,5 +50,24 @@ public class CommentRepository {
     public void unlikeComment(String commentId, String userId, Callback<Void> callback) {
         apiService.unlikeCommentByCommentId(commentId, userId).enqueue(callback);
     }
+    public void createCommentByPostId(String postId, Comment comment, CommentPostCallback callback) {
+        apiService.createCommentByPostId(postId, comment).enqueue(new Callback<Comment>() {
+            @Override
+            public void onResponse(Call<Comment> call, Response<Comment> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Không thể gửi bình luận: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Comment> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+
+
 
 }

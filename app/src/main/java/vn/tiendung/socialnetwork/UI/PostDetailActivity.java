@@ -33,7 +33,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private TextView tvUserName, tvCaption, tvHashtags, tvReactionCount;
     private ImageView ivUserAvatar;
-    private ImageButton btnReaction;
+    private ImageButton btnReaction, btnSendComment;
     private EditText etComment;
     private Button btnFollow;
     private RecyclerView rvComments;
@@ -59,6 +59,18 @@ public class PostDetailActivity extends AppCompatActivity {
         observeData();
 
         viewModel.loadPost(postId, currentUserId);
+
+        // Gắn sự kiện cho nút gửi bình luận
+        btnSendComment.setOnClickListener(v -> {
+            String content = etComment.getText().toString().trim();
+            if (!content.isEmpty()) {
+                // Chuyển việc gửi comment sang ViewModel
+                viewModel.createCommentByPostId(postId, currentUserId, content, null); // chọn gửi comment bằng null sẽ làm reply sau
+                etComment.setText("");  // Reset ô nhập comment
+            } else {
+                Toast.makeText(this, "Vui lòng nhập bình luận", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initView() {
@@ -73,6 +85,7 @@ public class PostDetailActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rvComments);
         vpPostImages = findViewById(R.id.vpPostImages);
         circleIndicator = findViewById(R.id.circleIndicator);
+        btnSendComment = findViewById(R.id.btnSendComment);
 
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         commentAdapter = new CommentAdapter(this, new ArrayList<>(), currentUserId, comment -> {
@@ -122,5 +135,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 }

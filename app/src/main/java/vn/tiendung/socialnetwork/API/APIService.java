@@ -94,7 +94,7 @@ public interface APIService {
     @GET("/api/posts/{postId}/comments")
     Call<List<Comment>> getCommentsByPostId(@Path("postId") String postId, @Query("userId") String userId);
     @POST("/api/posts/{postId}/comments")
-    Call<Void> createCommentByPostId(@Path("postId") String postId);
+    Call<Comment> createCommentByPostId(@Path("postId") String postId, @Body Comment comment);
     @PUT("/api/comments/{commentId}")
     Call<Void> updateCommentByCommentId(@Path("commentId") String commentId);
     @DELETE ("/api/comments/{commentId}")

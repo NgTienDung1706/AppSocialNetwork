@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Comment {
     private String id;
+    private String parent; // reply other comment
     private String postId;
     private String userId;
     private String userName;
@@ -39,6 +40,13 @@ public class Comment {
         this.myLike = myLike;
     }
 
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
     public String getId() { return id; }
     public String getPostId() { return postId; }
     public String getUserId() { return userId; }

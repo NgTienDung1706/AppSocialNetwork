@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
+import vn.tiendung.socialnetwork.Callback.CommentPostCallback;
 import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.Model.UserProfile;
@@ -22,7 +23,6 @@ public class PostDetailViewModel extends ViewModel {
     private final MutableLiveData<Post> postLiveData = new MutableLiveData<>();
     private final MutableLiveData<UserProfile> userProfileLiveData = new MutableLiveData<>();
     private final MutableLiveData<List<Comment>> commentListLiveData = new MutableLiveData<>();
-
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     public LiveData<Post> getPost() {
@@ -84,4 +84,24 @@ public class PostDetailViewModel extends ViewModel {
             }
         });
     }
+    public void createCommentByPostId(String postId, String userId, String content, String parentId) {
+        Comment newComment = new Comment();
+        newComment.setUserId(userId);
+        newComment.setContent(content);
+        newComment.setParent(parentId);  // Nếu comment là trả lời, truyền parentId
+
+        // Gọi repository để gửi comment lên backend
+        commentRepository.createCommentByPostId(postId, newComment, new CommentPostCallback() {
+            @Override
+            public void onSuccess(Comment comment) {
+                loadComments(postId, userId);  // Refresh lại list bình luận
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessage.postValue(message);
+            }
+        });
+    }
+
 }
