@@ -14,8 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import vn.tiendung.socialnetwork.Callback.LikeCallback;
 import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.R;
+import vn.tiendung.socialnetwork.Repository.CommentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,20 +107,22 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
             holder.btnLike.setOnClickListener(v -> {
                 if (listener != null) {
-                    listener.onLikeClicked(comment);
+                    listener.onLikeClicked(comment);  // xử lý logic
                 }
 
-                // Toggle tạm thời trạng thái like
-                comment.setMyLike(!comment.isMyLike());
+                boolean isLiked = comment.isMyLike();
+                comment.setMyLike(!isLiked);
+
                 if (comment.isMyLike()) {
                     comment.getLikes().add(currentUserId);
+                    new CommentRepository().likeComment(comment.getId(), currentUserId, new LikeCallback(comment.getId()));
                 } else {
                     comment.getLikes().remove(currentUserId);
+                    new CommentRepository().unlikeComment(comment.getId(), currentUserId, new LikeCallback(comment.getId()));
                 }
 
                 notifyItemChanged(holder.getAdapterPosition());
             });
-
 
 
             holder.itemView.setOnLongClickListener(v -> {

@@ -99,6 +99,9 @@ public interface APIService {
     Call<Void> updateCommentByCommentId(@Path("commentId") String commentId);
     @DELETE ("/api/comments/{commentId}")
     Call<Void> deleteCommentByCommentId(@Path("commentId") String commentId);
-    @POST ("/api/comments/{commentId}/like")
-    Call<Void> likeCommentByCommentId(@Path("commentId") String commentId);
+    @POST("/api/comments/{commentId}/like")
+    Call<Void> likeCommentByCommentId(@Path("commentId") String commentId, @Query("userId") String userId);
+    @DELETE("/api/comments/{commentId}/like")
+    Call<Void> unlikeCommentByCommentId(@Path("commentId") String commentId, @Query("userId") String userId);
+
 }
