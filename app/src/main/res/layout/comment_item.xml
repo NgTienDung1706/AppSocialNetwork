@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,65 +18,91 @@
         android:src="@drawable/circleusersolid" />
 
     <!-- Phần nội dung bình luận -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
 
         <!-- Tên người bình luận -->
+
+        <!-- Nội dung bình luận -->
+
+        <!-- Nút xem thêm / thu gọn -->
+
         <TextView
             android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tên người dùng"
+            android:textSize="14sp"
             android:textStyle="bold"
-            android:textSize="14sp" />
+            android:layout_marginVertical="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/tvContent"
+            app:layout_constraintEnd_toEndOf="@+id/tvContent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tvContent" />
 
-        <!-- Nội dung bình luận -->
+
+        <!-- Text nếu comment đã bị xóa -->
+
         <TextView
             android:id="@+id/tvContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nội dung bình luận rất dài..."
-            android:maxLines="3"
+            android:layout_marginVertical="4dp"
+            android:layout_marginStart="8dp"
             android:ellipsize="end"
+            android:text="Nội dung bình luận rất dài..."
             android:textSize="14sp"
-            android:layout_marginTop="2dp" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Nút xem thêm / thu gọn -->
         <TextView
             android:id="@+id/tvToggleContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:text="Xem thêm"
             android:textColor="@color/st"
-            android:textSize="13sp"
-            android:layout_marginTop="2dp"
-            android:visibility="gone" />
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTime"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvTime"
+            app:layout_constraintVertical_bias="0.0" />
 
-
-        <!-- Text nếu comment đã bị xóa -->
         <TextView
             android:id="@+id/tvDeletedComment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="124dp"
+            android:layout_marginBottom="16dp"
             android:text="Bình luận đã bị xoá"
-            android:textStyle="italic"
             android:textColor="#888888"
+            android:textStyle="italic"
             android:visibility="gone"
-            android:layout_marginTop="2dp" />
-
+            app:layout_constraintBottom_toBottomOf="@+id/tvContent"
+            app:layout_constraintEnd_toEndOf="@+id/tvContent" />
         <!-- Thời gian -->
         <TextView
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="5 phút trước"
-            android:textSize="12sp"
             android:textColor="#888888"
-            android:layout_marginTop="2dp" />
-    </LinearLayout>
+            android:textSize="12sp"
+            android:layout_marginVertical="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/tvContent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tvContent"
+            app:layout_constraintTop_toBottomOf="@+id/tvContent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Like -->
     <LinearLayout

@@ -80,11 +80,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
             holder.tvContent.post(() -> {
                 int lineCount = holder.tvContent.getLineCount();
-                if (lineCount > 3) {
+                if (lineCount > 5) {
                     holder.tvToggleContent.setVisibility(View.VISIBLE);
-                    holder.tvContent.setMaxLines(3);
+                    holder.tvContent.setMaxLines(5);
                 } else {
                     holder.tvToggleContent.setVisibility(View.GONE);
+                }
+            });
+            // Xử lý sự kiện cho nút xem thêm
+            holder.tvToggleContent.setOnClickListener(v -> {
+                if (holder.tvToggleContent.getText().equals("Xem thêm")) {
+                    holder.tvContent.setMaxLines(Integer.MAX_VALUE);  // Hiển thị hết nội dung
+                    holder.tvToggleContent.setText("Thu gọn");  // Đổi thành "Thu gọn"
+                } else {
+                    holder.tvContent.setMaxLines(5);  // Cắt bớt sau 3 dòng
+                    holder.tvToggleContent.setText("Xem thêm");  // Đổi thành "Xem thêm"
                 }
             });
 

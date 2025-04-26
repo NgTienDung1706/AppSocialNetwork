@@ -65,8 +65,13 @@ public class PostDetailActivity extends AppCompatActivity {
             String content = etComment.getText().toString().trim();
             if (!content.isEmpty()) {
                 // Chuyển việc gửi comment sang ViewModel
-                viewModel.createCommentByPostId(postId, currentUserId, content, null); // chọn gửi comment bằng null sẽ làm reply sau
-                etComment.setText("");  // Reset ô nhập comment
+                if (content.length() > 5000) {
+                    Toast.makeText(this, "Nội dung bình luận không được quá 5000 ký tự!", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Gửi bình luận đi
+                    viewModel.createCommentByPostId(postId, currentUserId, content, null);// chọn gửi comment bằng null sẽ làm reply sau
+                    etComment.setText("");  // Reset ô nhập comment
+                }
             } else {
                 Toast.makeText(this, "Vui lòng nhập bình luận", Toast.LENGTH_SHORT).show();
             }
