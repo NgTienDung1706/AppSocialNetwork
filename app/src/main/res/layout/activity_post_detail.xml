@@ -161,7 +161,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <!-- Thanh bình luận cố định -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/commentBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -177,11 +177,19 @@
             android:id="@+id/etComment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
+            android:maxHeight="400dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="top|start"
+            android:layout_marginEnd="4dp"
             android:hint="Thêm bình luận..."
-            android:inputType="text"
-            android:padding="8dp" />
+            android:inputType="textMultiLine"
+            android:lineSpacingExtra="2sp"
+            android:padding="8dp"
+            android:scrollbars="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnSendComment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Nút gửi bình luận -->
         <ImageButton
@@ -190,8 +198,11 @@
             android:layout_height="40dp"
             android:background="@android:color/transparent"
             android:contentDescription="Send Comment"
-            android:src="@drawable/ic_send"
             android:scaleType="centerInside"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
+            android:src="@drawable/ic_send"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/etComment"
+            app:layout_constraintEnd_toEndOf="parent"
+             />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
