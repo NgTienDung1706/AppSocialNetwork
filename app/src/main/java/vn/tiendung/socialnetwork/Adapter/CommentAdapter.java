@@ -18,6 +18,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.R;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,8 +151,32 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         notifyItemChanged(position);
     }
 
+    // Hàm formatTime để trả về thời gian theo định dạng dễ đọc
     private String formatTime(String createdAt) {
-        return "Vài phút trước"; // Placeholder, có thể dùng thư viện time sau
+        // Định dạng thời gian nhận được từ backend (ISO 8601)
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        LocalDateTime createdTime = LocalDateTime.parse(createdAt, formatter);
+
+        // Lấy thời gian hiện tại
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        // Tính khoảng cách thời gian giữa hiện tại và thời gian tạo bài viết
+        Duration duration = Duration.between(createdTime, currentTime);
+
+        // Kiểm tra và trả về thời gian theo đơn vị phù hợp
+        if (duration.toMinutes() < 1) {
+            return "Vừa xong";  // Nếu chưa đủ 1 phút
+        } else if (duration.toMinutes() < 60) {
+            return duration.toMinutes() + " phút trước";
+        } else if (duration.toHours() < 24) {
+            return duration.toHours() + " giờ trước";
+        } else if (duration.toDays() < 7) {
+            return duration.toDays() + " ngày trước";
+        } else if (duration.toDays() < 30) {
+            return (duration.toDays() / 7) + " tuần trước";
+        } else {
+            return (duration.toDays() / 30) + " tháng trước";  // Nếu lâu hơn 30 ngày, tính theo tháng
+        }
     }
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
