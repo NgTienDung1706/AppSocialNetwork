@@ -15,6 +15,7 @@
     <color name="rd">#DBE2EF</color>
     <color name="nd">#3F72AF</color>
     <color name="st">#112D4E</color>
+    <color name="highlightColor">#FFFFC1</color> <!-- Màu vàng nhạt -->
     <!--
     #F9F7F7: bg Nền chính.
     #DBE2EF: rd Màu nền phụ, nền nhạt cho các thành phần không quá nổi bật.

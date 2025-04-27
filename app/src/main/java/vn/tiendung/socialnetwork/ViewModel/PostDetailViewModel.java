@@ -1,0 +1,202 @@
+package vn.tiendung.socialnetwork.ViewModel;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import vn.tiendung.socialnetwork.Callback.CommentDeleteCallback;
+import vn.tiendung.socialnetwork.Callback.CommentLikeCallback;
+import vn.tiendung.socialnetwork.Callback.CommentPostCallback;
+import vn.tiendung.socialnetwork.Model.Comment;
+import vn.tiendung.socialnetwork.Model.Post;
+import vn.tiendung.socialnetwork.Model.UserProfile;
+import vn.tiendung.socialnetwork.Repository.CommentRepository;
+import vn.tiendung.socialnetwork.Repository.PostRepository;
+import vn.tiendung.socialnetwork.Repository.UserRepository;
+
+public class PostDetailViewModel extends ViewModel {
+
+    private final PostRepository postRepository = new PostRepository();
+    private final UserRepository userRepository = new UserRepository();
+    private final CommentRepository commentRepository = new CommentRepository();
+
+    private final MutableLiveData<Post> postLiveData = new MutableLiveData<>();
+    private final MutableLiveData<UserProfile> userProfileLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Comment>> commentListLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+
+    public LiveData<Post> getPost() {
+        return postLiveData;
+    }
+
+    public LiveData<UserProfile> getUserProfile() {
+        return userProfileLiveData;
+    }
+
+    public LiveData<List<Comment>> getComments() {
+        return commentListLiveData;
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void loadPost(String postId, String userId) {
+        postRepository.getPostById(postId, userId, new PostRepository.PostCallback() {
+            @Override
+            public void onSuccess(Post post) {
+                postLiveData.postValue(post);
+                loadUser(post.getUser().get_id());
+                loadComments(post.getId(), userId);
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessage.postValue(message);
+            }
+        });
+    }
+    public void loadUser(String userId) {
+        userRepository.getUserProfile(userId, new UserRepository.UserCallback() {
+            @Override
+            public void onSuccess(UserProfile userProfile) {
+                userProfileLiveData.postValue(userProfile);
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessage.postValue(message);
+            }
+        });
+    }
+    public void loadComments(String postId, String userId) {
+        commentRepository.getCommentsByPostId(postId, userId, new CommentRepository.CommentCallback() {
+            @Override
+            public void onSuccess(List<Comment> comments) {
+                commentListLiveData.postValue(comments);
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessage.postValue(message);
+            }
+        });
+    }
+    public void createCommentByPostId(String postId, String userId, String content, String parentId) {
+        Comment newComment = new Comment();
+        newComment.setUserId(userId);
+        newComment.setContent(content);
+        newComment.setParent(parentId);  // Nếu comment là trả lời, truyền parentId
+
+        // Gọi repository để gửi comment lên backend
+        commentRepository.createCommentByPostId(postId, newComment, new CommentPostCallback() {
+            @Override
+            public void onSuccess(Comment comment) {
+                loadComments(postId, userId);  // Refresh lại list bình luận
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessage.postValue(message);
+            }
+        });
+    }
+    public void toggleLikeComment(String currentUserId,Comment comment, int position) {
+        boolean isLiked = comment.isMyLike();
+        comment.setMyLike(!isLiked);
+
+        if (isLiked) {
+            comment.getLikes().remove(currentUserId);
+        } else {
+            comment.getLikes().add(currentUserId);
+        }
+
+        // Gửi lên server
+        CommentLikeCallback callback = new CommentLikeCallback() {
+            @Override
+            public void onSuccess() {
+                // Không cần reload
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessage.postValue(message);
+            }
+        };
+
+        if (isLiked) {
+            commentRepository.unlikeComment(comment.getId(), currentUserId, callback);
+        } else {
+            commentRepository.likeComment(comment.getId(), currentUserId, callback);
+        }
+
+        // Cập nhật comment trong danh sách hiện tại
+        List<Comment> currentList = commentListLiveData.getValue();
+        if (currentList != null && position >= 0 && position < currentList.size()) {
+            currentList.set(position, comment);
+            commentListLiveData.postValue(new ArrayList<>(currentList));
+        }
+    }
+    public void deleteComment(String commentId) {
+        commentRepository.deleteCommentByCommentId(commentId, new CommentDeleteCallback() {
+            @Override
+            public void onSuccess() {
+                if (postLiveData.getValue() != null && userProfileLiveData.getValue() != null) {
+                    String postId = postLiveData.getValue().getId();
+                    String userId = userProfileLiveData.getValue().getId();
+
+                    // Sau khi xóa comment, gọi lại loadComments
+                    loadComments(postId, userId);
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessage.postValue(message);
+            }
+        });
+    }
+    public List<Comment> buildCommentTree(List<Comment> flatComments) {
+        List<Comment> topLevelComments = new ArrayList<>();
+        Map<String, Comment> commentMap = new HashMap<>();
+
+        for (Comment comment : flatComments) {
+            commentMap.put(comment.getId(), comment);
+        }
+
+        for (Comment comment : flatComments) {
+            if (comment.getParent() == null) {
+                topLevelComments.add(comment);
+            } else {
+                Comment parentComment = commentMap.get(comment.getParent());
+                if (parentComment != null) {
+                    parentComment.getNestedComments().add(comment);
+                }
+            }
+        }
+
+        return topLevelComments;
+    }
+
+    public List<Comment> flattenCommentTree(List<Comment> comments, int currentDepth) {
+        List<Comment> result = new ArrayList<>();
+        for (Comment comment : comments) {
+            if(currentDepth >= 2){
+                currentDepth = 1; // Cài đặt độ sâu tối đa là 1
+            }
+            comment.setDepth(currentDepth);
+            result.add(comment);
+
+            if (comment.getNestedComments() != null && !comment.getNestedComments().isEmpty()) {
+                result.addAll(flattenCommentTree(comment.getNestedComments(), currentDepth + 1));
+            }
+        }
+        return result;
+    }
+
+}

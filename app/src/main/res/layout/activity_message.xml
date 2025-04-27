@@ -97,6 +97,6 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="6dp"
             android:scaleType="centerInside"
-            android:src="@drawable/send" />
+            android:src="@drawable/ic_send" />
     </LinearLayout>
 </RelativeLayout>
