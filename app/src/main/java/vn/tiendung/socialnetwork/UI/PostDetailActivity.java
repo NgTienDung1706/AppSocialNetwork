@@ -22,6 +22,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.relex.circleindicator.CircleIndicator3;
 import vn.tiendung.socialnetwork.Adapter.CommentAdapter;
@@ -139,7 +140,10 @@ public class PostDetailActivity extends AppCompatActivity {
 
         viewModel.getComments().observe(this, comments -> {
             if (comments != null) {
-                commentAdapter.updateComments(comments);
+                List<Comment> treeComments = viewModel.buildCommentTree(comments);
+                List<Comment> flatList = viewModel.flattenCommentTree(treeComments, 0);
+
+                commentAdapter.updateComments(flatList);
             }
         });
 
@@ -221,13 +225,13 @@ public class PostDetailActivity extends AppCompatActivity {
                 } else {
                     viewModel.createCommentByPostId(postId, currentUserId, content, parentCommentId);
                     etComment.setText("");
+                    replyingToCommentLayout.setVisibility(View.GONE);
                 }
             } else {
                 Toast.makeText(this, "Vui lòng nhập bình luận", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
     private void hideReplyingLayout(boolean toRight) {
         float translationX = toRight ? replyingToCommentLayout.getWidth() : -replyingToCommentLayout.getWidth();
 
@@ -242,7 +246,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 })
                 .start();
     }
-
     private void shakeView(View view) {
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationX", 0, 10, -10, 6, -6, 3, -3, 0);
         animator.setDuration(300);

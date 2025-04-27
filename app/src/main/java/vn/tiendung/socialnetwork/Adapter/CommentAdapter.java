@@ -92,33 +92,23 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                     holder.tvToggleContent.setVisibility(View.GONE);
                 }
             });
-            // Xử lý sự kiện cho nút xem thêm
+
             holder.tvToggleContent.setOnClickListener(v -> {
-                if (holder.tvToggleContent.getText().equals("Xem thêm")) {
-                    holder.tvContent.setMaxLines(Integer.MAX_VALUE);  // Hiển thị hết nội dung
-                    holder.tvToggleContent.setText("Thu gọn");  // Đổi thành "Thu gọn"
-                } else {
-                    holder.tvContent.setMaxLines(5);  // Cắt bớt sau 3 dòng
-                    holder.tvToggleContent.setText("Xem thêm");  // Đổi thành "Xem thêm"
-                }
+                boolean expanded = holder.tvContent.getMaxLines() == Integer.MAX_VALUE;
+                holder.tvContent.setMaxLines(expanded ? 5 : Integer.MAX_VALUE);
+                holder.tvToggleContent.setText(expanded ? "Xem thêm" : "Thu gọn");
             });
 
             holder.tvReply.setOnClickListener(v -> {
                 if (replyClickListener != null) {
-                    replyClickListener.onReplyClicked(comment); // Trả lời bình luận
-                }
-            });
-            // Lắng nghe sự kiện bấm vào bình luận để trả lời
-            holder.itemView.setOnClickListener(v -> {
-                if (replyClickListener != null) {
-                    replyClickListener.onReplyClicked(comment); // Trả lời bình luận
+                    replyClickListener.onReplyClicked(comment);
                 }
             });
 
-            holder.tvToggleContent.setOnClickListener(v -> {
-                boolean expanded = holder.tvContent.getMaxLines() == Integer.MAX_VALUE;
-                holder.tvContent.setMaxLines(expanded ? 3 : Integer.MAX_VALUE);
-                holder.tvToggleContent.setText(expanded ? "Xem thêm" : "Thu gọn");
+            holder.itemView.setOnClickListener(v -> {
+                if (replyClickListener != null) {
+                    replyClickListener.onReplyClicked(comment);
+                }
             });
 
             Glide.with(context)
@@ -140,8 +130,19 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 }
                 return true;
             });
+
+            //  phần chỉnh marginStart theo depth
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams();
+            int marginStart = dpToPx(context, 24 * comment.getDepth()); // mỗi cấp độ thụt vào 24dp
+            params.setMarginStart(marginStart);
+            holder.itemView.setLayoutParams(params);
         }
     }
+    private int dpToPx(Context context, int dp) {
+        return Math.round(dp * context.getResources().getDisplayMetrics().density);
+    }
+
+
 
     @Override
     public int getItemCount() {

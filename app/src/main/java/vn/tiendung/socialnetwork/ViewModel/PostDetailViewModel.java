@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import vn.tiendung.socialnetwork.Callback.CommentDeleteCallback;
 import vn.tiendung.socialnetwork.Callback.CommentLikeCallback;
@@ -158,6 +160,43 @@ public class PostDetailViewModel extends ViewModel {
                 errorMessage.postValue(message);
             }
         });
+    }
+    public List<Comment> buildCommentTree(List<Comment> flatComments) {
+        List<Comment> topLevelComments = new ArrayList<>();
+        Map<String, Comment> commentMap = new HashMap<>();
+
+        for (Comment comment : flatComments) {
+            commentMap.put(comment.getId(), comment);
+        }
+
+        for (Comment comment : flatComments) {
+            if (comment.getParent() == null) {
+                topLevelComments.add(comment);
+            } else {
+                Comment parentComment = commentMap.get(comment.getParent());
+                if (parentComment != null) {
+                    parentComment.getNestedComments().add(comment);
+                }
+            }
+        }
+
+        return topLevelComments;
+    }
+
+    public List<Comment> flattenCommentTree(List<Comment> comments, int currentDepth) {
+        List<Comment> result = new ArrayList<>();
+        for (Comment comment : comments) {
+            if(currentDepth >= 2){
+                currentDepth = 1; // Cài đặt độ sâu tối đa là 1
+            }
+            comment.setDepth(currentDepth);
+            result.add(comment);
+
+            if (comment.getNestedComments() != null && !comment.getNestedComments().isEmpty()) {
+                result.addAll(flattenCommentTree(comment.getNestedComments(), currentDepth + 1));
+            }
+        }
+        return result;
     }
 
 }

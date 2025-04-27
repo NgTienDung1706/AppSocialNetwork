@@ -1,5 +1,6 @@
 package vn.tiendung.socialnetwork.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Comment {
@@ -14,6 +15,8 @@ public class Comment {
     private List<String> likes; // Danh sách userId đã like
     private boolean isDeleted;
     private boolean myLike;
+    private List<Comment> nestedComments = new ArrayList<>();
+    private int depth = 0;
 
     public boolean isMyLike() {
         return myLike;
@@ -38,6 +41,17 @@ public class Comment {
         this.likes = likes;
         this.isDeleted = isDeleted;
         this.myLike = myLike;
+    }
+
+    public List<Comment> getNestedComments() { return nestedComments; }
+    public int getDepth() { return depth; }
+
+    public void setNestedComments(List<Comment> nestedComments) {
+        this.nestedComments = nestedComments;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 
     public String getParent() {
