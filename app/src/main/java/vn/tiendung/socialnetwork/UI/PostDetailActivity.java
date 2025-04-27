@@ -1,15 +1,19 @@
 package vn.tiendung.socialnetwork.UI;
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.ImageButton;
 import android.widget.Button;
 import android.widget.EditText;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,28 +27,28 @@ import me.relex.circleindicator.CircleIndicator3;
 import vn.tiendung.socialnetwork.Adapter.CommentAdapter;
 import vn.tiendung.socialnetwork.Adapter.PostImagesAdapter;
 import vn.tiendung.socialnetwork.Model.Comment;
-import vn.tiendung.socialnetwork.Model.Post;
-import vn.tiendung.socialnetwork.Model.UserProfile;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 import vn.tiendung.socialnetwork.ViewModel.PostDetailViewModel;
 
 public class PostDetailActivity extends AppCompatActivity {
 
-    private TextView tvUserName, tvCaption, tvHashtags, tvReactionCount;
-    private ImageView ivUserAvatar;
-    private ImageButton btnReaction, btnSendComment;
+    private TextView tvUserName, tvCaption, tvHashtags, tvReactionCount, tvReplyingUserName;
+    private ImageView ivUserAvatar, ivReplyingAvatar;
+    private ImageButton btnReaction, btnSendComment, btnCloseReply;
     private EditText etComment;
     private Button btnFollow;
     private RecyclerView rvComments;
+    private ConstraintLayout replyingToCommentLayout;
     private ViewPager2 vpPostImages;
     private CircleIndicator3 circleIndicator;
-
     private CommentAdapter commentAdapter;
     private PostDetailViewModel viewModel;
-
+    private GestureDetector gestureDetector;
     private String postId;
     private String currentUserId;
+    private String parentCommentId = null;
+    private boolean shouldDismiss = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,25 +61,9 @@ public class PostDetailActivity extends AppCompatActivity {
         initView();
         setupViewModel();
         observeData();
+        assignFunction();
 
         viewModel.loadPost(postId, currentUserId);
-
-        // Gắn sự kiện cho nút gửi bình luận
-        btnSendComment.setOnClickListener(v -> {
-            String content = etComment.getText().toString().trim();
-            if (!content.isEmpty()) {
-                // Chuyển việc gửi comment sang ViewModel
-                if (content.length() > 5000) {
-                    Toast.makeText(this, "Nội dung bình luận không được quá 5000 ký tự!", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Gửi bình luận đi
-                    viewModel.createCommentByPostId(postId, currentUserId, content, null);// chọn gửi comment bằng null sẽ làm reply sau
-                    etComment.setText("");  // Reset ô nhập comment
-                }
-            } else {
-                Toast.makeText(this, "Vui lòng nhập bình luận", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void initView() {
@@ -83,7 +71,10 @@ public class PostDetailActivity extends AppCompatActivity {
         tvCaption = findViewById(R.id.tvCaption);
         tvHashtags = findViewById(R.id.tvHashtags);
         tvReactionCount = findViewById(R.id.tvReactionCount);
+        tvReplyingUserName = findViewById(R.id.tvReplyingUserName);
         ivUserAvatar = findViewById(R.id.ivUserAvatar);
+        ivReplyingAvatar = findViewById(R.id.ivReplyingAvatar);
+        btnCloseReply = findViewById(R.id.btnCloseReply);
         btnReaction = findViewById(R.id.btnReaction);
         etComment = findViewById(R.id.etComment);
         btnFollow = findViewById(R.id.btnFollow);
@@ -91,6 +82,7 @@ public class PostDetailActivity extends AppCompatActivity {
         vpPostImages = findViewById(R.id.vpPostImages);
         circleIndicator = findViewById(R.id.circleIndicator);
         btnSendComment = findViewById(R.id.btnSendComment);
+        replyingToCommentLayout = findViewById(R.id.replyingToCommentLayout);
 
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         commentAdapter = new CommentAdapter(
@@ -98,12 +90,22 @@ public class PostDetailActivity extends AppCompatActivity {
                 new ArrayList<>(),
                 currentUserId,
                 (comment, position) -> viewModel.toggleLikeComment(currentUserId, comment, position),
-                commentId -> viewModel.deleteComment(commentId)
+                commentId -> viewModel.deleteComment(commentId),
+                comment -> {
+                    parentCommentId = comment.getId();
+                    replyingToCommentLayout.setVisibility(View.VISIBLE);
+                    tvReplyingUserName.setText("Trả lời bình luận của @" + comment.getUserName());
+                    Glide.with(this)
+                            .load(comment.getAvatarUrl())
+                            .placeholder(R.drawable.circleusersolid)
+                            .error(R.drawable.circleusersolid)
+                            .circleCrop()
+                            .into(ivReplyingAvatar);
+                }
         );
 
         rvComments.setAdapter(commentAdapter);
     }
-
 
     private void setupViewModel() {
         viewModel = new ViewModelProvider(this).get(PostDetailViewModel.class);
@@ -146,6 +148,104 @@ public class PostDetailActivity extends AppCompatActivity {
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
+    private void assignFunction() {
+        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            private static final int SWIPE_THRESHOLD = 100;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+            private boolean hasShaked = false;
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (e1 == null || e2 == null) return false;
+
+                float diffX = e2.getX() - e1.getX();
+                float diffY = e2.getY() - e1.getY();
+
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                        shouldDismiss = true;
+                        if (diffX > 0) {
+                            hideReplyingLayout(true);
+                        } else {
+                            hideReplyingLayout(false);
+                        }
+                        return true;
+                    }
+                }
+                shouldDismiss = false;
+                return false;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                if (e1 == null || e2 == null) return false;
+
+                float diffX = e2.getX() - e1.getX();
+                float width = replyingToCommentLayout.getWidth();
+                float progress = Math.min(1f, Math.abs(diffX) / width);
+
+                replyingToCommentLayout.setAlpha(1f - progress);
+
+                if (progress > 0.8f && !hasShaked) {
+                    shakeView(replyingToCommentLayout);
+                    hasShaked = true;
+                }
+                return false;
+            }
+        });
+
+        replyingToCommentLayout.setOnTouchListener((v, event) -> {
+            gestureDetector.onTouchEvent(event);
+
+            if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                if (!shouldDismiss) {
+                    replyingToCommentLayout.animate()
+                            .alpha(1f)
+                            .translationX(0f)
+                            .setDuration(200)
+                            .start();
+                }
+            }
+            return true;
+        });
+
+        btnCloseReply.setOnClickListener(v -> hideReplyingLayout(true));
+
+        btnSendComment.setOnClickListener(v -> {
+            String content = etComment.getText().toString().trim();
+            if (!content.isEmpty()) {
+                if (content.length() > 5000) {
+                    Toast.makeText(this, "Nội dung bình luận không được quá 5000 ký tự!", Toast.LENGTH_SHORT).show();
+                } else {
+                    viewModel.createCommentByPostId(postId, currentUserId, content, parentCommentId);
+                    etComment.setText("");
+                }
+            } else {
+                Toast.makeText(this, "Vui lòng nhập bình luận", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void hideReplyingLayout(boolean toRight) {
+        float translationX = toRight ? replyingToCommentLayout.getWidth() : -replyingToCommentLayout.getWidth();
+
+        replyingToCommentLayout.animate()
+                .alpha(0f)
+                .translationX(translationX)
+                .setDuration(300)
+                .withEndAction(() -> {
+                    replyingToCommentLayout.setVisibility(View.GONE);
+                    replyingToCommentLayout.setAlpha(1f);
+                    replyingToCommentLayout.setTranslationX(0f);
+                })
+                .start();
+    }
+
+    private void shakeView(View view) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationX", 0, 10, -10, 6, -6, 3, -3, 0);
+        animator.setDuration(300);
+        animator.start();
     }
 }

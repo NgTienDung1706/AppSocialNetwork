@@ -59,7 +59,6 @@ public class PostDetailViewModel extends ViewModel {
             }
         });
     }
-
     public void loadUser(String userId) {
         userRepository.getUserProfile(userId, new UserRepository.UserCallback() {
             @Override
@@ -73,7 +72,6 @@ public class PostDetailViewModel extends ViewModel {
             }
         });
     }
-
     public void loadComments(String postId, String userId) {
         commentRepository.getCommentsByPostId(postId, userId, new CommentRepository.CommentCallback() {
             @Override
@@ -142,7 +140,6 @@ public class PostDetailViewModel extends ViewModel {
             commentListLiveData.postValue(new ArrayList<>(currentList));
         }
     }
-
     public void deleteComment(String commentId) {
         commentRepository.deleteCommentByCommentId(commentId, new CommentDeleteCallback() {
             @Override
@@ -162,6 +159,5 @@ public class PostDetailViewModel extends ViewModel {
             }
         });
     }
-
 
 }

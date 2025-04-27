@@ -37,18 +37,23 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public interface OnCommentDeleteListener {
         void onDelete(String commentId);
     }
+    public interface OnReplyClickListener {
+        void onReplyClicked(Comment comment);
+    }
 
     private OnCommentActionListener likeListener;
     private OnCommentDeleteListener deleteListener;
-
+    private OnReplyClickListener replyClickListener;
     public CommentAdapter(Context context, List<Comment> commentList, String currentUserId,
                           OnCommentActionListener likeListener,
-                          OnCommentDeleteListener deleteListener) {
+                          OnCommentDeleteListener deleteListener,
+                          OnReplyClickListener replyClickListener) {
         this.context = context;
         this.commentList = commentList != null ? commentList : new ArrayList<>();
         this.currentUserId = currentUserId;
         this.likeListener = likeListener;
         this.deleteListener = deleteListener;
+        this.replyClickListener = replyClickListener;
     }
 
     @NonNull
@@ -95,6 +100,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 } else {
                     holder.tvContent.setMaxLines(5);  // Cắt bớt sau 3 dòng
                     holder.tvToggleContent.setText("Xem thêm");  // Đổi thành "Xem thêm"
+                }
+            });
+
+            holder.tvReply.setOnClickListener(v -> {
+                if (replyClickListener != null) {
+                    replyClickListener.onReplyClicked(comment); // Trả lời bình luận
+                }
+            });
+            // Lắng nghe sự kiện bấm vào bình luận để trả lời
+            holder.itemView.setOnClickListener(v -> {
+                if (replyClickListener != null) {
+                    replyClickListener.onReplyClicked(comment); // Trả lời bình luận
                 }
             });
 
@@ -191,7 +208,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAvatar;
-        TextView tvUserName, tvContent, tvTime, tvLikeCount, tvDeleted, tvToggleContent;
+        TextView tvUserName, tvContent, tvTime, tvLikeCount, tvDeleted, tvToggleContent, tvReply;
         ImageButton btnLike;
         View layoutLike;
 
@@ -200,6 +217,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             imgAvatar = itemView.findViewById(R.id.imgAvatar);
             tvUserName = itemView.findViewById(R.id.tvUserName);
             tvContent = itemView.findViewById(R.id.tvContent);
+            tvReply = itemView.findViewById(R.id.tvReply);
             tvToggleContent = itemView.findViewById(R.id.tvToggleContent);
             tvTime = itemView.findViewById(R.id.tvTime);
             tvLikeCount = itemView.findViewById(R.id.tvLikeCount);

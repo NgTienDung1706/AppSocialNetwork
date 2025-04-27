@@ -159,7 +159,54 @@
                 android:layout_marginTop="8dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/replyingToCommentLayout"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/background_rounded"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/commentBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
+        <ImageView
+            android:id="@+id/ivReplyingAvatar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical|start"
+            android:src="@drawable/circleusersolid"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvReplyingUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:layout_toStartOf="@id/ivReplyingAvatar"
+            android:text="Đang trả lời @User"
+            android:textColor="@color/nd"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivReplyingAvatar"
+            app:layout_constraintStart_toEndOf="@+id/ivReplyingAvatar"
+            app:layout_constraintTop_toTopOf="@+id/ivReplyingAvatar" />
+
+        <ImageButton
+            android:id="@+id/btnCloseReply"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical|end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Đóng"
+            android:src="@drawable/ic_close"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Thanh bình luận cố định -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/commentBar"
