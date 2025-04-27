@@ -40,20 +40,25 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public interface OnReplyClickListener {
         void onReplyClicked(Comment comment);
     }
-
+    public interface OnNavigateToParentListener {
+        void onNavigateToParent(String parentCommentId);
+    }
     private OnCommentActionListener likeListener;
     private OnCommentDeleteListener deleteListener;
     private OnReplyClickListener replyClickListener;
+    private OnNavigateToParentListener navigateListener;
     public CommentAdapter(Context context, List<Comment> commentList, String currentUserId,
                           OnCommentActionListener likeListener,
                           OnCommentDeleteListener deleteListener,
-                          OnReplyClickListener replyClickListener) {
+                          OnReplyClickListener replyClickListener,
+                          OnNavigateToParentListener navigateListener) {
         this.context = context;
         this.commentList = commentList != null ? commentList : new ArrayList<>();
         this.currentUserId = currentUserId;
         this.likeListener = likeListener;
         this.deleteListener = deleteListener;
         this.replyClickListener = replyClickListener;
+        this.navigateListener = navigateListener;
     }
 
     @NonNull
@@ -131,6 +136,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 return true;
             });
 
+            // 👉 Nếu comment có parent
+            if (comment.getParentUserName() != null) {
+                holder.tvReplyToUser.setVisibility(View.VISIBLE);
+                holder.tvReplyToUser.setText("➔ @" + comment.getParentUserName());
+
+                holder.tvReplyToUser.setOnClickListener(v -> {
+                    if (navigateListener != null) {
+                        navigateListener.onNavigateToParent(comment.getParent());
+                    }
+                });
+
+            } else {
+                holder.tvReplyToUser.setVisibility(View.GONE);
+            }
+
             //  phần chỉnh marginStart theo depth
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams();
             int marginStart = dpToPx(context, 24 * comment.getDepth()); // mỗi cấp độ thụt vào 24dp
@@ -206,10 +226,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             return (duration.toDays() / 30) + " tháng trước";  // Nếu lâu hơn 30 ngày, tính theo tháng
         }
     }
+    public int findCommentPositionById(String commentId) {
+        for (int i = 0; i < commentList.size(); i++) {
+            if (commentList.get(i).getId().equals(commentId)) {
+                return i;
+            }
+        }
+        return -1; // Không tìm thấy
+    }
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAvatar;
-        TextView tvUserName, tvContent, tvTime, tvLikeCount, tvDeleted, tvToggleContent, tvReply;
+        TextView tvUserName, tvContent, tvTime, tvLikeCount, tvDeleted, tvToggleContent, tvReply, tvReplyToUser;
         ImageButton btnLike;
         View layoutLike;
 
@@ -219,6 +247,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             tvUserName = itemView.findViewById(R.id.tvUserName);
             tvContent = itemView.findViewById(R.id.tvContent);
             tvReply = itemView.findViewById(R.id.tvReply);
+            tvReplyToUser = itemView.findViewById(R.id.tvReplyToUser);
             tvToggleContent = itemView.findViewById(R.id.tvToggleContent);
             tvTime = itemView.findViewById(R.id.tvTime);
             tvLikeCount = itemView.findViewById(R.id.tvLikeCount);

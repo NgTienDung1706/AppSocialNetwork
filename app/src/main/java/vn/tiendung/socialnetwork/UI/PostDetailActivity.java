@@ -2,6 +2,7 @@ package vn.tiendung.socialnetwork.UI;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +39,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private TextView tvUserName, tvCaption, tvHashtags, tvReactionCount, tvReplyingUserName;
     private ImageView ivUserAvatar, ivReplyingAvatar;
     private ImageButton btnReaction, btnSendComment, btnCloseReply;
+    private NestedScrollView nestedScrollView;
     private EditText etComment;
     private Button btnFollow;
     private RecyclerView rvComments;
@@ -84,6 +87,7 @@ public class PostDetailActivity extends AppCompatActivity {
         circleIndicator = findViewById(R.id.circleIndicator);
         btnSendComment = findViewById(R.id.btnSendComment);
         replyingToCommentLayout = findViewById(R.id.replyingToCommentLayout);
+        nestedScrollView = findViewById(R.id.nestedScrollView);
 
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         commentAdapter = new CommentAdapter(
@@ -102,6 +106,14 @@ public class PostDetailActivity extends AppCompatActivity {
                             .error(R.drawable.circleusersolid)
                             .circleCrop()
                             .into(ivReplyingAvatar);
+                },
+                parentCommentId -> { // scroll đến comment parent
+                    int position = commentAdapter.findCommentPositionById(parentCommentId);
+                    if (position != -1) {
+                        rvComments.post(() -> {
+                            scrollCommentIntoView(position);
+                        });
+                    }
                 }
         );
 
@@ -251,4 +263,42 @@ public class PostDetailActivity extends AppCompatActivity {
         animator.setDuration(300);
         animator.start();
     }
+    private void scrollCommentIntoView(int position) {
+        rvComments.post(() -> {
+            RecyclerView.ViewHolder viewHolder = rvComments.findViewHolderForAdapterPosition(position);
+            if (viewHolder != null) {
+                View itemView = viewHolder.itemView;
+
+                // Tính scrollY cần thiết:
+                int rvTopInNestedScrollView = rvComments.getTop(); // Vị trí RecyclerView trong NestedScrollView
+                int itemTopInRecyclerView = itemView.getTop();     // Vị trí item trong RecyclerView
+
+                int finalScrollY = rvTopInNestedScrollView + itemTopInRecyclerView - 400; 
+
+                nestedScrollView.smoothScrollTo(0, finalScrollY);  // Scroll tới vị trí comment cha
+
+                highlightCommentAtPosition(position); // Highlight sau scroll
+            }
+        });
+    }
+
+    private void highlightCommentAtPosition(int position) {
+        rvComments.smoothScrollToPosition(position);
+
+        rvComments.postDelayed(() -> {
+            RecyclerView.ViewHolder viewHolder = rvComments.findViewHolderForAdapterPosition(position);
+            if (viewHolder != null) {
+                View itemView = viewHolder.itemView;
+                int originalColor = itemView.getSolidColor(); // màu gốc nếu có, nếu không lấy sẵn màu background
+
+                itemView.setBackgroundColor(getResources().getColor(R.color.highlightColor)); // đổi sang màu vàng nhạt
+
+                // Sau 1.5s, đổi lại màu nền bình thường
+                itemView.postDelayed(() -> {
+                    itemView.setBackgroundColor(getResources().getColor(android.R.color.transparent)); // hoặc màu nền gốc
+                }, 1500);
+            }
+        }, 300); // Đợi 300ms để scroll xong mới lấy View
+    }
+
 }

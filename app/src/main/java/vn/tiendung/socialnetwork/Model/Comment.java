@@ -17,7 +17,15 @@ public class Comment {
     private boolean myLike;
     private List<Comment> nestedComments = new ArrayList<>();
     private int depth = 0;
+    private String parentUserName;
 
+    public String getParentUserName() {
+        return parentUserName;
+    }
+
+    public void setParentUserName(String parentUserName) {
+        this.parentUserName = parentUserName;
+    }
     public boolean isMyLike() {
         return myLike;
     }
