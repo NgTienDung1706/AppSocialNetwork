@@ -18,7 +18,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:scaleType="centerInside"
-            android:src="@drawable/back"
+            android:src="@drawable/ic_back"
             android:tint="@color/nd" />
 
         <!-- Ảnh đại diện -->

@@ -46,7 +46,7 @@
 
                     <!-- Nút thêm khoảnh khắc -->
                     <include
-                        layout="@layout/share_moment_item" />
+                        layout="@layout/view_add_story" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewMoments"

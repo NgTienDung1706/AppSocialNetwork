@@ -9,15 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import vn.tiendung.socialnetwork.Callback.CommentDeleteCallback;
-import vn.tiendung.socialnetwork.Callback.CommentLikeCallback;
-import vn.tiendung.socialnetwork.Callback.CommentPostCallback;
 import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.Model.UserProfile;
 import vn.tiendung.socialnetwork.Repository.CommentRepository;
 import vn.tiendung.socialnetwork.Repository.PostRepository;
 import vn.tiendung.socialnetwork.Repository.UserRepository;
+import vn.tiendung.socialnetwork.Utils.Resource;
 
 public class PostDetailViewModel extends ViewModel {
 
@@ -47,66 +45,55 @@ public class PostDetailViewModel extends ViewModel {
     }
 
     public void loadPost(String postId, String userId) {
-        postRepository.getPostById(postId, userId, new PostRepository.PostCallback() {
-            @Override
-            public void onSuccess(Post post) {
-                postLiveData.postValue(post);
-                loadUser(post.getUser().get_id());
-                loadComments(post.getId(), userId);
-            }
-
-            @Override
-            public void onError(String message) {
-                errorMessage.postValue(message);
+        postRepository.getPostById(postId, userId).observeForever(result -> {
+            if (result.getStatus() == Resource.Status.SUCCESS) {
+                postLiveData.postValue(result.getData());
+                if (result.getData() != null) {
+                    loadUser(result.getData().getUser().get_id());
+                    loadComments(postId, userId);
+                }
+            } else {
+                errorMessage.postValue(result.getMessage());
             }
         });
     }
+
     public void loadUser(String userId) {
-        userRepository.getUserProfile(userId, new UserRepository.UserCallback() {
-            @Override
-            public void onSuccess(UserProfile userProfile) {
-                userProfileLiveData.postValue(userProfile);
-            }
-
-            @Override
-            public void onError(String message) {
-                errorMessage.postValue(message);
+        userRepository.getUserProfile(userId).observeForever(result -> {
+            if (result.getStatus() == Resource.Status.SUCCESS) {
+                userProfileLiveData.postValue(result.getData());
+            } else {
+                errorMessage.postValue(result.getMessage());
             }
         });
     }
+
     public void loadComments(String postId, String userId) {
-        commentRepository.getCommentsByPostId(postId, userId, new CommentRepository.CommentCallback() {
-            @Override
-            public void onSuccess(List<Comment> comments) {
-                commentListLiveData.postValue(comments);
-            }
-
-            @Override
-            public void onError(String message) {
-                errorMessage.postValue(message);
+        commentRepository.getCommentsByPostId(postId, userId).observeForever(result -> {
+            if (result.getStatus() == Resource.Status.SUCCESS) {
+                commentListLiveData.postValue(result.getData());
+            } else {
+                errorMessage.postValue(result.getMessage());
             }
         });
     }
+
     public void createCommentByPostId(String postId, String userId, String content, String parentId) {
         Comment newComment = new Comment();
         newComment.setUserId(userId);
         newComment.setContent(content);
-        newComment.setParent(parentId);  // Nếu comment là trả lời, truyền parentId
+        newComment.setParent(parentId);
 
-        // Gọi repository để gửi comment lên backend
-        commentRepository.createCommentByPostId(postId, newComment, new CommentPostCallback() {
-            @Override
-            public void onSuccess(Comment comment) {
-                loadComments(postId, userId);  // Refresh lại list bình luận
-            }
-
-            @Override
-            public void onError(String message) {
-                errorMessage.postValue(message);
+        commentRepository.createCommentByPostId(postId, newComment).observeForever(result -> {
+            if (result.getStatus() == Resource.Status.SUCCESS) {
+                loadComments(postId, userId);
+            } else {
+                errorMessage.postValue(result.getMessage());
             }
         });
     }
-    public void toggleLikeComment(String currentUserId,Comment comment, int position) {
+
+    public void toggleLikeComment(String currentUserId, Comment comment, int position) {
         boolean isLiked = comment.isMyLike();
         comment.setMyLike(!isLiked);
 
@@ -116,51 +103,40 @@ public class PostDetailViewModel extends ViewModel {
             comment.getLikes().add(currentUserId);
         }
 
-        // Gửi lên server
-        CommentLikeCallback callback = new CommentLikeCallback() {
-            @Override
-            public void onSuccess() {
-                // Không cần reload
-            }
-
-            @Override
-            public void onError(String message) {
-                errorMessage.postValue(message);
-            }
-        };
-
-        if (isLiked) {
-            commentRepository.unlikeComment(comment.getId(), currentUserId, callback);
-        } else {
-            commentRepository.likeComment(comment.getId(), currentUserId, callback);
-        }
-
-        // Cập nhật comment trong danh sách hiện tại
+        // Cập nhật trong danh sách
         List<Comment> currentList = commentListLiveData.getValue();
         if (currentList != null && position >= 0 && position < currentList.size()) {
             currentList.set(position, comment);
             commentListLiveData.postValue(new ArrayList<>(currentList));
         }
-    }
-    public void deleteComment(String commentId) {
-        commentRepository.deleteCommentByCommentId(commentId, new CommentDeleteCallback() {
-            @Override
-            public void onSuccess() {
-                if (postLiveData.getValue() != null && userProfileLiveData.getValue() != null) {
-                    String postId = postLiveData.getValue().getId();
-                    String userId = userProfileLiveData.getValue().getId();
 
-                    // Sau khi xóa comment, gọi lại loadComments
-                    loadComments(postId, userId);
-                }
-            }
+        // Gửi lên server
+        LiveData<Resource<Void>> likeLiveData = isLiked ?
+                commentRepository.unlikeComment(comment.getId(), currentUserId) :
+                commentRepository.likeComment(comment.getId(), currentUserId);
 
-            @Override
-            public void onError(String message) {
-                errorMessage.postValue(message);
+        likeLiveData.observeForever(result -> {
+            if (result.getStatus() == Resource.Status.ERROR) {
+                errorMessage.postValue(result.getMessage());
             }
         });
     }
+
+    public void deleteComment(String commentId) {
+        commentRepository.deleteCommentByCommentId(commentId).observeForever(result -> {
+            if (result.getStatus() == Resource.Status.SUCCESS) {
+                String postId = postLiveData.getValue() != null ? postLiveData.getValue().getId() : null;
+                String userId = userProfileLiveData.getValue() != null ? userProfileLiveData.getValue().getId() : null;
+
+                if (postId != null && userId != null) {
+                    loadComments(postId, userId);
+                }
+            } else {
+                errorMessage.postValue(result.getMessage());
+            }
+        });
+    }
+
     public List<Comment> buildCommentTree(List<Comment> flatComments) {
         List<Comment> topLevelComments = new ArrayList<>();
         Map<String, Comment> commentMap = new HashMap<>();
@@ -186,8 +162,8 @@ public class PostDetailViewModel extends ViewModel {
     public List<Comment> flattenCommentTree(List<Comment> comments, int currentDepth) {
         List<Comment> result = new ArrayList<>();
         for (Comment comment : comments) {
-            if(currentDepth >= 2){
-                currentDepth = 1; // Cài đặt độ sâu tối đa là 1
+            if (currentDepth >= 2) {
+                currentDepth = 1;
             }
             comment.setDepth(currentDepth);
             result.add(comment);
@@ -198,5 +174,4 @@ public class PostDetailViewModel extends ViewModel {
         }
         return result;
     }
-
 }

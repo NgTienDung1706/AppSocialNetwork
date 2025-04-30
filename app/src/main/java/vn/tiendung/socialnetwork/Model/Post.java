@@ -1,5 +1,8 @@
 package vn.tiendung.socialnetwork.Model;
 
+import android.net.Uri;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -126,6 +129,17 @@ public class Post {
     }
 
     public Post() {
+    }
+    //Story
+    public Post(String userId, String imageUri, String caption) {
+        this.userid = new User();
+        this.userid.set_id(userId);
+        this.content = new Content();
+        this.content.setCaption(caption);
+        List<String> pictures = new ArrayList<>();
+        pictures.add(imageUri);
+        this.content.setPictures(pictures);
+        this.isStory = true;
     }
 }
 

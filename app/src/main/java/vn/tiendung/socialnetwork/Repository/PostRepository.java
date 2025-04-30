@@ -1,6 +1,9 @@
 package vn.tiendung.socialnetwork.Repository;
 
-import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -8,36 +11,60 @@ import retrofit2.Response;
 import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Model.Post;
+import vn.tiendung.socialnetwork.Utils.Resource;
 
 public class PostRepository {
-
     private final APIService apiService;
-
-    public interface PostCallback {
-        void onSuccess(Post post);
-        void onError(String message);
-    }
 
     public PostRepository() {
         apiService = RetrofitClient.getRetrofit().create(APIService.class);
     }
 
-    public void getPostById(String postId, String userId, PostCallback callback) {
-        Call<Post> call = apiService.getPostById(postId, userId);
-        call.enqueue(new Callback<Post>() {
+    //  Get All Posts
+    public LiveData<Resource<List<Post>>> getAllPosts(String userId) {
+        MutableLiveData<Resource<List<Post>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        apiService.getAllPosts(userId).enqueue(new Callback<List<Post>>() {
             @Override
-            public void onResponse(@NonNull Call<Post> call, @NonNull Response<Post> response) {
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
+                    result.setValue(Resource.success(response.body()));
                 } else {
-                    callback.onError("Không tìm thấy bài viết");
+                    result.setValue(Resource.error("Không tìm thấy bài viết", null));
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<Post> call, @NonNull Throwable t) {
-                callback.onError("Lỗi kết nối: " + t.getMessage());
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                result.setValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
             }
         });
+
+        return result;
+    }
+
+    //  Get Single Post by ID
+    public LiveData<Resource<Post>> getPostById(String postId, String userId) {
+        MutableLiveData<Resource<Post>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        apiService.getPostById(postId, userId).enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.setValue(Resource.success(response.body()));
+                } else {
+                    result.setValue(Resource.error("Không tìm thấy bài viết", null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                result.setValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
+            }
+        });
+
+        return result;
     }
 }

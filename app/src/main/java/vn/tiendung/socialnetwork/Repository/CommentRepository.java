@@ -1,120 +1,138 @@
 package vn.tiendung.socialnetwork.Repository;
 
-import androidx.annotation.NonNull;
-
-import java.util.List;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
-import vn.tiendung.socialnetwork.Callback.CommentDeleteCallback;
-import vn.tiendung.socialnetwork.Callback.CommentLikeCallback;
-import vn.tiendung.socialnetwork.Callback.CommentPostCallback;
 import vn.tiendung.socialnetwork.Model.Comment;
+import vn.tiendung.socialnetwork.Utils.Resource;
+
+import java.util.List;
 
 public class CommentRepository {
 
     private final APIService apiService;
 
-    public interface CommentCallback {
-        void onSuccess(List<Comment> comments);
-        void onError(String message);
-    }
-
     public CommentRepository() {
         apiService = RetrofitClient.getRetrofit().create(APIService.class);
     }
 
-    public void getCommentsByPostId(String postId, String userId, CommentCallback callback) {
-        Call<List<Comment>> call = apiService.getCommentsByPostId(postId, userId);
-        call.enqueue(new Callback<List<Comment>>() {
+    public LiveData<Resource<List<Comment>>> getCommentsByPostId(String postId, String userId) {
+        MutableLiveData<Resource<List<Comment>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        apiService.getCommentsByPostId(postId, userId).enqueue(new Callback<List<Comment>>() {
             @Override
-            public void onResponse(@NonNull Call<List<Comment>> call, @NonNull Response<List<Comment>> response) {
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
+                    result.postValue(Resource.success(response.body()));
                 } else {
-                    callback.onError("Không tìm thấy comment");
+                    result.postValue(Resource.error("Không tìm thấy comment", null));
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Comment>> call, @NonNull Throwable t) {
-                callback.onError("Lỗi kết nối: " + t.getMessage());
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
+                result.postValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
             }
         });
+
+        return result;
     }
-    public void likeComment(String commentId, String userId, CommentLikeCallback callback) {
+
+    public LiveData<Resource<Void>> likeComment(String commentId, String userId) {
+        MutableLiveData<Resource<Void>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
         apiService.likeCommentByCommentId(commentId, userId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    callback.onSuccess();
+                    result.postValue(Resource.success(null));
                 } else {
-                    callback.onError("Like thất bại: " + response.code());
+                    result.postValue(Resource.error("Like thất bại: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                callback.onError("Lỗi kết nối: " + t.getMessage());
+                result.postValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
             }
         });
+
+        return result;
     }
 
+    public LiveData<Resource<Void>> unlikeComment(String commentId, String userId) {
+        MutableLiveData<Resource<Void>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
 
-    public void unlikeComment(String commentId, String userId, CommentLikeCallback callback) {
         apiService.unlikeCommentByCommentId(commentId, userId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    callback.onSuccess();
+                    result.postValue(Resource.success(null));
                 } else {
-                    callback.onError("Bỏ like thất bại: " + response.code());
+                    result.postValue(Resource.error("Bỏ like thất bại: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                callback.onError("Lỗi kết nối: " + t.getMessage());
+                result.postValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
             }
         });
+
+        return result;
     }
 
-    public void createCommentByPostId(String postId, Comment comment, CommentPostCallback callback) {
+    public LiveData<Resource<Comment>> createCommentByPostId(String postId, Comment comment) {
+        MutableLiveData<Resource<Comment>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
         apiService.createCommentByPostId(postId, comment).enqueue(new Callback<Comment>() {
             @Override
             public void onResponse(Call<Comment> call, Response<Comment> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
+                    result.postValue(Resource.success(response.body()));
                 } else {
-                    callback.onError("Không thể gửi bình luận: " + response.code());
+                    result.postValue(Resource.error("Không thể gửi bình luận: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<Comment> call, Throwable t) {
-                callback.onError("Lỗi kết nối: " + t.getMessage());
+                result.postValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
             }
         });
+
+        return result;
     }
-    public void deleteCommentByCommentId(String commentId, CommentDeleteCallback callback) {
+
+    public LiveData<Resource<Void>> deleteCommentByCommentId(String commentId) {
+        MutableLiveData<Resource<Void>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
         apiService.deleteCommentByCommentId(commentId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    callback.onSuccess();
+                    result.postValue(Resource.success(null));
                 } else {
-                    callback.onError("Xóa thất bại: " + response.code());
+                    result.postValue(Resource.error("Xóa thất bại: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                callback.onError("Lỗi kết nối: " + t.getMessage());
+                result.postValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
             }
         });
-    }
 
+        return result;
+    }
 }

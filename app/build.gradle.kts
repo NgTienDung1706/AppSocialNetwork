@@ -53,6 +53,14 @@ dependencies {
     //implementation 'io.socket:socket.io-client:2.0.0'
     implementation ("io.socket:engine.io-client:2.0.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
+    // CameraX Core
+    implementation ("androidx.camera:camera-core:1.3.2")
+    implementation ("androidx.camera:camera-lifecycle:1.3.2")
+    implementation ("androidx.camera:camera-camera2:1.3.2")
+    implementation ("androidx.camera:camera-view:1.3.2")
+    //Cloudinary
+    implementation("com.cloudinary:cloudinary-android:2.3.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

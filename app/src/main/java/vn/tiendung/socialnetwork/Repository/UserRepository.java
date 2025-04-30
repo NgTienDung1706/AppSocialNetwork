@@ -1,6 +1,7 @@
 package vn.tiendung.socialnetwork.Repository;
 
-import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -8,36 +9,36 @@ import retrofit2.Response;
 import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Model.UserProfile;
+import vn.tiendung.socialnetwork.Utils.Resource;
 
 public class UserRepository {
 
     private final APIService apiService;
 
-    public interface UserCallback {
-        void onSuccess(UserProfile userProfile);
-        void onError(String message);
-    }
-
     public UserRepository() {
         apiService = RetrofitClient.getRetrofit().create(APIService.class);
     }
 
-    public void getUserProfile(String userId, UserCallback callback) {
-        Call<UserProfile> call = apiService.getUserProfile(userId);
-        call.enqueue(new Callback<UserProfile>() {
+    public LiveData<Resource<UserProfile>> getUserProfile(String userId) {
+        MutableLiveData<Resource<UserProfile>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        apiService.getUserProfile(userId).enqueue(new Callback<UserProfile>() {
             @Override
-            public void onResponse(@NonNull Call<UserProfile> call, @NonNull Response<UserProfile> response) {
+            public void onResponse(Call<UserProfile> call, Response<UserProfile> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
+                    result.postValue(Resource.success(response.body()));
                 } else {
-                    callback.onError("Không tìm thấy người dùng");
+                    result.postValue(Resource.error("Không tìm thấy người dùng", null));
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<UserProfile> call, @NonNull Throwable t) {
-                callback.onError("Lỗi kết nối: " + t.getMessage());
+            public void onFailure(Call<UserProfile> call, Throwable t) {
+                result.postValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
             }
         });
+
+        return result;
     }
 }

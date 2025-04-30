@@ -91,6 +91,9 @@ public interface APIService {
             @Query("userId") String userId
     );
 
+    @POST("/api/post/story/create")
+    Call<Post> createStory(@Body Post post);
+    //Comments
     @GET("/api/posts/{postId}/comments")
     Call<List<Comment>> getCommentsByPostId(@Path("postId") String postId, @Query("userId") String userId);
     @POST("/api/posts/{postId}/comments")
