@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import vn.tiendung.socialnetwork.Adapter.MomentAdapter;
+import vn.tiendung.socialnetwork.Adapter.StoryAdapter;
 import vn.tiendung.socialnetwork.Adapter.PostAdapter;
 import vn.tiendung.socialnetwork.Model.Moment;
 import vn.tiendung.socialnetwork.Model.Post;
@@ -36,7 +37,8 @@ public class HomeFragment extends Fragment {
     private TextView tvNoPosts;
     private CardView cardAddStory;
     private OnScrollListener scrollListener;
-    private HomeViewModel homeViewModel;
+    private HomeViewModel viewModel;
+    private StoryAdapter storyAdapter;
 
     @Nullable
     @Override
@@ -46,6 +48,7 @@ public class HomeFragment extends Fragment {
         initViews(view);
         setupViewModel();
         observeData();
+        setupRecyclerViews(view);
         assignFunction();
 
         return view;
@@ -55,19 +58,15 @@ public class HomeFragment extends Fragment {
         cardAddStory = view.findViewById(R.id.cardAddStory);
         recyclerViewPosts = view.findViewById(R.id.recyclerViewPosts);
         tvNoPosts = view.findViewById(R.id.tvNoPosts);
-        setupRecyclerViews(view);
     }
 
     private void setupRecyclerViews(View view) {
-        // Moments
+        // Stories
         RecyclerView recyclerViewMoments = view.findViewById(R.id.recyclerViewMoments);
-        List<Moment> moments = new ArrayList<>();
-        moments.add(new Moment(R.drawable.ic_coin, "Khoảnh khắc 1"));
-        moments.add(new Moment(R.drawable.ic_coin, "Khoảnh khắc 2"));
-        moments.add(new Moment(R.drawable.ic_coin, "Khoảnh khắc 3"));
-        MomentAdapter momentAdapter = new MomentAdapter(moments);
+
+        storyAdapter = new StoryAdapter(getContext());
         recyclerViewMoments.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        recyclerViewMoments.setAdapter(momentAdapter);
+        recyclerViewMoments.setAdapter(storyAdapter);
 
         // Posts
         postAdapter = new PostAdapter(getContext(), postList);
@@ -97,13 +96,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupViewModel() {
-        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
     }
     private void observeData(){
         String userId = SharedPrefManager.getInstance(requireContext()).getUserId();
-        homeViewModel.loadPosts(userId);
+        viewModel.loadPosts(userId);
+        viewModel.loadStories(userId);
 
-        homeViewModel.getPosts().observe(getViewLifecycleOwner(), posts -> {
+        viewModel.getPosts().observe(getViewLifecycleOwner(), posts -> {
             if (posts != null && !posts.isEmpty()) {
                 tvNoPosts.setVisibility(View.GONE);
                 postList.clear();
@@ -111,6 +111,19 @@ public class HomeFragment extends Fragment {
                 postAdapter.notifyDataSetChanged();
             } else {
                 tvNoPosts.setVisibility(View.VISIBLE);
+            }
+        });
+        viewModel.getStories().observe(getViewLifecycleOwner(), resource -> {
+            switch (resource.getStatus()) {
+                case LOADING:
+                    // show loading
+                    break;
+                case SUCCESS:
+                    storyAdapter.setStories(resource.getData());
+                    break;
+                case ERROR:
+                    Toast.makeText(getContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();
+                    break;
             }
         });
     }

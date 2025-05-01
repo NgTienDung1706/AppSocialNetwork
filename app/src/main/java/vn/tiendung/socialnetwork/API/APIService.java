@@ -90,9 +90,11 @@ public interface APIService {
             @Query("postId") String postId,
             @Query("userId") String userId
     );
-
+    //Story
     @POST("/api/post/story/create")
     Call<Post> createStory(@Body Post post);
+    @GET("/api/post/story/{userId}")
+    Call<List<Post>> getUserStories(@Path("userId") String userId);
     //Comments
     @GET("/api/posts/{postId}/comments")
     Call<List<Comment>> getCommentsByPostId(@Path("postId") String postId, @Query("userId") String userId);

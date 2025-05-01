@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -75,6 +76,35 @@ public class StoryRepository {
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
                 result.setValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
+            }
+        });
+
+        return result;
+    }
+    public LiveData<Resource<List<Post>>> loadStories(String userId) {
+        MutableLiveData<Resource<List<Post>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        apiService.getUserStories(userId).enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                if (response.isSuccessful()) {
+                    result.setValue(Resource.success(response.body()));
+                } else {
+                    try {
+                        String errorJson = response.errorBody() != null ? response.errorBody().string() : "Không rõ lỗi";
+                        Log.e("DEBUG_API", "Lỗi API: code = " + response.code() + ", message = " + errorJson);
+                        result.setValue(Resource.error("Không lấy được story: " + response.code(), null));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        result.setValue(Resource.error("Lỗi không xác định khi đọc lỗi", null));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                result.setValue(Resource.error("Lỗi: " + t.getMessage(), null));
             }
         });
 

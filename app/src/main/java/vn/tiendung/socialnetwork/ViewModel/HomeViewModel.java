@@ -8,14 +8,17 @@ import java.util.List;
 
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.Repository.PostRepository;
+import vn.tiendung.socialnetwork.Repository.StoryRepository;
 import vn.tiendung.socialnetwork.Utils.Resource;
 
 public class HomeViewModel extends ViewModel {
 
     private final PostRepository postRepository;
+    private final StoryRepository storyRepository = new StoryRepository();
     private final MutableLiveData<List<Post>> posts = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    private final MutableLiveData<Resource<List<Post>>> stories = new MutableLiveData<>();
 
     public HomeViewModel() {
         postRepository = new PostRepository();
@@ -23,6 +26,9 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<List<Post>> getPosts() {
         return posts;
+    }
+    public LiveData<Resource<List<Post>>> getStories() {
+        return stories;
     }
 
     public LiveData<String> getErrorMessage() {
@@ -51,6 +57,11 @@ public class HomeViewModel extends ViewModel {
                         break;
                 }
             }
+        });
+    }
+    public void loadStories(String userId) {
+        storyRepository.loadStories(userId).observeForever(resource -> {
+            stories.setValue(resource);
         });
     }
 }

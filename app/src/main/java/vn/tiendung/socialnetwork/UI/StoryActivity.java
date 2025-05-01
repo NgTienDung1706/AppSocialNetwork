@@ -98,6 +98,7 @@ public class StoryActivity extends AppCompatActivity {
                 btnSwitchCamera.setImageResource(R.drawable.ic_switch_camera);
             }
         });
+
     }
 
     private void assignFunction() {
