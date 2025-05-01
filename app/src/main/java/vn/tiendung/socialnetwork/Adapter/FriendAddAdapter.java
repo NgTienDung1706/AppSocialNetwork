@@ -41,7 +41,7 @@ public class FriendAddAdapter extends RecyclerView.Adapter<FriendAddAdapter.Frie
         holder.tvMutualFriends.setText(friend.getMutualFriends() + " bạn chung");
 
         // Hiển thị ảnh profile tạm thời lấy trong local
-        holder.imageProfile.setImageResource(friend.getAvatarResId());
+        //holder.imageProfile.setImageResource(friend.getAvatarResId());
 /*        Glide.with(context)
                 .load(friend.getProfileImage())
                 .centerCrop()

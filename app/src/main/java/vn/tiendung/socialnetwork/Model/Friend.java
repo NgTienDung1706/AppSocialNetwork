@@ -5,8 +5,11 @@ public class Friend {
     public static final int TYPE_REQUEST = 1;
     public static final int TYPE_SUGGEST = 2;
     private String name;
-    private int mutualFriends;
-    private int avatarResId;
+    private String mutualFriends;
+    private String avatarResId;
+
+    private boolean isFriend;
+
     private int type;
 
     public int getType() {
@@ -17,12 +20,13 @@ public class Friend {
         this.type = type;
     }
 
-    public Friend(String name, int mutualFriends, int avatarResId) {
+    public Friend(String name, String mutualFriends, String avatarResId,boolean isFriend) {
         this.name = name;
         this.mutualFriends = mutualFriends;
         this.avatarResId = avatarResId;
+        this.isFriend = isFriend;
     }
-    public Friend(String name, int avatarResId, int mutualFriends, int type) {
+    public Friend(String name, String avatarResId, String mutualFriends, int type) {
         this.name = name;
         this.mutualFriends = mutualFriends;
         this.avatarResId = avatarResId;
@@ -32,11 +36,19 @@ public class Friend {
         return name;
     }
 
-    public int getMutualFriends() {
+    public String getMutualFriends() {
         return mutualFriends;
     }
 
-    public int getAvatarResId() {
+    public String getAvatarResId() {
         return avatarResId;
+    }
+
+    public boolean isFriend() {
+        return isFriend;
+    }
+
+    public void setFriend(boolean friend) {
+        isFriend = friend;
     }
 }

@@ -5,7 +5,6 @@
         android:id="@+id/nav_home"
         android:icon="@drawable/housesolid"
         android:title="TODO" />
-
     <item
         android:id="@+id/nav_chat"
         android:icon="@drawable/commentsolid"

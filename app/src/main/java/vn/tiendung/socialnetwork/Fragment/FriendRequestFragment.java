@@ -31,18 +31,18 @@ public class FriendRequestFragment extends Fragment {
 
         // Dữ liệu mẫu
 
-        List<Friend> friends = new ArrayList<>();
-        friends.add(new Friend("Nguyễn Văn A", R.drawable.circleusersolid, 31, Friend.TYPE_REQUEST));
-        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-
-        // Thiết lập adapter
-        RecyclerView.Adapter adapter = new FriendAddAdapter(getContext(), friends);
-        recyclerView.setAdapter(adapter);
+//        List<Friend> friends = new ArrayList<>();
+//        friends.add(new Friend("Nguyễn Văn A", R.drawable.circleusersolid, 31, Friend.TYPE_REQUEST));
+//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
+//
+//        // Thiết lập adapter
+//        RecyclerView.Adapter adapter = new FriendAddAdapter(getContext(), friends);
+//        recyclerView.setAdapter(adapter);
 
         return view;
     }

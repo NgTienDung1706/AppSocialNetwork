@@ -32,6 +32,7 @@ import retrofit2.Response;
 import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Fragment.ReactionPopupWindow;
+import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.UI.PostDetailActivity;
@@ -227,5 +228,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             case "Giận": return R.drawable.ic_reaction_angry;
             default: return R.drawable.ic_like;
         }
+    }
+    public void updateData(List<Post> newPosts) {
+        this.posts.clear();
+        this.posts.addAll(newPosts);
+        notifyDataSetChanged();
     }
 }

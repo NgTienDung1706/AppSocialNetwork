@@ -1,10 +1,12 @@
 package vn.tiendung.socialnetwork.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,8 @@ import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.Adapter.PostAdapter;
 
 import vn.tiendung.socialnetwork.R;
+import vn.tiendung.socialnetwork.UI.MainActivity;
+import vn.tiendung.socialnetwork.UI.SearchActivity;
 import vn.tiendung.socialnetwork.Utils.OnScrollListener;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 
@@ -39,6 +43,8 @@ public class HomeFragment extends Fragment {
 
     TextView tvNoPosts;
     private ImageButton btnReaction;
+
+    ImageView search;
 
 
 
@@ -81,7 +87,11 @@ public class HomeFragment extends Fragment {
         String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
         loadPostsFromApi(userId);
         tvNoPosts = view.findViewById(R.id.tvNoPosts);
-
+        search = view.findViewById(R.id.icon_search);
+        search.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), SearchActivity.class);
+            startActivity(intent);
+        });
 
         return view;
     }

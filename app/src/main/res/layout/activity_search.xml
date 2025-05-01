@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Thanh tìm kiếm -->
+    <EditText
+        android:id="@+id/edtSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tìm kiếm bạn bè hoặc hashtag..."
+        android:padding="12dp"
+        android:background="@android:color/white"
+        android:drawableLeft="@android:drawable/ic_menu_search"
+        android:drawablePadding="8dp"
+        android:inputType="text"
+        android:elevation="4dp" />
+
+    <!-- Tab cho lựa chọn tìm kiếm -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayoutSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabIndicatorColor="@android:color/holo_blue_dark"
+        app:tabSelectedTextColor="@android:color/holo_blue_dark"
+        app:tabTextColor="@android:color/darker_gray"
+        android:background="@android:color/white" />
+
+    <!-- ViewPager2 để chứa các fragment con -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerSearch"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

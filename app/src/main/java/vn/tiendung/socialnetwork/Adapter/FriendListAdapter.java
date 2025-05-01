@@ -1,6 +1,7 @@
 package vn.tiendung.socialnetwork.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -37,9 +40,15 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
     public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
         Friend friend = friends.get(position);
 
-        holder.avatar.setImageResource(friend.getAvatarResId());
+        //holder.avatar.setImageResource(friend.getAvatarResId());
         holder.name.setText(friend.getName());
         holder.mutualFriends.setText(friend.getMutualFriends() + " bạn chung");
+        Glide.with(context).load(friend.getAvatarResId()).into(holder.avatar);
+        if (friend.isFriend()) {
+            holder.tvIsFriend.setVisibility(View.VISIBLE); // Hiển thị "Friend"
+        } else {
+            holder.tvIsFriend.setVisibility(View.GONE); // Ẩn "Friend"
+        }
 
         holder.messageIcon.setOnClickListener(v -> {
             // Xử lý sự kiện nhắn tin
@@ -54,7 +63,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
 
     public static class FriendViewHolder extends RecyclerView.ViewHolder {
         ImageView avatar, messageIcon;
-        TextView name, mutualFriends;
+        TextView name, mutualFriends,tvIsFriend;
 
         public FriendViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -62,6 +71,13 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
             name = itemView.findViewById(R.id.tvName);
             mutualFriends = itemView.findViewById(R.id.tvMutualFriends);
             messageIcon = itemView.findViewById(R.id.imgMessage);
+            tvIsFriend = itemView.findViewById((R.id.tvIsFriend));
         }
+    }
+
+    public void updateData(List<Friend> newFriends) {
+        this.friends.clear();
+        this.friends.addAll(newFriends);
+        notifyDataSetChanged();
     }
 }

@@ -1,9 +1,12 @@
 package vn.tiendung.socialnetwork.UI;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
     private BottomNavigationView bottomNavigationView;
     private View fragmentContainer;
     private RecyclerView recyclerViewPosts;
+
+    ImageView search;
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener 
 
             return true;
         });
+
     }
 
     @Override
