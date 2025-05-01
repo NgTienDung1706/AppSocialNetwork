@@ -1,0 +1,8 @@
+Callback:
+
+Xác nhận xử lý API thành công/thất bại
+Log lỗi nếu có
+Có thể reload lại comment (nếu cần), hoặc đơn giản là thông báo
+=> tức là thao tác không phản hồi
+
+Like comment, follow user, xóa post

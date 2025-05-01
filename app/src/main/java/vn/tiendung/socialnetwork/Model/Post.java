@@ -3,6 +3,8 @@ package vn.tiendung.socialnetwork.Model;
 import java.util.List;
 import java.util.Map;
 
+import vn.tiendung.socialnetwork.R;
+
 public class Post {
     private String _id;
     private Content content;
@@ -28,6 +30,48 @@ public class Post {
     public boolean isStory() { return isStory; }
     public String getLocation() { return location; }
     public Map<String, List<String>> getReactions() { return reactions; }
+
+    public int getMyReactionsIcon()
+    {
+        if (myReaction.equals("Thích")) {
+            return R.drawable.ic_reaction_like;
+        }
+        else if (myReaction.equals("Haha")) {
+            return R.drawable.ic_reaction_haha;
+        }
+        else if (myReaction.equals("Buồn")) {
+            return R.drawable.ic_reaction_sad;
+        }
+        else if (myReaction.equals("Thương")) {
+            return R.drawable.ic_reaction_love;
+        }
+        else if (myReaction.equals("Wow")) {
+            return R.drawable.ic_reaction_wow;
+        }
+        else if (myReaction.equals("Giận")) {
+            return R.drawable.ic_reaction_angry;
+        }
+        else if (myReaction.equals("Tim")) {
+            return R.drawable.ic_reaction_heart;
+        }
+        return R.drawable.ic_like;
+    }
+
+    public int getTotalReactionsCount() {
+        int totalReactions = 0;
+
+        // Kiểm tra nếu reactions không phải là null
+        if (getReactions() != null) {
+            // Duyệt qua từng loại cảm xúc trong map reactions
+            for (List<String> reactionList : getReactions().values()) {
+                // Cộng tổng số lượng cảm xúc (số lượng người thả cảm xúc)
+                totalReactions += reactionList.size();
+            }
+        }
+
+        return totalReactions;
+    }
+
 
     public static class Content {
         private String caption;

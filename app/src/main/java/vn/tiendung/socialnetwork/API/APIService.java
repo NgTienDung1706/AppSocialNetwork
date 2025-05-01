@@ -16,6 +16,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.Model.MessageResponse;
 import vn.tiendung.socialnetwork.Model.Post;
@@ -85,8 +86,25 @@ public interface APIService {
     @GET("/api/post/myPosts/{userId}")
     Call<List<Post>> getMyPosts(@Path("userId") String userId);
 
-    @GET("/api/post/postDetail/{postId}")
-    Call<Post> getPostById(@Path("postId") String postId);
+    @GET("/api/post/postDetail")
+    Call<Post> getPostById(
+            @Query("postId") String postId,
+            @Query("userId") String userId
+    );
+
+    @GET("/api/posts/{postId}/comments")
+    Call<List<Comment>> getCommentsByPostId(@Path("postId") String postId, @Query("userId") String userId);
+    @POST("/api/posts/{postId}/comments")
+    Call<Comment> createCommentByPostId(@Path("postId") String postId, @Body Comment comment);
+    @PUT("/api/comments/{commentId}")
+    Call<Void> updateCommentByCommentId(@Path("commentId") String commentId);
+    @DELETE ("/api/comments/{commentId}")
+    Call<Void> deleteCommentByCommentId(@Path("commentId") String commentId);
+    @POST("/api/comments/{commentId}/like")
+    Call<Void> likeCommentByCommentId(@Path("commentId") String commentId, @Query("userId") String userId);
+    @DELETE("/api/comments/{commentId}/like")
+    Call<Void> unlikeCommentByCommentId(@Path("commentId") String commentId, @Query("userId") String userId);
+
 
     @GET("/api/search/user")
     Call<List<Friend>> searchFriends(@Query("keyword") String keyword,

@@ -10,6 +10,7 @@
 
     <!-- NestedScrollView để hỗ trợ cuộn toàn bộ nội dung -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -58,6 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Follow"
+                    android:visibility="invisible"
                     android:backgroundTint="@color/rd"
                     android:textColor="@color/st" />
             </LinearLayout>
@@ -121,12 +123,14 @@
 
                 <ImageButton
                     android:id="@+id/btnReaction"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="?android:selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_like"
-                    android:contentDescription="Cảm xúc"
-                    app:tint="@color/rd" />
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="@null"
+                    android:padding="0dp"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Reaction Button"
+                    android:src="@drawable/ic_like" />
+
 
                 <TextView
                     android:id="@+id/tvReactionCount"
@@ -156,9 +160,56 @@
                 android:layout_marginTop="8dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/replyingToCommentLayout"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/background_rounded"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/commentBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
+        <ImageView
+            android:id="@+id/ivReplyingAvatar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical|start"
+            android:src="@drawable/circleusersolid"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvReplyingUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:layout_toStartOf="@id/ivReplyingAvatar"
+            android:text="Đang trả lời @User"
+            android:textColor="@color/nd"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivReplyingAvatar"
+            app:layout_constraintStart_toEndOf="@+id/ivReplyingAvatar"
+            app:layout_constraintTop_toTopOf="@+id/ivReplyingAvatar" />
+
+        <ImageButton
+            android:id="@+id/btnCloseReply"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical|end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Đóng"
+            android:src="@drawable/ic_close"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Thanh bình luận cố định -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/commentBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -174,11 +225,19 @@
             android:id="@+id/etComment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
+            android:maxHeight="400dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="top|start"
+            android:layout_marginEnd="4dp"
             android:hint="Thêm bình luận..."
-            android:inputType="text"
-            android:padding="8dp" />
+            android:inputType="textMultiLine"
+            android:lineSpacingExtra="2sp"
+            android:padding="8dp"
+            android:scrollbars="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnSendComment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Nút gửi bình luận -->
         <ImageButton
@@ -187,8 +246,11 @@
             android:layout_height="40dp"
             android:background="@android:color/transparent"
             android:contentDescription="Send Comment"
-            android:src="@drawable/ic_send"
             android:scaleType="centerInside"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
+            android:src="@drawable/ic_send"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/etComment"
+            app:layout_constraintEnd_toEndOf="parent"
+             />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
