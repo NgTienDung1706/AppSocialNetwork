@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Network Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- Camera -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Camera -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
-    <!-- Storage permissions -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" /> <!-- Storage permissions -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- API 33+ -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
         android:allowBackup="true"
@@ -26,42 +26,38 @@
         android:theme="@style/Theme.SocialNetwork"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
+        <activity
+            android:name=".UI.StoryViewActivity"
+            android:exported="false" />
         <activity
             android:name=".UI.StoryActivity"
             android:exported="false" />
-
         <activity
             android:name=".UI.PostDetailActivity"
             android:exported="false" />
-
         <activity
             android:name=".UI.LoginActivity"
             android:exported="false" />
-
         <activity
             android:name=".UI.RegisterActivity"
             android:exported="false" />
-
         <activity
             android:name=".UI.ForgotPasswordActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
         <activity
             android:name=".UI.MessageActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
         <activity
             android:name=".UI.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

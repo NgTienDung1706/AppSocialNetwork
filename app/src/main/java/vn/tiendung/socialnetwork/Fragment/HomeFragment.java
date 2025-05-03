@@ -16,15 +16,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import vn.tiendung.socialnetwork.Adapter.StoryAdapter;
 import vn.tiendung.socialnetwork.Adapter.PostAdapter;
-import vn.tiendung.socialnetwork.Model.Moment;
+import vn.tiendung.socialnetwork.Adapter.StoryAdapter;
 import vn.tiendung.socialnetwork.Model.Post;
+import vn.tiendung.socialnetwork.Model.StoryGroup;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.UI.StoryActivity;
+import vn.tiendung.socialnetwork.UI.StoryViewActivity;
 import vn.tiendung.socialnetwork.Utils.OnScrollListener;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 import vn.tiendung.socialnetwork.ViewModel.HomeViewModel;
@@ -47,9 +50,9 @@ public class HomeFragment extends Fragment {
 
         initViews(view);
         setupViewModel();
-        observeData();
         setupRecyclerViews(view);
         assignFunction();
+        observeData();
 
         return view;
     }
@@ -61,14 +64,22 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRecyclerViews(View view) {
-        // Stories
         RecyclerView recyclerViewMoments = view.findViewById(R.id.recyclerViewMoments);
 
-        storyAdapter = new StoryAdapter(getContext());
+        // 💡 Adapter callback truyền full danh sách + vị trí người được click
+        storyAdapter = new StoryAdapter(requireContext(), (group, position, allGroups) -> {
+            Intent intent = new Intent(requireContext(), StoryViewActivity.class);
+
+            // ✅ Truyền danh sách toàn bộ group + vị trí hiện tại
+            intent.putExtra("storiesJson", new Gson().toJson(allGroups));
+            intent.putExtra("startPosition", position);
+
+            startActivity(intent);
+        });
+
         recyclerViewMoments.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerViewMoments.setAdapter(storyAdapter);
 
-        // Posts
         postAdapter = new PostAdapter(getContext(), postList);
         recyclerViewPosts.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewPosts.setAdapter(postAdapter);
@@ -80,7 +91,6 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
-        // Gán scroll listener
         if (getActivity() instanceof OnScrollListener) {
             scrollListener = (OnScrollListener) getActivity();
         }
@@ -98,7 +108,8 @@ public class HomeFragment extends Fragment {
     private void setupViewModel() {
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
     }
-    private void observeData(){
+
+    private void observeData() {
         String userId = SharedPrefManager.getInstance(requireContext()).getUserId();
         viewModel.loadPosts(userId);
         viewModel.loadStories(userId);
@@ -113,13 +124,18 @@ public class HomeFragment extends Fragment {
                 tvNoPosts.setVisibility(View.VISIBLE);
             }
         });
+
+        viewModel.getGroupedStories().observe(getViewLifecycleOwner(), grouped -> {
+            storyAdapter.setStoryGroups(grouped);
+        });
+
         viewModel.getStories().observe(getViewLifecycleOwner(), resource -> {
             switch (resource.getStatus()) {
                 case LOADING:
-                    // show loading
+                    // Show loading if needed
                     break;
                 case SUCCESS:
-                    storyAdapter.setStories(resource.getData());
+                    viewModel.setGroupedStories(resource.getData()); // 💡 trigger grouped update
                     break;
                 case ERROR:
                     Toast.makeText(getContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();

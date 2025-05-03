@@ -17,22 +17,32 @@ import java.util.List;
 
 import vn.tiendung.socialnetwork.Model.Moment;
 import vn.tiendung.socialnetwork.Model.Post;
+import vn.tiendung.socialnetwork.Model.StoryGroup;
 import vn.tiendung.socialnetwork.R;
 
 public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.StoryViewHolder> {
-
-    private List<Post> stories = new ArrayList<>();
-
+    private List<StoryGroup> storyGroups = new ArrayList<>();
     private Context context;
-
-    public StoryAdapter(Context context) {
-        this.context = context;
+    private OnStoryGroupClickListener listener;
+    public interface OnStoryGroupClickListener {
+        void onStoryGroupClick(StoryGroup group, int position, List<StoryGroup> allGroups);
     }
-    public void setStories(List<Post> stories) {
-        this.stories = stories;
+
+
+    public StoryAdapter(Context context, OnStoryGroupClickListener listener) {
+        this.context = context;
+        this.listener = listener;
+    }
+    public void setStoryGroups(List<StoryGroup> groups) {
+        this.storyGroups.clear();
+        if (groups != null) {
+            this.storyGroups.addAll(groups);
+        }
         notifyDataSetChanged();
     }
-
+    public List<StoryGroup> getStoryGroups() {
+        return storyGroups;
+    }
     @NonNull
     @Override
     public StoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,29 +52,35 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.StoryViewHol
 
     @Override
     public void onBindViewHolder(@NonNull StoryViewHolder holder, int position) {
-        Post story = stories.get(position);
+        StoryGroup group = storyGroups.get(position);
+        Post.User user = group.getUser();
 
-        holder.textUsername.setText(story.getUser().getName());
+        holder.textUsername.setText(user.getName());
 
 
         // Load avatar bằng Glide
         Glide.with(context)
-                .load(story.getContent().getPictures().get(0))
+                .load(group.getStories().get(0).getContent().getPictures().get(0))
                 .placeholder(R.drawable.circleusersolid)
                 .into(holder.imageStory);
         Glide.with(context)
-                .load(story.getUser().getAvatar())
+                .load(group.getUser().getAvatar())
                 .placeholder(R.drawable.circleusersolid)
                 .circleCrop()
                 .into(holder.imageAvatar);
 
-        // TODO: onClick mở StoryViewerActivity (nếu bạn có)
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onStoryGroupClick(group, position, storyGroups);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return stories.size();
+        return storyGroups.size();
     }
+
 
     public static class StoryViewHolder extends RecyclerView.ViewHolder {
         ImageView imageAvatar, imageStory;
