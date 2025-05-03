@@ -17,6 +17,7 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import vn.tiendung.socialnetwork.Model.Comment;
+import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.Model.MessageResponse;
 import vn.tiendung.socialnetwork.Model.Post;
 import vn.tiendung.socialnetwork.Model.UserModel;
@@ -109,4 +110,12 @@ public interface APIService {
     @DELETE("/api/comments/{commentId}/like")
     Call<Void> unlikeCommentByCommentId(@Path("commentId") String commentId, @Query("userId") String userId);
 
+
+    @GET("/api/search/user")
+    Call<List<Friend>> searchFriends(@Query("keyword") String keyword,
+                                     @Query("userId") String userId);
+
+    @GET("/api/post/search")
+    Call<List<Post>> searchPosts(@Query("keyword") String keyword,
+                                     @Query("userId") String userId);
 }

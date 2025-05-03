@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,8 @@ import vn.tiendung.socialnetwork.Model.StoryGroup;
 import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.UI.StoryActivity;
 import vn.tiendung.socialnetwork.UI.StoryViewActivity;
+import vn.tiendung.socialnetwork.UI.MainActivity;
+import vn.tiendung.socialnetwork.UI.SearchActivity;
 import vn.tiendung.socialnetwork.Utils.OnScrollListener;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 import vn.tiendung.socialnetwork.ViewModel.HomeViewModel;
@@ -42,6 +45,10 @@ public class HomeFragment extends Fragment {
     private OnScrollListener scrollListener;
     private HomeViewModel viewModel;
     private StoryAdapter storyAdapter;
+	private RecyclerView recyclerViewMoments
+    private ImageButton btnReaction;
+
+    private ImageView search;
 
     @Nullable
     @Override
@@ -61,10 +68,12 @@ public class HomeFragment extends Fragment {
         cardAddStory = view.findViewById(R.id.cardAddStory);
         recyclerViewPosts = view.findViewById(R.id.recyclerViewPosts);
         tvNoPosts = view.findViewById(R.id.tvNoPosts);
+		recyclerViewMoments = view.findViewById(R.id.recyclerViewMoments);
+		search = view.findViewById(R.id.icon_search);
     }
 
     private void setupRecyclerViews(View view) {
-        RecyclerView recyclerViewMoments = view.findViewById(R.id.recyclerViewMoments);
+        
 
         // 💡 Adapter callback truyền full danh sách + vị trí người được click
         storyAdapter = new StoryAdapter(requireContext(), (group, position, allGroups) -> {
@@ -78,7 +87,10 @@ public class HomeFragment extends Fragment {
         });
 
         recyclerViewMoments.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+ 
         recyclerViewMoments.setAdapter(storyAdapter);
+
+
 
         postAdapter = new PostAdapter(getContext(), postList);
         recyclerViewPosts.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -103,12 +115,18 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-    }
 
+    
+        
+        search.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), SearchActivity.class);
+            startActivity(intent);
+        });
+
+	}
     private void setupViewModel() {
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
     }
-
     private void observeData() {
         String userId = SharedPrefManager.getInstance(requireContext()).getUserId();
         viewModel.loadPosts(userId);
@@ -124,6 +142,7 @@ public class HomeFragment extends Fragment {
                 tvNoPosts.setVisibility(View.VISIBLE);
             }
         });
+
 
         viewModel.getGroupedStories().observe(getViewLifecycleOwner(), grouped -> {
             storyAdapter.setStoryGroups(grouped);

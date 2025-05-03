@@ -29,24 +29,16 @@ public class FriendListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Dữ liệu mẫu
-        List<Friend> friends = new ArrayList<>();
-        friends.add(new Friend("Thao Pham", 15, R.drawable.circleusersolid));
-        friends.add(new Friend("Nguyen Van A", 10, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid));
-
-        // Thiết lập adapter
-        RecyclerView.Adapter adapter = new FriendListAdapter(getContext(),friends);
-        recyclerView.setAdapter(adapter);
+//        List<Friend> friends = new ArrayList<>();
+//        friends.add(new Friend("Thao Pham", 15, R.drawable.circleusersolid,true));
+//        friends.add(new Friend("Nguyen Van A", 10, R.drawable.circleusersolid,true));
+//        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid,true));
+//        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid,true));
+//        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid,true));
+//        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid,true));
+//        // Thiết lập adapter
+//        RecyclerView.Adapter adapter = new FriendListAdapter(getContext(),friends);
+//        recyclerView.setAdapter(adapter);
 
         return view;
     }
