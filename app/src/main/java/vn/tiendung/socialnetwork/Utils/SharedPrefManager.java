@@ -39,13 +39,13 @@ public class SharedPrefManager {
         editor.putBoolean(KEY_LOGGED_IN, true);
         editor.apply();
     }
-    public void saveUser(String userId, String username, String email) {
-        editor.putString(KEY_USER_ID, userId);
-        editor.putString(KEY_USERNAME, username);
-        editor.putString(KEY_EMAIL, email);
-        editor.putBoolean(KEY_LOGGED_IN, true);
-        editor.apply();
-    }
+//    public void saveUser(String userId, String username, String email) {
+//        editor.putString(KEY_USER_ID, userId);
+//        editor.putString(KEY_USERNAME, username);
+//        editor.putString(KEY_EMAIL, email);
+//        editor.putBoolean(KEY_LOGGED_IN, true);
+//        editor.apply();
+//    }
 
     // Lấy ID của user
     public String getUserId() {

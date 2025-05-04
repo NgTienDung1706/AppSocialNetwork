@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +21,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +48,10 @@ public class WritePostFragment extends Fragment {
 
     private ProgressBar progressBar;
 
+    private ImageView imageView;
+
+    private TextView textView;
+
     private PostViewModel postViewModel;
 
 
@@ -66,6 +75,30 @@ public class WritePostFragment extends Fragment {
 
 
         recyclerSelectedImages = view.findViewById(R.id.recyclerSelectedImages);
+
+        imageView = view.findViewById(R.id.imgAvatar);
+        textView = view.findViewById(R.id.txtName);
+
+        try {
+            String name = SharedPrefManager.getInstance(getActivity()).getName();
+            String avatar = SharedPrefManager.getInstance(getActivity()).getAvatar();
+            Log.d("DEBUG_AVATAR", "Avatar URL: " + avatar);
+
+            if (name != null) {
+                textView.setText(name);
+            }
+
+            if (avatar != null && !avatar.isEmpty()) {
+                Glide.with(this)
+                        .load(avatar)
+                        .placeholder(R.drawable.avt_default)
+                        .into(imageView);
+            } else {
+                imageView.setImageResource(R.drawable.avt_default);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Log lỗi ra Logcat
+        }
 
         adapter = new SelectedImagesAdapter(selectedImageUris, uri -> {
             selectedImageUris.remove(uri);

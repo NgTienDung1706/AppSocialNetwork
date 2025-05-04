@@ -100,9 +100,11 @@ public class LoginActivity extends AppCompatActivity {
                             String userId = userJson.getString("_id");
                             String username = userJson.getString("username");
                             String email = userJson.getString("email");
+                            String name = userJson.getString("name");
+                            String avatar = userJson.getString("avatar");
 
                             // Lưu vào SharedPreferences
-                            SharedPrefManager.getInstance(LoginActivity.this).saveUser(userId, username, email);
+                            SharedPrefManager.getInstance(LoginActivity.this).saveUser(userId, username, email,name,avatar);
 
                             // Chuyển sang MainActivity
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
