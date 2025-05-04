@@ -49,7 +49,6 @@ public class SearchUserFragment extends Fragment implements OnSearchListener {
     }
     @Override
     public void onSearch(String keyword) {
-    Log.d("SearchUserFragment", "onSearch called with keyword: " + keyword);
         userViewModel.searchFriends(keyword);
     }
 }

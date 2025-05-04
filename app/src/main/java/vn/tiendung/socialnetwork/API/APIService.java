@@ -20,6 +20,7 @@ import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.Model.MessageResponse;
 import vn.tiendung.socialnetwork.Model.Post;
+import vn.tiendung.socialnetwork.Model.PostRequest;
 import vn.tiendung.socialnetwork.Model.UserModel;
 import vn.tiendung.socialnetwork.Model.UserProfile;
 import vn.tiendung.socialnetwork.Model.Message;
@@ -96,6 +97,10 @@ public interface APIService {
     Call<Post> createStory(@Body Post post);
     @GET("/api/post/story/{userId}")
     Call<List<Post>> getUserStories(@Path("userId") String userId);
+
+    @POST("/api/post/create")
+    Call<Void> createPost(@Body PostRequest postRequest);
+
     //Comments
     @GET("/api/posts/{postId}/comments")
     Call<List<Comment>> getCommentsByPostId(@Path("postId") String postId, @Query("userId") String userId);
