@@ -13,7 +13,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,12 +28,17 @@ import vn.tiendung.socialnetwork.Utils.Resource;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 
 public class StoryRepository {
+    private static StoryRepository instance;
     private final APIService apiService;
-
+    public static StoryRepository getInstance() {
+        if (instance == null) {
+            instance = new StoryRepository();
+        }
+        return instance;
+    }
     public StoryRepository() {
         apiService = RetrofitClient.getRetrofit().create(APIService.class);
     }
-
     public LiveData<Resource<Void>> uploadStory(Context context, Uri imageUri, String caption) {
         MediatorLiveData<Resource<Void>> result = new MediatorLiveData<>();
         result.setValue(Resource.loading(null));
@@ -109,6 +116,28 @@ public class StoryRepository {
         });
 
         return result;
+    }
+    public void reactToStory(String postId, String reaction, String userId) {
+        // Chuẩn bị dữ liệu gửi lên server
+        Map<String, String> body = new HashMap<>();
+        body.put("reaction", reaction);
+        body.put("userId", userId);
+
+        apiService.addOrUpdateReaction(postId, body).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d("REACT", "Cảm xúc đã được gửi lên server");
+                } else {
+                    Log.e("REACT", "Gửi thất bại: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("REACT", "Lỗi kết nối: " + t.getMessage());
+            }
+        });
     }
 }
 

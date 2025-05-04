@@ -17,5 +17,9 @@
         <item name="android:focusable">true</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
     </style>
+    <style name="ImageCornerStyle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item> <!-- bo góc bao nhiêu tuỳ -->
+    </style>
 
 </resources>

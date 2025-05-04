@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +46,7 @@ public class HomeFragment extends Fragment {
     private OnScrollListener scrollListener;
     private HomeViewModel viewModel;
     private StoryAdapter storyAdapter;
-	private RecyclerView recyclerViewMoments
+	private RecyclerView recyclerViewMoments;
     private ImageButton btnReaction;
 
     private ImageView search;
@@ -73,7 +74,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRecyclerViews(View view) {
-        
 
         // 💡 Adapter callback truyền full danh sách + vị trí người được click
         storyAdapter = new StoryAdapter(requireContext(), (group, position, allGroups) -> {

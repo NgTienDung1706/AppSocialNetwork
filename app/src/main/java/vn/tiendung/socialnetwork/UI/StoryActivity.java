@@ -24,6 +24,7 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.File;
@@ -37,7 +38,7 @@ public class StoryActivity extends AppCompatActivity {
     private PreviewView previewView;
     private ImageButton btnCapture, btnGallery, btnSwitchCamera;
     private EditText etCaption;
-    private ImageView imgCapturedPreview;
+    private ShapeableImageView imgCapturedPreview;
 
     private ImageCapture imageCapture;
     private StoryViewModel viewModel;

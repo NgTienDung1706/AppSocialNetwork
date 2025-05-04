@@ -74,6 +74,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.StoryViewHol
                 listener.onStoryGroupClick(group, position, storyGroups);
             }
         });
+
     }
 
     @Override
