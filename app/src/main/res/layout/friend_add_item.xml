@@ -113,7 +113,27 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/bg"
                 android:text="Xóa"
-                android:textColor="@color/st" />
+                android:textColor="@color/st"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tVDagui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đã gửi lời mời"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnRecall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:backgroundTint="@color/nd"
+                android:text="Gỡ lời mời"
+                android:textColor="@color/st"
+                android:visibility="gone" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>    <!-- Ảnh đại diện -->
 

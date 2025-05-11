@@ -47,6 +47,12 @@ public interface APIService {
 
     @GET("/api/getProfile/{userId}")
     Call<UserProfile> getUserProfile(@Path("userId") String userId);
+    @GET("/api/users/{userId}/profile/{userIdMe}")
+    Call<UserProfile> getProfileUser(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
 
     @Multipart
     @PUT("/api/update-profile")
@@ -123,4 +129,53 @@ public interface APIService {
     @GET("/api/post/search")
     Call<List<Post>> searchPosts(@Query("keyword") String keyword,
                                      @Query("userId") String userId);
+
+
+    @POST("/api/users/{userId}/addFriend/{userIdMe}")
+    Call<Void> addFriend(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
+    @PUT("/api/users/{userId}/acceptFriend/{userIdMe}")
+    Call<Void> acceptFriend(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
+    @PUT("/api/users/{userId}/rejectFriend/{userIdMe}")
+    Call<Void> rejectFriend(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
+    @DELETE("/api/users/{userId}/unFriend/{userIdMe}")
+    Call<Void> unFriend(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
+
+    @PUT("/api/users/{userId}/cancelFriendRequest/{userIdMe}")
+    Call<Void> cancelFriendRequest(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
+    @GET("/api/friendrequests/{userId}")
+    Call<List<Friend>> getFriendRequests(@Path("userId") String userId);
+
+
+    @GET("/api/friends/{userId}")
+    Call<List<Friend>> getFriends(@Path("userId") String userId);
+
+    @POST("/api/conversations/private")
+    Call<Map<String, String>> createOrGetPrivateConversation(
+            @Query("userId") String userId,
+            @Query("userIdMe") String userIdMe
+    );
+
+    @GET("/api/friendsuggested/{userId}")
+    Call<List<Friend>> getSuggestedFriends(@Path("userId") String userId);
+
 }

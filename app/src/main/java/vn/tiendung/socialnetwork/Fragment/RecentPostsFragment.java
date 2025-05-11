@@ -37,39 +37,61 @@ public class RecentPostsFragment extends Fragment {
 
     TextView tvNoPosts;
 
-    @SuppressLint("MissingInflatedId")
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.recent_posts_fragment, container, false);
-        recyclerView = view.findViewById(R.id.recyclerViewPosts);
+    String userId;
+    // Factory method để truyền userId từ bên ngoài vào
+    public static RecentPostsFragment newInstance(String userId) {
+        RecentPostsFragment fragment = new RecentPostsFragment();
+        Bundle args = new Bundle();
+        args.putString("userId", userId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
-        // Gửi sự kiện lên ProfileFragment
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Lấy userId từ arguments hoặc từ SharedPref
+        if (getArguments() != null && getArguments().containsKey("userId")) {
+            userId = getArguments().getString("userId");
+        } else {
+            userId = SharedPrefManager.getInstance(requireContext()).getUserId();
+        }
+
+        // Gửi sự kiện scroll nếu Fragment được gắn vào Activity có implements OnScrollListener
         if (getActivity() instanceof OnScrollListener) {
             scrollListener = (OnScrollListener) getActivity();
         }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.recent_posts_fragment, container, false);
+
+        recyclerView = view.findViewById(R.id.recyclerViewPosts);
+        tvNoPosts = view.findViewById(R.id.tvNoPosts);
+
+        postAdapter = new PostAdapter(getContext(), postList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(postAdapter);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                Log.d("SCROLL_EVENT", "RecyclerView đang cuộn: dy = " + dy);
+            public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
+                super.onScrolled(rv, dx, dy);
+                Log.d("SCROLL_EVENT", "dy = " + dy);
                 if (scrollListener != null) {
                     scrollListener.onScroll(dy > 0);
                 }
             }
         });
-        // Bài đăng
-        postAdapter = new PostAdapter(getContext(), postList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(postAdapter);
 
-        String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
         loadPostsFromApi(userId);
-        tvNoPosts = view.findViewById(R.id.tvNoPosts);
 
         return view;
     }
+
     private void loadPostsFromApi(String userId) {
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
         Call<List<Post>> call = apiService.getMyPosts(userId);
@@ -81,12 +103,7 @@ public class RecentPostsFragment extends Fragment {
                     postList.clear();
                     postList.addAll(response.body());
                     postAdapter.notifyDataSetChanged();
-                    // Ẩn hoặc hiện TextView tùy vào danh sách
-                    if (postList.isEmpty()) {
-                        tvNoPosts.setVisibility(View.VISIBLE);
-                    } else {
-                        tvNoPosts.setVisibility(View.GONE);
-                    }
+                    tvNoPosts.setVisibility(postList.isEmpty() ? View.VISIBLE : View.GONE);
                 } else {
                     tvNoPosts.setVisibility(View.VISIBLE);
                 }

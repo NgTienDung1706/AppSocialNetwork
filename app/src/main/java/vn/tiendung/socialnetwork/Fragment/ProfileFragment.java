@@ -70,7 +70,11 @@ public class ProfileFragment extends Fragment implements OnScrollListener, EditP
         TabLayout tabLayout = view.findViewById(R.id.tabLayout);
         ViewPager2 viewPager = view.findViewById(R.id.viewPager);
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity());
+//        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity());
+//        viewPager.setAdapter(adapter);
+
+        String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity(), userId);
         viewPager.setAdapter(adapter);
 
         // Liên kết TabLayout với ViewPager2
@@ -107,7 +111,7 @@ public class ProfileFragment extends Fragment implements OnScrollListener, EditP
         tvAboutMe = view.findViewById(R.id.tvAboutMe);
         flexboxLayout = view.findViewById(R.id.flexboxLayout);
 
-        String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
+        //String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
         getUserProfile(userId);
 
         ivUpdateProfile = view.findViewById(R.id.ivUpdateProfile);

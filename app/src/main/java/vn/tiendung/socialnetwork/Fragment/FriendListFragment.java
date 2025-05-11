@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,32 +15,73 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import vn.tiendung.socialnetwork.API.APIService;
+import vn.tiendung.socialnetwork.API.RetrofitClient;
+import vn.tiendung.socialnetwork.Adapter.FriendAddAdapter;
 import vn.tiendung.socialnetwork.Adapter.FriendListAdapter;
 import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.R;
+import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 
 public class FriendListFragment extends Fragment {
+
+    private RecyclerView recyclerView;
+    private FriendListAdapter adapter;
+
+    private List<Friend> friendList = new ArrayList<>();
+
+    private APIService apiService;
+
+    private String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_friend_list, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Dữ liệu mẫu
-//        List<Friend> friends = new ArrayList<>();
-//        friends.add(new Friend("Thao Pham", 15, R.drawable.circleusersolid,true));
-//        friends.add(new Friend("Nguyen Van A", 10, R.drawable.circleusersolid,true));
-//        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid,true));
-//        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid,true));
-//        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid,true));
-//        friends.add(new Friend("Tran Thi B", 20, R.drawable.circleusersolid,true));
-//        // Thiết lập adapter
-//        RecyclerView.Adapter adapter = new FriendListAdapter(getContext(),friends);
-//        recyclerView.setAdapter(adapter);
+        apiService = RetrofitClient.getRetrofit().create(APIService.class);
+
+        loadFriends();
+
+        getParentFragmentManager().setFragmentResultListener("refresh_friend_list_key", this, (requestKey, bundle) -> {
+            boolean shouldRefresh = bundle.getBoolean("refresh_friend_list", false);
+            if (shouldRefresh) {
+                loadFriends(); // hoặc hàm cập nhật danh sách bạn
+            }
+        });
 
         return view;
+    }
+
+    private void loadFriends(){
+        apiService.getFriends(userId).enqueue(new Callback<List<Friend>>() {
+            @Override
+            public void onResponse(Call<List<Friend>> call, Response<List<Friend>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    friendList = response.body();
+                    adapter = new FriendListAdapter(getContext(), friendList, apiService, userId);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    Toast.makeText(getContext(), "Không thể tải danh sách", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Friend>> call, Throwable t) {
+                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadFriends(); // Gọi lại API để reload danh sách bạn bè mỗi khi quay lại
     }
 }

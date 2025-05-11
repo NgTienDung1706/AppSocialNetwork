@@ -59,7 +59,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".UI.SearchActivity" >
+
         </activity>
+
+        <activity
+            android:name=".UI.ProfileActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
