@@ -258,6 +258,22 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
         return -1; // Không tìm thấy
     }
+    public void removeComment(String commentId) {
+        Integer position = commentPositionMap.get(commentId);
+
+        if (position != null) {
+            commentList.remove((int) position);
+            notifyItemRemoved(position);
+            commentPositionMap.remove(commentId);
+
+            // Cập nhật lại vị trí trong commentPositionMap
+            for (int i = position; i < commentList.size(); i++) {
+                commentPositionMap.put(commentList.get(i).getId(), i);
+            }
+        } else {
+            Log.w(TAG, "Comment not found for removal: " + commentId);
+        }
+    }
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAvatar;

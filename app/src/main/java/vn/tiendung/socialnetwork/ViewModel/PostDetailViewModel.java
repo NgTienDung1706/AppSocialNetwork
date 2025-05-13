@@ -35,6 +35,12 @@ public class PostDetailViewModel extends ViewModel {
     public LiveData<Pair<Comment, Integer>> getUpdatedCommentLiveData() {
         return updatedCommentLiveData;
     }
+    private MutableLiveData<String> deletedCommentIdLiveData = new MutableLiveData<>();
+
+    public LiveData<String> getDeletedCommentIdLiveData() {
+        return deletedCommentIdLiveData;
+    }
+
 
     public LiveData<Post> getPost() {
         return postLiveData;
@@ -125,7 +131,7 @@ public class PostDetailViewModel extends ViewModel {
         });
     }
 
-    public void deleteComment(String commentId) {
+/*    public void deleteComment(String commentId) {
         commentRepository.deleteCommentByCommentId(commentId).observeForever(result -> {
             if (result.getStatus() == Resource.Status.SUCCESS) {
                 String postId = postLiveData.getValue() != null ? postLiveData.getValue().getId() : null;
@@ -134,6 +140,15 @@ public class PostDetailViewModel extends ViewModel {
                 if (postId != null && userId != null) {
                     loadComments(postId, userId);
                 }
+            } else {
+                errorMessage.postValue(result.getMessage());
+            }
+        });
+    }*/
+    public void deleteComment(String commentId) {
+        commentRepository.deleteCommentByCommentId(commentId).observeForever(result -> {
+            if (result.getStatus() == Resource.Status.SUCCESS) {
+                deletedCommentIdLiveData.postValue(commentId);
             } else {
                 errorMessage.postValue(result.getMessage());
             }

@@ -165,6 +165,12 @@ public class PostDetailActivity extends AppCompatActivity {
                 commentAdapter.updateSingleComment(updatedComment, position);
             }
         });
+        viewModel.getDeletedCommentIdLiveData().observe(this, deletedCommentId -> {
+            if (deletedCommentId != null) {
+                commentAdapter.removeComment(deletedCommentId);
+            }
+        });
+
 
         viewModel.getErrorMessage().observe(this, msg -> {
             if (msg != null) {
