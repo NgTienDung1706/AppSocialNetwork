@@ -20,6 +20,7 @@ import vn.tiendung.socialnetwork.Model.Comment;
 import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.Model.MessageResponse;
 import vn.tiendung.socialnetwork.Model.Post;
+import vn.tiendung.socialnetwork.Model.PostRequest;
 import vn.tiendung.socialnetwork.Model.UserModel;
 import vn.tiendung.socialnetwork.Model.UserProfile;
 import vn.tiendung.socialnetwork.Model.Message;
@@ -46,6 +47,12 @@ public interface APIService {
 
     @GET("/api/getProfile/{userId}")
     Call<UserProfile> getUserProfile(@Path("userId") String userId);
+    @GET("/api/users/{userId}/profile/{userIdMe}")
+    Call<UserProfile> getProfileUser(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
 
     @Multipart
     @PUT("/api/update-profile")
@@ -61,6 +68,7 @@ public interface APIService {
     // Message APIs
     @GET("/api/message/{conversation_id}")
     Call<MessageResponse> getMessages(@Path("conversation_id") String conversationId);
+
 
     @POST("/api/message/send")
     Call<Message> sendMessage(@Body Message message);
@@ -96,6 +104,10 @@ public interface APIService {
     Call<Post> createStory(@Body Post post);
     @GET("/api/post/story/{userId}")
     Call<List<Post>> getUserStories(@Path("userId") String userId);
+
+    @POST("/api/post/create")
+    Call<Void> createPost(@Body PostRequest postRequest);
+
     //Comments
     @GET("/api/posts/{postId}/comments")
     Call<List<Comment>> getCommentsByPostId(@Path("postId") String postId, @Query("userId") String userId);
@@ -118,4 +130,53 @@ public interface APIService {
     @GET("/api/post/search")
     Call<List<Post>> searchPosts(@Query("keyword") String keyword,
                                      @Query("userId") String userId);
+
+
+    @POST("/api/users/{userId}/addFriend/{userIdMe}")
+    Call<Void> addFriend(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
+    @PUT("/api/users/{userId}/acceptFriend/{userIdMe}")
+    Call<Void> acceptFriend(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
+    @PUT("/api/users/{userId}/rejectFriend/{userIdMe}")
+    Call<Void> rejectFriend(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
+    @DELETE("/api/users/{userId}/unFriend/{userIdMe}")
+    Call<Void> unFriend(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
+
+    @PUT("/api/users/{userId}/cancelFriendRequest/{userIdMe}")
+    Call<Void> cancelFriendRequest(
+            @Path("userId") String userId,
+            @Path("userIdMe") String userIdMe
+    );
+
+    @GET("/api/friendrequests/{userId}")
+    Call<List<Friend>> getFriendRequests(@Path("userId") String userId);
+
+
+    @GET("/api/friends/{userId}")
+    Call<List<Friend>> getFriends(@Path("userId") String userId);
+
+    @POST("/api/conversations/private")
+    Call<Map<String, String>> createOrGetPrivateConversation(
+            @Query("userId") String userId,
+            @Query("userIdMe") String userIdMe
+    );
+
+    @GET("/api/friendsuggested/{userId}")
+    Call<List<Friend>> getSuggestedFriends(@Path("userId") String userId);
+
 }

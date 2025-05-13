@@ -1,5 +1,7 @@
 package vn.tiendung.socialnetwork.Repository;
 
+import android.widget.Toast;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -11,10 +13,12 @@ import retrofit2.Response;
 import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Model.Post;
+import vn.tiendung.socialnetwork.Model.PostRequest;
 import vn.tiendung.socialnetwork.Utils.Resource;
 
 public class PostRepository {
     private final APIService apiService;
+
 
     public PostRepository() {
         apiService = RetrofitClient.getRetrofit().create(APIService.class);
@@ -66,5 +70,33 @@ public class PostRepository {
         });
 
         return result;
+    }
+
+    // Tạo bài viết mới
+    public LiveData<Resource<Void>> createPost(PostRequest postRequest) {
+        MutableLiveData<Resource<Void>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+        apiService.createPost(postRequest).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    result.setValue(Resource.success(null));
+                } else {
+                    result.setValue(Resource.error("Đăng bài thất bại: " + response.message(), null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                result.setValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
+            }
+        });
+
+        return result;
+    }
+
+    public interface PostCallback {
+        void onSuccess();
+        void onError(String errorMessage);
     }
 }

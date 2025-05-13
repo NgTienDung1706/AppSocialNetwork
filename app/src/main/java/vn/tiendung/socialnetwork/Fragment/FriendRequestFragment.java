@@ -11,39 +11,63 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import vn.tiendung.socialnetwork.API.APIService;
+import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Adapter.FriendAddAdapter;
 import vn.tiendung.socialnetwork.Model.Friend;
 import vn.tiendung.socialnetwork.R;
+import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
 
 public class FriendRequestFragment extends Fragment {
+
+    private RecyclerView recyclerView;
+    private FriendAddAdapter adapter;
+
+    private List<Friend> friendList = new ArrayList<>();
+
+    private APIService apiService;
+
+    private String userId = SharedPrefManager.getInstance(getActivity()).getUserId();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_friend_list, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Dữ liệu mẫu
+        apiService = RetrofitClient.getRetrofit().create(APIService.class);
 
-//        List<Friend> friends = new ArrayList<>();
-//        friends.add(new Friend("Nguyễn Văn A", R.drawable.circleusersolid, 31, Friend.TYPE_REQUEST));
-//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-//        friends.add(new Friend("Hoàng C", R.drawable.circleusersolid, 48, Friend.TYPE_REQUEST));
-//
-//        // Thiết lập adapter
-//        RecyclerView.Adapter adapter = new FriendAddAdapter(getContext(), friends);
-//        recyclerView.setAdapter(adapter);
+        loadFriendRequests();
 
         return view;
+    }
+    private void loadFriendRequests() {
+        apiService.getFriendRequests(userId).enqueue(new Callback<List<Friend>>() {
+            @Override
+            public void onResponse(Call<List<Friend>> call, Response<List<Friend>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    friendList = response.body();
+                    adapter = new FriendAddAdapter(getContext(), friendList, apiService, userId,FriendRequestFragment.this);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    Toast.makeText(getContext(), "Không thể tải danh sách", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Friend>> call, Throwable t) {
+                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

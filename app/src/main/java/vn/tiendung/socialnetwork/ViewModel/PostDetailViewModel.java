@@ -19,6 +19,7 @@ import vn.tiendung.socialnetwork.Utils.Resource;
 
 public class PostDetailViewModel extends ViewModel {
 
+
     private final PostRepository postRepository = new PostRepository();
     private final UserRepository userRepository = new UserRepository();
     private final CommentRepository commentRepository = new CommentRepository();
@@ -174,4 +175,6 @@ public class PostDetailViewModel extends ViewModel {
         }
         return result;
     }
+
+
 }

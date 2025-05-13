@@ -15,11 +15,12 @@ public class UserProfile {
     private boolean isOnline;
     private String lastSeen;
     private List<String> favoriteTags;
+    private String relationship;
 
     public UserProfile() {
     }
 
-    public UserProfile(String id, String username, String name, String avatar, int friendsCount, int postsCount, String bio, List<String> favoriteTags) {
+    public UserProfile(String id, String username, String name, String avatar, int friendsCount, int postsCount, String bio, List<String> favoriteTags, String relationship) {
         this.id = id;
         this.username = username;
         this.name = name;
@@ -28,7 +29,9 @@ public class UserProfile {
         this.postsCount = postsCount;
         this.bio = bio;
         this.favoriteTags = favoriteTags;
+        this.relationship = relationship;
     }
+
     public UserProfile(String id, String username, String name, String avatar, int friendsCount, int postsCount, String bio, List<String> favoriteTags, boolean isOnline, String lastSeen) {
         this.id = id;
         this.username = username;
@@ -106,5 +109,13 @@ public class UserProfile {
 
     public void setFavoriteTags(List<String> favoriteTags) {
         this.favoriteTags = favoriteTags;
+    }
+
+    public String getRelationship() {
+        return relationship;
+    }
+
+    public void setRelationship(String relationship) {
+        this.relationship = relationship;
     }
 }

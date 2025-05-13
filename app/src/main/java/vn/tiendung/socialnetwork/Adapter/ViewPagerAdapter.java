@@ -1,5 +1,7 @@
 package vn.tiendung.socialnetwork.Adapter;
 
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -9,25 +11,33 @@ import vn.tiendung.socialnetwork.Fragment.AlbumFragment;
 import vn.tiendung.socialnetwork.Fragment.RecentPostsFragment;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
-    public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+
+    private final String userId;
+
+    public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity, String userId) {
         super(fragmentActivity);
+        this.userId = userId;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch (position) {
-            case 0:
-                return new RecentPostsFragment(); // Tab 1
-            case 1:
-                return new AlbumFragment(); // Tab 2
-            default:
-                return new RecentPostsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("userId", userId);
+
+        Fragment fragment;
+        if (position == 0) {
+            fragment = new RecentPostsFragment();
+        } else {
+            fragment = new AlbumFragment();
         }
+
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
     public int getItemCount() {
-        return 2; // Tổng số tab
+        return 2;
     }
 }
