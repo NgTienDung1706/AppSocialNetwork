@@ -37,43 +37,22 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/circleusersolid" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/textUsername"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <!-- ✅ Gradient overlay -->
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/bottom_story_overlay_gradient" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textUsername"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:ellipsize="end"
-                    android:gravity="center"
-                    android:maxWidth="100dp"
-                    android:maxLines="2"
-                    android:text="Nguyexn Hoang Tiến Dũng"
-                    android:textColor="@color/bg"
-                    android:textSize="12dp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </FrameLayout>
-
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxWidth="120dp"
+            android:maxLines="2"
+            android:text="Tiến Dũng"
+            android:textColor="@color/bg"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

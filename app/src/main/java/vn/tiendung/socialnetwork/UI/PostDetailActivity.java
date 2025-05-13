@@ -158,19 +158,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 commentAdapter.updateComments(flatList);
             }
         });
-        viewModel.getUpdatedCommentLiveData().observe(this, pair -> {
-            if (pair != null) {
-                Comment updatedComment = pair.first;
-                int position = pair.second;
-                commentAdapter.updateSingleComment(updatedComment, position);
-            }
-        });
-        viewModel.getDeletedCommentIdLiveData().observe(this, deletedCommentId -> {
-            if (deletedCommentId != null) {
-                commentAdapter.removeComment(deletedCommentId);
-            }
-        });
-
 
         viewModel.getErrorMessage().observe(this, msg -> {
             if (msg != null) {

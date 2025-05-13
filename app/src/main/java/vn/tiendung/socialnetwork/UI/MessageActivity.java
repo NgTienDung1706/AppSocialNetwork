@@ -56,9 +56,8 @@ import vn.tiendung.socialnetwork.R;
 import vn.tiendung.socialnetwork.Utils.MessageSocketManager;
 import vn.tiendung.socialnetwork.Adapter.MessageAdapter;
 import vn.tiendung.socialnetwork.Utils.SharedPrefManager;
-import vn.tiendung.socialnetwork.Utils.SocketManager;
 
-public class MessageActivity extends AppCompatActivity implements SocketManager.SocketEventListener {
+public class MessageActivity extends AppCompatActivity implements MessageSocketManager.SocketEventListener {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final String TAG = "MessageActivity";
 
@@ -75,7 +74,7 @@ public class MessageActivity extends AppCompatActivity implements SocketManager.
     private String recipientId;
     private String recipientName;
     private String recipientAvatar;
-    private SocketManager socketManager;
+    private MessageSocketManager socketManager;
     private Uri selectedImageUri;
     private String userId;
 
@@ -191,7 +190,7 @@ public class MessageActivity extends AppCompatActivity implements SocketManager.
 
     private void initializeSocket() {
         try {
-            socketManager = SocketManager.getInstance();
+            socketManager = MessageSocketManager.getInstance();
             if (socketManager != null) {
                 socketManager.setEventListener(this);
                 socketManager.initialize(userId);
@@ -226,10 +225,13 @@ public class MessageActivity extends AppCompatActivity implements SocketManager.
                 if (!socketManager.isConnected()) {
                     Log.d(TAG, "Socket not connected, connecting...");
                     socketManager.connect();
+                    // Room will be joined in onConnect callback
                 } else {
+                    // Socket is already connected, join room directly
                     Log.d(TAG, "Socket already connected, joining room directly");
                     if (conversationId != null && !conversationId.isEmpty()) {
                         socketManager.joinRoom(conversationId);
+                        emitMarkRead();
                     }
                 }
             }
@@ -237,7 +239,6 @@ public class MessageActivity extends AppCompatActivity implements SocketManager.
             Log.e(TAG, "Error in onResume: " + e.getMessage());
         }
     }
-
 
     @Override
     protected void onPause() {
@@ -281,7 +282,7 @@ public class MessageActivity extends AppCompatActivity implements SocketManager.
             JSONObject data = new JSONObject();
             data.put("conversationid", conversationId);
             data.put("userid", userId); // user đang đọc
-            socketManager.markRead(data);
+            socketManager.MarkRead(data);
             Log.d(TAG, "Emitted mark_read for conversation: " + conversationId);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -330,26 +331,21 @@ public class MessageActivity extends AppCompatActivity implements SocketManager.
 
         Message message = new Message();
         message.setConversationId(conversationId);
-
+        
         // Create sender object with full info
         Message.Sender sender = new Message.Sender();
-        sender.setId(userId);
+        sender.setId(SharedPrefManager.getInstance(this).getUserId());
         sender.setUsername(SharedPrefManager.getInstance(this).getUsername());
         sender.setName(SharedPrefManager.getInstance(this).getName());
         sender.setAvatar(SharedPrefManager.getInstance(this).getAvatar());
         message.setSender(sender);
-
         message.setContent(content);
         message.setMessageType("text");
         message.setTimestamp(String.valueOf(System.currentTimeMillis()));
 
-        // Gửi tin nhắn qua socket
         socketManager.sendMessage(message);
-
-        // Xóa nội dung input
         edtMessage.setText("");
     }
-
 
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -463,39 +459,6 @@ public class MessageActivity extends AppCompatActivity implements SocketManager.
     }
 
     @Override
-    public void onNewMessage(JSONObject messageData) {
-        try {
-            String conversationIdReceived = messageData.getString("conversation_id");
-
-            if (conversationId.equals(conversationIdReceived)) {
-                Message newMessage = new Message();
-                newMessage.setConversationId(conversationIdReceived);
-                newMessage.setContent(messageData.getString("content"));
-                newMessage.setMessageType(messageData.getString("message_type"));
-                newMessage.setTimestamp(messageData.getString("timestamp"));
-
-                JSONObject senderData = messageData.getJSONObject("sender");
-                Message.Sender sender = new Message.Sender();
-                sender.setId(senderData.getString("id"));
-                sender.setUsername(senderData.getString("username"));
-                sender.setName(senderData.getString("name"));
-                sender.setAvatar(senderData.getString("avatar"));
-                newMessage.setSender(sender);
-
-                runOnUiThread(() -> {
-                    messageAdapter.addMessage(newMessage);
-                    recyclerMessages.scrollToPosition(messageAdapter.getItemCount() - 1);
-                });
-            }
-
-        } catch (JSONException e) {
-            Log.e(TAG, "Error in onNewMessage: " + e.getMessage());
-        }
-    }
-
-
-
-/*    @Override
     public void onNewMessage(Message message) {
         try {
             if (message.getConversationId().equals(conversationId)) {
@@ -535,19 +498,5 @@ public class MessageActivity extends AppCompatActivity implements SocketManager.
     @Override
     public void onMessageStatus(JSONObject statusData) {
         // TODO: Cập nhật trạng thái tin nhắn (đã gửi, đã nhận, đã đọc)
-    }*/
-    @Override
-    public void onOnlineUsersUpdate(String onlineUsers) {
-        Log.d(TAG, "Online users updated: " + onlineUsers);
-    }
-
-    @Override
-    public void onUserStatusChange(String userId, boolean isOnline) {
-        Log.d(TAG, "User " + userId + " is " + (isOnline ? "online" : "offline"));
-    }
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-        super.onPointerCaptureChanged(hasCapture);
     }
 }

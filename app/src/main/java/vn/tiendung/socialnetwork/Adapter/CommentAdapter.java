@@ -1,10 +1,7 @@
 package vn.tiendung.socialnetwork.Adapter;
 
-import static androidx.constraintlayout.widget.StateSet.TAG;
-
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,16 +23,13 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
     private Context context;
     private List<Comment> commentList;
     private String currentUserId;
-    private Map<String, Integer> commentPositionMap = new HashMap<>();
 
     public interface OnCommentActionListener {
         void onLikeClicked(Comment comment, int position);
@@ -79,8 +73,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment comment = commentList.get(position);
 
-        // Cập nhật lại vị trí trong map
-        commentPositionMap.put(comment.getId(), position);
         if (comment.isDeleted()) {
             holder.tvDeleted.setVisibility(View.VISIBLE);
             holder.tvContent.setVisibility(View.GONE);
@@ -170,24 +162,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private int dpToPx(Context context, int dp) {
         return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }
-    @Override
-    public void onBindViewHolder(@NonNull CommentViewHolder holder, int position, @NonNull List<Object> payloads) {
-        if (!payloads.isEmpty() && payloads.contains("LIKE_UPDATE")) {
-            Comment comment = commentList.get(position);
-
-            // ✅ Chỉ cập nhật phần like
-            holder.btnLike.setImageResource(
-                    comment.isMyLike() ? R.drawable.ic_comment_heart : R.drawable.ic_comment_outline_heart
-            );
-            holder.tvLikeCount.setText(String.valueOf(comment.getLikes().size()));
-
-            Log.d(TAG, "Payload LIKE_UPDATE applied at position: " + position);
-
-        } else {
-            // Không có payload -> cập nhật toàn bộ
-            super.onBindViewHolder(holder, position, payloads);
-        }
-    }
 
 
 
@@ -216,39 +190,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         bottomSheetDialog.show();
     }
 
-/*    public void updateComments(List<Comment> newComments) {
+    public void updateComments(List<Comment> newComments) {
         commentList = new ArrayList<>(newComments);
         notifyDataSetChanged();
-    }*/
-
-    public void updateComments(List<Comment> newComments) {
-        if (newComments == null) return;
-
-        for (Comment newComment : newComments) {
-            Integer position = commentPositionMap.get(newComment.getId());
-
-            if (position != null) {
-                // Nếu bình luận đã tồn tại, cập nhật nội dung
-            commentList.set(position, newComment);
-            notifyItemChanged(position);
-            } else {
-                // Nếu là bình luận mới, thêm vào cuối danh sách
-                commentList.add(newComment);
-                int newIndex = commentList.size() - 1;
-                commentPositionMap.put(newComment.getId(), newIndex);
-                notifyItemInserted(newIndex);
-            }
-        }
     }
 
     public void updateSingleComment(Comment updatedComment, int position) {
-        if (position >= 0 && position < commentList.size()) {
-            commentList.set(position, updatedComment);
-            notifyItemChanged(position, "LIKE_UPDATE");
-            Log.d(TAG, "Updated comment at position: " + position);
-        }
+        commentList.set(position, updatedComment);
+        notifyItemChanged(position);
     }
-
 
     public int findCommentPositionById(String commentId) {
         for (int i = 0; i < commentList.size(); i++) {
@@ -257,22 +207,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             }
         }
         return -1; // Không tìm thấy
-    }
-    public void removeComment(String commentId) {
-        Integer position = commentPositionMap.get(commentId);
-
-        if (position != null) {
-            commentList.remove((int) position);
-            notifyItemRemoved(position);
-            commentPositionMap.remove(commentId);
-
-            // Cập nhật lại vị trí trong commentPositionMap
-            for (int i = position; i < commentList.size(); i++) {
-                commentPositionMap.put(commentList.get(i).getId(), i);
-            }
-        } else {
-            Log.w(TAG, "Comment not found for removal: " + commentId);
-        }
     }
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {

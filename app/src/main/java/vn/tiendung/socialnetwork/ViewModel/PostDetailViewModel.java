@@ -1,7 +1,5 @@
 package vn.tiendung.socialnetwork.ViewModel;
 
-import android.util.Pair;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -30,17 +28,6 @@ public class PostDetailViewModel extends ViewModel {
     private final MutableLiveData<UserProfile> userProfileLiveData = new MutableLiveData<>();
     private final MutableLiveData<List<Comment>> commentListLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
-    private MutableLiveData<Pair<Comment, Integer>> updatedCommentLiveData = new MutableLiveData<>();
-
-    public LiveData<Pair<Comment, Integer>> getUpdatedCommentLiveData() {
-        return updatedCommentLiveData;
-    }
-    private MutableLiveData<String> deletedCommentIdLiveData = new MutableLiveData<>();
-
-    public LiveData<String> getDeletedCommentIdLiveData() {
-        return deletedCommentIdLiveData;
-    }
-
 
     public LiveData<Post> getPost() {
         return postLiveData;
@@ -117,7 +104,12 @@ public class PostDetailViewModel extends ViewModel {
             comment.getLikes().add(currentUserId);
         }
 
-        updatedCommentLiveData.postValue(new Pair<>(comment, position));
+        // Cập nhật trong danh sách
+        List<Comment> currentList = commentListLiveData.getValue();
+        if (currentList != null && position >= 0 && position < currentList.size()) {
+            currentList.set(position, comment);
+            commentListLiveData.postValue(new ArrayList<>(currentList));
+        }
 
         // Gửi lên server
         LiveData<Resource<Void>> likeLiveData = isLiked ?
@@ -131,7 +123,7 @@ public class PostDetailViewModel extends ViewModel {
         });
     }
 
-/*    public void deleteComment(String commentId) {
+    public void deleteComment(String commentId) {
         commentRepository.deleteCommentByCommentId(commentId).observeForever(result -> {
             if (result.getStatus() == Resource.Status.SUCCESS) {
                 String postId = postLiveData.getValue() != null ? postLiveData.getValue().getId() : null;
@@ -140,15 +132,6 @@ public class PostDetailViewModel extends ViewModel {
                 if (postId != null && userId != null) {
                     loadComments(postId, userId);
                 }
-            } else {
-                errorMessage.postValue(result.getMessage());
-            }
-        });
-    }*/
-    public void deleteComment(String commentId) {
-        commentRepository.deleteCommentByCommentId(commentId).observeForever(result -> {
-            if (result.getStatus() == Resource.Status.SUCCESS) {
-                deletedCommentIdLiveData.postValue(commentId);
             } else {
                 errorMessage.postValue(result.getMessage());
             }

@@ -69,6 +69,7 @@ public class FlatStoryPagerAdapter extends RecyclerView.Adapter<FlatStoryPagerAd
                 // Gọi hàm trong repository hoặc service gửi lên backend
                 StoryRepository.getInstance().reactToStory(postId, reaction, userId);
 
+                // (Tuỳ chọn) cập nhật UI ngay
                 holder.btnReact.setImageResource(ReactionUtils.getEmojiResId(reaction));
             });
 

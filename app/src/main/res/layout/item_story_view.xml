@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/ImageCornerStyle" />
 
     <!-- ✅ Overlay tối để text rõ ràng -->
@@ -101,10 +101,10 @@
             android:gravity="center"
             android:text="Chuyến đi thật tuyệt!"
             android:textColor="@color/bg"
-            android:textSize="14dp"
+            android:textSize="14sp"
             android:maxLines="3"
             android:ellipsize="end"
-            android:textStyle="bold" />
+            android:textStyle="italic" />
 
         <ImageView
             android:id="@+id/btnReact"
@@ -116,6 +116,13 @@
             android:contentDescription="React"
             android:background="?attr/selectableItemBackgroundBorderless"
             />
+
+<!--        <include
+            android:id="@+id/include"
+            layout="@layout/reaction_popup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />-->
     </LinearLayout>
 
 </FrameLayout>
