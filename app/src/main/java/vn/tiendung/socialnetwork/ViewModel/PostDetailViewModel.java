@@ -1,5 +1,7 @@
 package vn.tiendung.socialnetwork.ViewModel;
 
+import android.util.Pair;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -28,6 +30,11 @@ public class PostDetailViewModel extends ViewModel {
     private final MutableLiveData<UserProfile> userProfileLiveData = new MutableLiveData<>();
     private final MutableLiveData<List<Comment>> commentListLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+    private MutableLiveData<Pair<Comment, Integer>> updatedCommentLiveData = new MutableLiveData<>();
+
+    public LiveData<Pair<Comment, Integer>> getUpdatedCommentLiveData() {
+        return updatedCommentLiveData;
+    }
 
     public LiveData<Post> getPost() {
         return postLiveData;
@@ -104,12 +111,7 @@ public class PostDetailViewModel extends ViewModel {
             comment.getLikes().add(currentUserId);
         }
 
-        // Cập nhật trong danh sách
-        List<Comment> currentList = commentListLiveData.getValue();
-        if (currentList != null && position >= 0 && position < currentList.size()) {
-            currentList.set(position, comment);
-            commentListLiveData.postValue(new ArrayList<>(currentList));
-        }
+        updatedCommentLiveData.postValue(new Pair<>(comment, position));
 
         // Gửi lên server
         LiveData<Resource<Void>> likeLiveData = isLiked ?
