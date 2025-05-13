@@ -36,6 +36,9 @@ public class Post {
 
     public int getMyReactionsIcon()
     {
+        if (myReaction == null) {
+            return R.drawable.ic_like;
+        }
         if (myReaction.equals("Thích")) {
             return R.drawable.ic_reaction_like;
         }
