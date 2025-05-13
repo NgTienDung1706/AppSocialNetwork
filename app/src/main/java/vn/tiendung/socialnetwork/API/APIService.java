@@ -69,6 +69,7 @@ public interface APIService {
     @GET("/api/message/{conversation_id}")
     Call<MessageResponse> getMessages(@Path("conversation_id") String conversationId);
 
+
     @POST("/api/message/send")
     Call<Message> sendMessage(@Body Message message);
 
