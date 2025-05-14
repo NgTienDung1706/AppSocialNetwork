@@ -92,7 +92,7 @@ public class HomeFragment extends Fragment {
 
 
 
-        postAdapter = new PostAdapter(getContext(), postList);
+        postAdapter = new PostAdapter(getContext(), postList,false);
         recyclerViewPosts.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewPosts.setAdapter(postAdapter);
     }

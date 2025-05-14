@@ -86,6 +86,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
                                 intent.putExtra("user_id", friend.getUserId());
                                 intent.putExtra("fullname", friend.getName());
                                 intent.putExtra("avatar", friend.getAvatarResId());
+
                                 context.startActivity(intent);
                             } else {
                                 Toast.makeText(context, "Không thể tạo cuộc trò chuyện", Toast.LENGTH_SHORT).show();

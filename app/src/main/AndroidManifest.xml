@@ -36,7 +36,7 @@
             android:name=".UI.PostDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".UI.LoginActivity"
+            android:name=".UI.GuestHomeActivity"
             android:exported="false" />
         <activity
             android:name=".UI.RegisterActivity"
@@ -50,7 +50,7 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".UI.MainActivity"
+            android:name=".UI.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -64,6 +64,13 @@
 
         <activity
             android:name=".UI.ProfileActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".UI.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UI.LoginActivity"
             android:exported="false" />
     </application>
 

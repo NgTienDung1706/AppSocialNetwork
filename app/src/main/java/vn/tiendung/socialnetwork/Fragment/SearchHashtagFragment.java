@@ -37,7 +37,7 @@ public class SearchHashtagFragment extends Fragment implements OnSearchListener 
         recyclerView = view.findViewById(R.id.recyclerSearchHashtag);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new PostAdapter(getContext(), new ArrayList<>());
+        adapter = new PostAdapter(getContext(), new ArrayList<>(),false);
         recyclerView.setAdapter(adapter);
 
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);

@@ -179,4 +179,7 @@ public interface APIService {
     @GET("/api/friendsuggested/{userId}")
     Call<List<Friend>> getSuggestedFriends(@Path("userId") String userId);
 
+    @GET("/api/post/guest")
+    Call<List<Post>> getPublicPosts();
+
 }

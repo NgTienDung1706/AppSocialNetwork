@@ -401,6 +401,8 @@ public class MessageActivity extends AppCompatActivity implements SocketManager.
             sender.setName(SharedPrefManager.getInstance(this).getName());
             sender.setAvatar(SharedPrefManager.getInstance(this).getAvatar());
             message.setSender(sender);
+            message.setMessageType("image");
+            message.setTimestamp(String.valueOf(System.currentTimeMillis()));
 
             // Show loading
             Toast.makeText(this, "Đang gửi ảnh...", Toast.LENGTH_SHORT).show();

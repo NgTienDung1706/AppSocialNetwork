@@ -72,7 +72,7 @@ public class RecentPostsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerViewPosts);
         tvNoPosts = view.findViewById(R.id.tvNoPosts);
 
-        postAdapter = new PostAdapter(getContext(), postList);
+        postAdapter = new PostAdapter(getContext(), postList, false);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(postAdapter);
 

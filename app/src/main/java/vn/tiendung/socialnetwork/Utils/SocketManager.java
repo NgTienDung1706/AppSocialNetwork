@@ -15,6 +15,7 @@ import vn.tiendung.socialnetwork.API.APIService;
 import vn.tiendung.socialnetwork.API.RetrofitClient;
 import vn.tiendung.socialnetwork.Model.Message;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -123,6 +124,7 @@ public class SocketManager {
             if (eventListener != null && args.length > 0) {
                 try {
                     JSONObject messageData = (JSONObject) args[0];
+
                     eventListener.onNewMessage(messageData);
                 } catch (Exception e) {
                     Log.e(TAG, "Error in new_message: " + e.getMessage());
@@ -223,7 +225,39 @@ public class SocketManager {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    callback.onSuccess("Upload successful");
+                    // Gửi socket emit sau khi upload thành công
+                    try {
+                        String imageUrl = null;
+                        if (response.body() != null) {
+                            String responseStr = response.body().string();
+                            JSONObject responseJson = new JSONObject(responseStr);
+                            JSONObject data = responseJson.getJSONObject("data");
+                            imageUrl = data.getString("content"); // ✅ Lấy URL ảnh từ response
+                        }
+
+                        // Gửi socket emit
+                        JSONObject messageData = new JSONObject();
+                        messageData.put("conversation_id", message.getConversationId());
+                        messageData.put("sender", new JSONObject()
+                                .put("id", message.getSender().getId())
+                                .put("username", message.getSender().getUsername())
+                                .put("name", message.getSender().getName())
+                                .put("avatar", message.getSender().getAvatar()));
+                        messageData.put("image_url", imageUrl); // ✅ đúng với BE
+                        messageData.put("message_type", "image");
+                        //messageData.put("timestamp", Long.parseLong(message.getTimestamp())); // epoch time
+
+                        String isoTimestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+                                .format(new Date(Long.parseLong(message.getTimestamp())));
+                        messageData.put("timestamp", isoTimestamp);
+
+                        socket.emit("send_image", messageData);
+                        callback.onSuccess("Upload and emit successful");
+
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error creating message JSON: " + e.getMessage());
+                        callback.onError("Socket emit error");
+                    }
                 } else {
                     callback.onError("Upload failed: " + response.message());
                 }
